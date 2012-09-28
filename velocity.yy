@@ -17,7 +17,65 @@ statements
 
 statement
   : references { $$ = $1; }
+  | directives { $$ = $1; }
   | content { $$ = $1; }
+  ;
+
+directives
+  : set { $$ = $1; }
+  | conditionals { $$ = $1; }
+  ;
+
+conditionals
+  : if CONTENT end
+  | if CONTENT else CONTENT end
+  | if CONTENT elseif else CONTENT end
+  ;
+
+end
+  : HASH END
+  ;
+
+else
+  : HASH ELSE
+  ;
+
+elseifs
+  : elseif CONTENT
+  | elseifs elseifs
+  ;
+
+elseif
+  : HASH ELSEIF PARENTHESIS logical CLOSE_BRACKET 
+  ;
+
+if
+  : HASH IF PARENTHESIS logical CLOSE_BRACKET
+  ;
+
+logical
+  : not
+  | or
+  | and
+  | compare
+  ;
+
+not
+  : NOT references
+  ;
+
+not
+  : NOT references
+  ;
+
+set
+  : HASH SET PARENTHESIS equal CLOSE_PARENTHESIS 
+    { $$ = [].concat($2, $4); }
+  ;
+
+equal
+  : references EQUAL references { $$ = [$1, '=', $3]; }
+  | references EQUAL literals { $$ = [$1, '=', $3]; }
   ;
 
 references
@@ -39,13 +97,15 @@ attribute
   ;
 
 method
-  : DOT ID params { $$ = [$2, $3]; }
+  : DOT ID PARENTHESIS params CLOSE_PARENTHESIS { $$ = [$2, $4]; }
+  | DOT ID PARENTHESIS CLOSE_PARENTHESIS { $$ = []; }
   ;
 
 params
-  : PARENTHESIS array CLOSE_PARENTHESIS { $$ = $2; }
-  | PARENTHESIS data CLOSE_PARENTHESIS { $$ = $2; }
-  | PARENTHESIS CLOSE_PARENTHESIS { $$ = []; }
+  : literals { $$ = $1; }
+  | references { $$ = $1; }
+  | params COMMA literals { $$ = [].concat($1, $3); }
+  | params COMMA references { $$ = [].concat($1, $3); }
   ;
 
 property
@@ -54,25 +114,26 @@ property
   ;
 
 index
-  : BRACKET data CLOSE_BRACKET { $$ = $2; } 
-  | BRACKET data CONTENT { $$ = "<<<" + $1 + $2 + $3; } 
+  : BRACKET literal CLOSE_BRACKET { $$ = $2; } 
+  | BRACKET references CLOSE_BRACKET { $$ = $2; } 
+  | BRACKET literal CONTENT { $$ = "<<<" + $1 + $2 + $3; } 
   | BRACKET CONTENT { $$ = "<<<" + $1 + $2; } 
   | BRACKET CLOSE_BRACKET { $$ = "<<<" + $1 + $2; } 
   ;
 
-data
+literal
   : STRING { $$ = $1; }
   | INTEGER { $$ = $1; }
-  | references { $$ = $1; }
   ;
 
-datas
-  : data { $$ = $1; }
-  | datas COMMA data { $$ = [].concat($1, $3);}
+literals
+  : literal { $$ = $1; }
+  | array { $$ = $1;}
   ;
 
 array
-  : ARR_BRACKET datas CLOSE_BRACKET { $$ = $2; }
+  : BRACKET params CLOSE_BRACKET { $$ = $2; }
+  | BRACKET CLOSE_BRACKET { $$ = []; }
   ;
 
 content
