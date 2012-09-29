@@ -8,8 +8,26 @@
 [^\x00]+                          { return 'CONTENT'; }
 <h>"#"                            { return 'HASH'; }
 <h>"set"                          { return 'SET'; }
+<h>"if"                           { return 'IF'; }
+<h>"elseif"                       { return 'ELSEIF'; }
+<h>"else"                         { this.popState(); return 'ELSE'; }
+<h>"{else}"                       { this.popState(); return 'ELSE'; }
+<h>"end"                          { this.popState(); return 'END'; }
+<h>"foreach"                      { return 'FOREACH'; }
+<h>"include"                      { return 'INCLUDE'; }
+<h>"parse"                        { return 'PARSE'; }
+<h>"evaluate"                     { return 'EVAL'; }
+<h>"define"                       { return 'DEFINE'; }
+<h>"macro"                        { return 'MACRO'; }
+<h,c,i>"in"                       { return 'IN'; }
+<h,c,i>[\+\-\*/]                  { return yytext; }
+<h,c,i>[><]                       { return yytext; }
+<h,c,i>"=="                       { return yytext; }
+<h,c,i>"||"                       { return yytext; }
+<h,c,i>"&&"                       { return yytext; }
 <mu,c,i>"$!"                      { return 'DOLLAR'; }
 <mu,h,c,i>"$"                     { return 'DOLLAR'; }
+<h,c,i>"!"                        { return yytext; }
 <h,c,i>"="                        { return 'EQUAL'; }
 <h,c,i>\s+                        { /*ignore whitespace*/ }
 <mu>"{"                           { return 'VAR_BEGIN'; }
@@ -40,9 +58,10 @@
 <mu,h,c,i>"."                     { return 'DOT'; }
 <mu,h,c,i>","                     { return 'COMMA'; }
 <c,h,c,i>'"'(\\\"|[^\"])*'"'      { yytext = yytext.substr(1,yyleng-2).replace(/\\"/g,'"'); return 'STRING'; }
+<c,h,c,i>"'"(\\\'|[^\'])*"'"      { yytext = yytext.substr(1,yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
 <h,c,i>[0-9]+                     { return 'INTEGER'; }
 <mu,h,c,i>[a-zA-Z][a-zA-Z0-9_]*   { return 'ID'; }
-<mu>.                             { return 'CONTENT'; }
-<h>.                              { return 'CONTENT'; }
+<mu>.                             { this.popState(); return 'CONTENT'; }
+<h>.                              { this.popState(); return 'CONTENT'; }
 <mu>\s+                           { this.popState(); return 'CONTENT'; }
 <INITIAL,mu><<EOF>>               { return 'EOF'; }

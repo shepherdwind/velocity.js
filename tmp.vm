@@ -1,4 +1,17 @@
-#set( $directoryRoot = "www" )
-#set( $templateName = "index.vm" )
-#set( $template = "$directoryRoot/$templateName" )
-$template
+<ul>
+#foreach( $product in $allProducts )
+    <li>$product</li>
+#end
+</ul>
+#include( "greetings.txt", $seasonalstock )
+
+#parse( "parsefoo.vm" )
+#define( $block )Hello $who#end
+#set( $who = 'World!' )
+$block
+
+#macro( tablerows $color $somelist )
+#foreach( $something in $somelist )
+    <tr><td bgcolor=$color>$something</td></tr>
+#end
+#end

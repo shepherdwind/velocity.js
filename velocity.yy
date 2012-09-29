@@ -1,3 +1,11 @@
+%left '>' '<' '=='
+%left '||' '&&'
+%left '+' '-'
+%left '*' '/'
+%left '>' '==' '<'
+%left '!'
+%left UMINUS
+
 %start root
 
 %%
@@ -22,50 +30,28 @@ statement
   ;
 
 directives
-  : set { $$ = $1; }
-  | conditionals { $$ = $1; }
-  ;
-
-conditionals
-  : if CONTENT end
-  | if CONTENT else CONTENT end
-  | if CONTENT elseif else CONTENT end
-  ;
-
-end
-  : HASH END
-  ;
-
-else
-  : HASH ELSE
-  ;
-
-elseifs
-  : elseif CONTENT
-  | elseifs elseifs
-  ;
-
-elseif
-  : HASH ELSEIF PARENTHESIS logical CLOSE_BRACKET 
-  ;
-
-if
-  : HASH IF PARENTHESIS logical CLOSE_BRACKET
-  ;
-
-logical
-  : not
-  | or
-  | and
-  | compare
-  ;
-
-not
-  : NOT references
-  ;
-
-not
-  : NOT references
+  : set 
+      { $$ = $1; }
+  | if 
+      { $$ = $1; }
+  | elseif
+      { $$ = $1; }
+  | else 
+      { $$ = $1; }
+  | end
+      { $$ = $1; }
+  | foreach
+      { $$ = $1; }
+  | include
+      { $$ = $1; }
+  | parse
+      { $$ = $1; }
+  | evaluate
+      { $$ = $1; }
+  | define
+      { $$ = $1; }
+  | macro
+      { $$ = $1; }
   ;
 
 set
@@ -73,9 +59,107 @@ set
     { $$ = [].concat($2, $4); }
   ;
 
+if
+  : HASH IF PARENTHESIS expression CLOSE_PARENTHESIS
+    { $$ = [].concat($2, $4); }
+  ;
+
+elseif
+  : HASH ELSEIF PARENTHESIS expression CLOSE_PARENTHESIS
+    { $$ = [].concat($2, $4); }
+  ;
+
+else
+  : HASH ELSE
+    { $$ = 'else'; }
+  ;
+
+end
+  : HASH END
+    { $$ = 'end'; }
+  ;
+
+foreach
+  : HASH FOREACH PARENTHESIS DOLLAR ID IN references CLOSE_PARENTHESIS
+      { $$ = [].concat($2, $5, $6, $7); }
+  ;
+
+include
+  : HASH INCLUDE PARENTHESIS params CLOSE_PARENTHESIS
+      { $$ = [].concat($2, $4); }
+  ;
+
+parse
+  : HASH PARSE PARENTHESIS STRING CLOSE_PARENTHESIS
+      { $$ = [].concat($2, $4); }
+  ;
+
+evaluate
+  : HASH EAVL PARENTHESIS DOLLAR ID CLOSE_PARENTHESIS
+      { $$ = [].concat($2, $5); }
+  ;
+
+define
+  : HASH DEFINE PARENTHESIS DOLLAR ID CLOSE_PARENTHESIS
+      { $$ = [].concat($2, $5); }
+  ;
+
+macro
+  : HASH MACRO PARENTHESIS ID arguments CLOSE_PARENTHESIS
+      { $$ = [].concat($2, $4, $5); }
+  | HASH MACRO PARENTHESIS ID CLOSE_PARENTHESIS
+      { $$ = [].concat($2, $4); }
+  ;
+
+arguments
+  : DOLLAR ID
+      { $$ = $2; }
+  | arguments DOLLAR ID
+      { $$ = [].concat($1, $3); }
+  ;
+
 equal
-  : references EQUAL references { $$ = [$1, '=', $3]; }
-  | references EQUAL literals { $$ = [$1, '=', $3]; }
+  : references EQUAL expression { $$ = [$1, '=', $3]; }
+  ;
+
+expression
+  : STRING 
+      { $$ = $1; }
+  | array
+      { $$ = $1; }
+  | math
+      { $$ = $1; }
+  ;
+
+math
+  : math '||' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '&&' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '>' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '<' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '==' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '+' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '-' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '*' math
+      { $$ = [].concat($1, $2, $3); }
+  | math '/' math
+      { $$ = [].concat($1, $2, $3); }
+  | PARENTHESIS math CLOSE_PARENTHESIS
+      { $$ = [].concat($1, $2, $3); }
+  | '-' math %prec UMINUS
+      { $$ = [].concat($1, $2); }
+  | '!' math
+      { $$ = [].concat($1, $2); }
+  | references
+      { $$ = $1; }
+  | INTEGER
+      { $$ = $1; }
   ;
 
 references
