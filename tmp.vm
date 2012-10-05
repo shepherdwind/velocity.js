@@ -1,7 +1,32 @@
-<ul>
-#foreach( $product in $allProducts )
-    <li>$product</li>
+## #include( "a.txt" ) renders as <contents of a.txt>
+#include( "a.txt" )
+$test.name
+$!test.name
+
+## \#include( "a.txt" ) renders as #include( "a.txt" )
+\#include( "a.txt" )
+
+## \\#include ( "a.txt" ) renders as \<contents of a.txt>
+\\#include ( "a.txt" )
+<HTML>
+<BODY>
+Hello $customer.Name!
+<table>
+#foreach( $mud in $mudsOnSpecial )
+   #if ( $customer.hasPurchased($mud) )
+      <tr>
+        <td>
+          $flogger.getPromo( $mud )
+        </td>
+      </tr>
+   #end
 #end
+</table>
+
+<ul>
+  #foreach( $product in $allProducts )
+  <li>$product</li>
+  #end
 </ul>
 #include( "greetings.txt", $seasonalstock )
 
@@ -12,6 +37,6 @@ $block
 
 #macro( tablerows $color $somelist )
 #foreach( $something in $somelist )
-    <tr><td bgcolor=$color>$something</td></tr>
+<tr><td bgcolor=$color>$something</td></tr>
 #end
 #end

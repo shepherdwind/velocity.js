@@ -1,18 +1,48 @@
 
-%x mu c i h
+%x mu c i h esc
 
 %%
 
-[^#]*?/"$"                        { if(yytext.slice(-1) !== "\\") this.begin("mu"); if(yytext) return 'CONTENT'; }
-[^\$]*?/"#"                       { if(yytext.slice(-1) !== "\\") this.begin("h"); if(yytext) return 'CONTENT'; }
+[^#]*?/"$"                        { 
+                                    var _reg = /\\+$/;
+                                    var _esc = yytext.match(_reg);
+                                    var _num = _esc ? _esc[0].length: null;
+                                    /*转义实现，非常恶心，暂时没有好的解决方案*/
+                                    if (!_num || !(_num % 2)) {
+                                      this.begin("mu");
+                                    } else {
+                                      yytext = yytext.replace(/\\$/, '');
+                                      this.begin('esc');
+                                    }
+                                    if (_num > 1) yytext = yytext.replace(/(\\\\)+$/, '\\');
+                                    if(yytext) return 'CONTENT'; 
+                                  }
+
+[^\$]*?/"#"                       { 
+                                    var _reg = /\\+$/;
+                                    var _esc = yytext.match(_reg);
+                                    var _num = _esc ? _esc[0].length: null;
+                                    if (!_num || !(_num % 2)) {
+                                      this.begin("h");
+                                    } else {
+                                      yytext = yytext.replace(/\\$/, '');
+                                      this.begin('esc');
+                                    }
+                                    if (_num > 1) yytext = yytext.replace(/(\\\\)+$/, '\\');
+                                    if(yytext) return 'CONTENT'; 
+                                  }
+
 [^\x00]+                          { return 'CONTENT'; }
-<h>"#"                            { return 'HASH'; }
+<h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
+<h>"##"[^\n]+/\n                  { this.popState(); return 'COMMENT'; }
+<h>"#"/[^\s]                      { return 'HASH'; }
 <h>"set"                          { return 'SET'; }
 <h>"if"                           { return 'IF'; }
 <h>"elseif"                       { return 'ELSEIF'; }
 <h>"else"                         { this.popState(); return 'ELSE'; }
 <h>"{else}"                       { this.popState(); return 'ELSE'; }
 <h>"end"                          { this.popState(); return 'END'; }
+<h>"break"                        { this.popState(); return 'BREAK'; }
 <h>"foreach"                      { return 'FOREACH'; }
 <h>"include"                      { return 'INCLUDE'; }
 <h>"parse"                        { return 'PARSE'; }
@@ -30,6 +60,9 @@
 <h,c,i>"!"                        { return yytext; }
 <h,c,i>"="                        { return 'EQUAL'; }
 <h,c,i>\s+                        { /*ignore whitespace*/ }
+<h,c>"{"                          { return 'MAP_BEGIN'; }
+<h,c>"}"                          { return 'MAP_END'; }
+<h,c>":"                          { return 'MAP_SPLIT'; }
 <mu>"{"                           { return 'VAR_BEGIN'; }
 <mu>"}"                           { this.popState(); return 'VAR_END'; }
 <mu,h,c,i>"("                     { this.begin("c"); return 'PARENTHESIS'; }
@@ -55,13 +88,15 @@
                                     }
                                   }
 
+<i>".."                           { return 'RANGE'; }
 <mu,h,c,i>"."                     { return 'DOT'; }
 <mu,h,c,i>","                     { return 'COMMA'; }
-<c,h,c,i>'"'(\\\"|[^\"])*'"'      { yytext = yytext.substr(1,yyleng-2).replace(/\\"/g,'"'); return 'STRING'; }
-<c,h,c,i>"'"(\\\'|[^\'])*"'"      { yytext = yytext.substr(1,yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
+<c,h,c,i>'"'(\\\"|[^\"])*'"'      { yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'EVAL_STRING'; }
+<c,h,c,i>"'"(\\\'|[^\'])*"'"      { yytext = yytext.substr(1, yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
 <h,c,i>[0-9]+                     { return 'INTEGER'; }
 <mu,h,c,i>[a-zA-Z][a-zA-Z0-9_]*   { return 'ID'; }
-<mu>.                             { this.popState(); return 'CONTENT'; }
-<h>.                              { this.popState(); return 'CONTENT'; }
+<mu>"#"                           { this.begin('h'); return 'HASH'; }
+<h,mu>.                           { this.popState(); return 'CONTENT'; }
 <mu>\s+                           { this.popState(); return 'CONTENT'; }
-<INITIAL,mu><<EOF>>               { return 'EOF'; }
+<esc>[\$#]                        { this.popState(); return 'CONTENT'; }
+<INITIAL,mu,h><<EOF>>             { return 'EOF'; }
