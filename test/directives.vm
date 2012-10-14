@@ -1,0 +1,10 @@
+#macro( tablerows $color $somelist )
+#foreach( $something in $somelist )
+    <tr><td bgcolor=$color>$something</td></tr>
+#end
+#end
+#set( $greatlakes = ["Superior","Michigan","Huron","Erie","Ontario"] )
+#set( $color = "blue" )
+<table>
+    #tablerows( $color $greatlakes )
+</table>

@@ -9,3 +9,5 @@
 #set( $monkey.Number = 123 ) ##number literal
 #set( $monkey.Say = ["Not", $my, "fault"] ) ## ArrayList
 #set( $monkey.Map = {"banana" : "good", "roast beef" : "bad"}) ## Map
+
+$monkey.Number

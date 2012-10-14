@@ -5,7 +5,7 @@ var utils = {
 
 ['forEach', 'some', 'every'].forEach(function(fnName){
   utils[fnName] = function(arr, fn, context){
-    if (!arr) return arr;
+    if (!arr || typeof arr == 'string') return arr;
     context = context || this;
     if (arr[fnName]){
       return arr[fnName](fn, context);
@@ -17,6 +17,11 @@ var utils = {
     }
   };
 });
+
+var num = 0;
+utils.guid = function(){
+  return num++;
+};
 
 utils.walks = function walks(arr, fn, callback){
   var rets = [];

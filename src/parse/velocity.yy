@@ -142,7 +142,7 @@ macro_call
   : HASH ID PARENTHESIS macro_args CLOSE_PARENTHESIS
       { $$ = {type:"macro_call", id: $2, args: $4}; }
   | HASH ID PARENTHESIS CLOSE_PARENTHESIS
-      { $$ = $2; }
+      { $$ = {type:"macro_call", id: $2}; }
   ;
 
 arguments
@@ -301,16 +301,15 @@ map
 
 map_item
   : string MAP_SPLIT literal
-      { $$ = {}; $$[$1] = $1; }
+      { $$ = {}; $$[$1.value] = $3; }
   | string MAP_SPLIT references
-      { $$ = {}; $$[$1] = $3; }
+      { $$ = {}; $$[$1.value] = $3; }
   | map_item COMMA string MAP_SPLIT references
-      { $$ = $1; $$[$3] = $5; }
+      { $$ = $1; $$[$3.value] = $5; }
   | map_item COMMA string MAP_SPLIT literal
-      { $$ = $1; $$[$3] = $5; }
+      { $$ = $1; $$[$3.value] = $5; }
   ;
     
-
 content
   : CONTENT 
       { $$ = $1; }
