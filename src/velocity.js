@@ -26,24 +26,37 @@ Velocity.prototype = {
     //模拟数据
     this._context = {};
 
-    utils.forEach(this.ast, this._init);
+    utils.forEach(this.ast, this._init, this);
   },
 
-  _init: function(ast){
-    //console.log(ast);
+  _init: function(ast, i){
+    if (!ast.type || ast.type !== 'references') {
+      this._trim(i + 1);
+    }
+  },
+
+  /**
+   * 删除多余的换行符，规则，所有非references的指令后面的换行符，都去除接下来的
+   * 换行符
+   */
+  _trim: function(i){
+    var ast = this.ast;
+    var _ast = ast[i];
+    if (typeof _ast === 'string' && _ast.slice(0, 1) === "\n") {
+      ast[i] = _ast.slice(1);
+    }
   },
 
   render: function(context){
     this.context = context || {};
     var str = this._render();
     console.log(str);
-    console.log(this);
+    //console.log(this);
   },
 
   _render: function(ast, contextId){
 
     var str = '';
-    var isNewLine = true;
     var block = [];
     var index = 0;
     ast = ast || this.ast;
@@ -70,12 +83,10 @@ Velocity.prototype = {
             block.push(ast);
           } else {
             this.setValue(ast);
-            isNewLine = false;
           }
           break;
 
         case 'comment':
-          isNewLine = false;
           break;
 
         case 'break':
@@ -279,27 +290,66 @@ Velocity.prototype = {
     return this._render(asts);
   },
 
-  getExpression: function(condition){
+  getExpression: function(ast){
 
-    var str = '';
-    if (!condition.length) condition = [condition];
+    var exp = ast.expression;
+    var ret;
+    if (ast.type === 'math') {
 
-    utils.forEach(condition, function(exp){
+      switch(ast.operator) {
+        case '+':
+        ret = this.getExpression(exp[0]) + this.getExpression(exp[1]);
+        break;
 
-      if (typeof exp === 'string') {
-        str += exp;
-      } else if (exp.type) {
+        case '-':
+        ret = this.getExpression(exp[0]) - this.getExpression(exp[1]);
+        break;
 
-        var val = this.getLiteral(exp);
-        if (typeof val === 'string') val = '"' + val + '"';
-        str += val;
+        case '/':
+        ret = this.getExpression(exp[0]) / this.getExpression(exp[1]);
+        break;
 
+        case '*':
+        ret = this.getExpression(exp[0]) * this.getExpression(exp[1]);
+        break;
+
+        case '||':
+        ret = this.getExpression(exp[0]) || this.getExpression(exp[1]);
+        break;
+
+        case '&&':
+        ret = this.getExpression(exp[0]) && this.getExpression(exp[1]);
+        break;
+
+        case '>':
+        ret = this.getExpression(exp[0]) > this.getExpression(exp[1]);
+        break;
+
+        case '<':
+        ret = this.getExpression(exp[0]) < this.getExpression(exp[1]);
+        break;
+
+        case 'minus':
+        ret = - this.getExpression(exp[0]);
+        break;
+
+        case 'not':
+        ret = !this.getExpression(exp[0]);
+        break;
+
+        case 'parenthesis':
+        ret = this.getExpression(exp[0]);
+        break;
+
+        default:
+        return;
+        // code
       }
 
-    }, this);
-
-    str = '(' + str + ')';
-    return eval(str);
+      return ret;
+    } else {
+      return this.getLiteral(ast);
+    }
   },
 
   /**
@@ -308,7 +358,14 @@ Velocity.prototype = {
   setValue: function(ast){
     var ref = ast.equal[0];
     var context  = this.context;
-    var val = this.getLiteral(ast.equal[1]);
+    var valAst = ast.equal[1];
+    var val;
+
+    if (valAst.type === 'math') {
+      val = this.getExpression(valAst);
+    } else {
+      val = this.getLiteral(ast.equal[1]);
+    }
 
     if (!ref.path) {
 

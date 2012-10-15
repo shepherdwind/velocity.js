@@ -1,13 +1,6 @@
-#set($foo[0] = 1)
-#set($foo.bar[1] = 3)
-#set($map["apple"] = "orange")
-
-#set( $monkey = $bill ) ## variable reference
-#set( $monkey.Friend = "monica" ) ## string literal
-#set( $monkey.Blame = $whitehouse.Leak ) ## property reference
-#set( $monkey.Plan = $spindoctor.weave($web) ) ## method reference
-#set( $monkey.Number = 123 ) ##number literal
-#set( $monkey.Say = ["Not", $my, "fault"] ) ## ArrayList
-#set( $monkey.Map = {"banana" : "good", "roast beef" : "bad"}) ## Map
-
-$monkey.Number
+#set( $foo = 5 )
+#set( $value = $foo + 8 / 4 - 2 )
+#if( $foo > 8 + 4)
+hello $foo
+#end
+$value

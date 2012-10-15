@@ -1,8 +1,7 @@
-%left '>' '<' '=='
 %left '||' '&&'
-%left '+' '-'
-%left '*' '/'
 %left '>' '==' '<'
+%left '+' '-'
+%left '*' '/' 
 %left '!'
 %left UMINUS
 
@@ -168,29 +167,29 @@ expression
 
 math
   : math '||' math
-      { $$ = [].concat($1, $2, $3); }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | math '&&' math
-      { $$ = [].concat($1, $2, $3); }
-  | math '>' math
-      { $$ = [].concat($1, $2, $3); }
-  | math '<' math
-      { $$ = [].concat($1, $2, $3); }
-  | math '==' math
-      { $$ = [].concat($1, $2, $3); }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | math '+' math
-      { $$ = [].concat($1, $2, $3); }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | math '-' math
-      { $$ = [].concat($1, $2, $3); }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | math '*' math
-      { $$ = [].concat($1, $2, $3); }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | math '/' math
-      { $$ = [].concat($1, $2, $3); }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+  | math '>' math
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+  | math '<' math
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+  | math '==' math
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | PARENTHESIS math CLOSE_PARENTHESIS
-      { $$ = [].concat($1, $2, $3); }
+      { $$ = {type: 'math', expression: [$2], operator: 'parenthesis'}; }
   | '-' math %prec UMINUS
-      { $$ = [].concat($1, $2); }
+      { $$ = {type: 'math', expression: [$2], operator: 'minus'}; }
   | '!' math
-      { $$ = [].concat($1, $2); }
+      { $$ = {type: 'math', expression: [$2], operator: 'not'}; }
   | references
       { $$ = $1; }
   | literal
