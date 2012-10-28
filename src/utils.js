@@ -11,7 +11,7 @@ var utils = {
       return arr[fnName](fn, context);
     } else {
       var keys = Object.keys(arr);
-      return keys[fnName](function(key, i){
+      return keys[fnName](function(key){
         return fn.call(context, arr[key], key, arr);
       }, context);
     }
@@ -57,4 +57,4 @@ utils.mixin = function (from, to){
   return to;
 };
 
-module.exports = utils;
+odule.exports = utils;

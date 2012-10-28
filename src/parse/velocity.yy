@@ -138,10 +138,28 @@ macro_args
   ;
 
 macro_call
-  : HASH ID PARENTHESIS macro_args CLOSE_PARENTHESIS
+  : HASH ID PARENTHESIS macro_call_args CLOSE_PARENTHESIS
       { $$ = {type:"macro_call", id: $2, args: $4}; }
   | HASH ID PARENTHESIS CLOSE_PARENTHESIS
       { $$ = {type:"macro_call", id: $2}; }
+  ;
+
+/**
+ * 空格被忽略了，references array 无法和references自身区分开，比如$name[1],
+ * $name [1]两者是一样的，可以是references array，也可以是references 此处处理，
+ * 让macro_call_args和velocity解释有差异 
+ */
+macro_call_args
+  : literal
+      { $$ = [$1]; }
+  | array
+      { $$ = [$1]; }
+  | references
+      { $$ = [$1]; }
+  | macro_call_args literal
+      { $$ = [].concat($1, $2); }
+  | macro_call_args references
+      { $$ = [].concat($1, $2); }
   ;
 
 arguments
@@ -186,10 +204,10 @@ math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | PARENTHESIS math CLOSE_PARENTHESIS
       { $$ = {type: 'math', expression: [$2], operator: 'parenthesis'}; }
-  | '-' math %prec UMINUS
-      { $$ = {type: 'math', expression: [$2], operator: 'minus'}; }
   | '!' math
       { $$ = {type: 'math', expression: [$2], operator: 'not'}; }
+  | '-' references %prec UMINUS
+      { $$ = {type: 'math', expression: [$2], operator: 'minus'}; }
   | references
       { $$ = $1; }
   | literal
@@ -264,8 +282,15 @@ index
 literal
   : string 
       { $$ = $1; }
-  | INTEGER 
+  | integer
       { $$ = {type: 'integer', value: $1}; }
+  ;
+
+integer
+  : INTEGER
+      { $$ = $1; }
+  | '-' INTEGER
+      { $$ = - parseInt($2, 10); }
   ;
 
 string
@@ -287,7 +312,7 @@ literals
 array
   : BRACKET params CLOSE_BRACKET 
       { $$ = {type: 'array', value: $2}; }
-  | BRACKET INTEGER RANGE INTEGER CLOSE_BRACKET 
+  | BRACKET integer RANGE integer CLOSE_BRACKET 
       { $$ = {type: 'array', isRange: true, value: [$2, $4]}; }
   | BRACKET CLOSE_BRACKET 
       { $$ = {type: 'array', value: []}; }
@@ -315,5 +340,9 @@ content
   | ID 
       { $$ = $1; }
   | HASH CONTENT
-      { $$ = $1; }
+      { $$ = $1 + $2; }
+  | HASH ID CONTENT
+      { $$ = $1 + $2 + $3; }
+  | HASH ID EOF
+      { $$ = $1 + $2; }
   ;

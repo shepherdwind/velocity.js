@@ -3,7 +3,7 @@
 
 %%
 
-[^#]*?/"$"                        { 
+[^#]*?/"$"                        {
                                     var _reg = /\\+$/;
                                     var _esc = yytext.match(_reg);
                                     var _num = _esc ? _esc[0].length: null;
@@ -44,22 +44,22 @@
 <h>"end"                          { this.popState(); return 'END'; }
 <h>"break"                        { this.popState(); return 'BREAK'; }
 <h>"foreach"                      { return 'FOREACH'; }
-<h>"include"                      { return 'INCLUDE'; }
+<h>"include"[ ]*                  { return 'INCLUDE'; }
 <h>"parse"                        { return 'PARSE'; }
 <h>"evaluate"                     { return 'EVAL'; }
 <h>"define"                       { return 'DEFINE'; }
 <h>"macro"                        { return 'MACRO'; }
-<h,c,i>"in"                       { return 'IN'; }
-<h,c,i>[\+\-\*/]                  { return yytext; }
-<h,c,i>[><]                       { return yytext; }
-<h,c,i>"=="                       { return yytext; }
-<h,c,i>"||"                       { return yytext; }
-<h,c,i>"&&"                       { return yytext; }
+<c,i>"in"                         { return 'IN'; }
+<c,i>[\+\-\*/]                    { return yytext; }
+<c,i>[><]                         { return yytext; }
+<c,i>"=="                         { return yytext; }
+<c,i>"||"                         { return yytext; }
+<c,i>"&&"                         { return yytext; }
 <mu,c,i>"$!"                      { return 'DOLLAR'; }
 <mu,h,c,i>"$"                     { return 'DOLLAR'; }
 <h,c,i>"!"                        { return yytext; }
 <h,c,i>"="                        { return 'EQUAL'; }
-<h,c,i>\s+                        { /*ignore whitespace*/ }
+<c,i>\s+                          { /*ignore whitespace*/ }
 <h,c>"{"                          { return 'MAP_BEGIN'; }
 <h,c>"}"                          { return 'MAP_END'; }
 <h,c>":"                          { return 'MAP_SPLIT'; }
@@ -91,12 +91,13 @@
 <i>".."                           { return 'RANGE'; }
 <mu,h,c,i>"."                     { return 'DOT'; }
 <mu,h,c,i>","                     { return 'COMMA'; }
-<c,h,c,i>'"'(\\\"|[^\"])*'"'      { yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'EVAL_STRING'; }
-<c,h,c,i>"'"(\\\'|[^\'])*"'"      { yytext = yytext.substr(1, yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
+<c,i>'"'(\\\"|[^\"])*'"'          { yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'EVAL_STRING'; }
+<c,i>"'"(\\\'|[^\'])*"'"          { yytext = yytext.substr(1, yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
 <h,c,i>[0-9]+                     { return 'INTEGER'; }
 <mu,h,c,i>[a-zA-Z][a-zA-Z0-9_]*   { return 'ID'; }
 <mu>"#"                           { this.begin('h'); return 'HASH'; }
 <h,mu>.                           { this.popState(); return 'CONTENT'; }
-<mu>\s+                           { this.popState(); return 'CONTENT'; }
+<h,mu>\s+                         { this.popState(); return 'CONTENT'; }
 <esc>[\$#]                        { this.popState(); return 'CONTENT'; }
-<INITIAL,mu,h><<EOF>>             { return 'EOF'; }
+<mu,h><<EOF>>                     { this.popState(); return 'EOF'; }
+<INITIAL><<EOF>>                  { return 'EOF'; }

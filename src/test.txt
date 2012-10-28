@@ -1,0 +1,4 @@
+abcdefghijklmnopqrstuvwxyzSTRING
+abc		defghijklmnopqrstuvwxyzSTRING
+abcdef  ghi		jklmnopqrstuvwxyzSTRING
+abcdefghijklmnopqrstuvwxyzSTRING

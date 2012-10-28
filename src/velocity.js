@@ -18,7 +18,15 @@ Velocity.prototype = {
 
   init: function(template){
     this.template = template;
+
+    var t1 = Date.now();
     this.ast = Parser.parse(template);
+    //console.log(JSON.stringify(this.ast));
+    var t2 = Date.now();
+    var str = 'parse syntax tree finished, cost time: ' + (t2 - t1)+ 'ms.';
+    console.log(str);
+    this.times = [t2];
+
     this.context = {};
     this.macros = {};
     this.conditions = [];
@@ -50,10 +58,21 @@ Velocity.prototype = {
   render: function(context){
     this.context = context || {};
     var str = this._render();
-    console.log(str);
+    this.times.push(Date.now());
+
+    var cost = this.times[1] - this.times[0];
+    return str + "finished, cout time:" + cost + 'ms';
+    //console.log(str);
     //console.log(this);
   },
 
+  /**
+   * 解析入口函数
+   * @param ast {array} 模板结构数组
+   * @param contextId {number} 执行环境id，对于macro有局部作用域，变量的设置和
+   * 取值，都放在一个this.local下，通过contextId查找
+   * @return {string}解析后的字符串
+   */
   _render: function(ast, contextId){
 
     var str = '';
@@ -145,6 +164,9 @@ Velocity.prototype = {
     return str;
   },
 
+  /**
+   * 处理代码库: if foreach macro
+   */
   getBlock: function(block) {
     var ast = block[0];
     var ret = '';
@@ -188,6 +210,9 @@ Velocity.prototype = {
     return ret;
   },
 
+  /**
+   * define macro
+   */
   setBlockMacro: function(block){
     var ast = block[0];
     var _block = block.slice(1);
@@ -199,6 +224,9 @@ Velocity.prototype = {
     };
   },
 
+  /**
+   * parse macro call
+   */
   getMacro: function(ast){
     var macro = this.macros[ast.id];
     var ret = '';
@@ -215,22 +243,26 @@ Velocity.prototype = {
       var contextId = ast.id + ':' + guid;
 
       utils.forEach(args, function(ref, i){
-        local[ref.id] = this.getReferences(_call_args[i]);
+        local[ref.id] = this.getLiteral(_call_args[i]);
       }, this);
 
       this.local[contextId] = local;
       ret = this._render(asts, contextId);
       this.local[contextId] = {};
       this.conditions.pop();
+      this.condition = '';
     }
 
     return ret;
   },
 
+  /**
+   * parse #foreach
+   */
   getBlockEach: function(block){
 
     var ast = block[0];
-    var _from = this.getReferences(ast.from);
+    var _from = this.getLiteral(ast.from);
     var _block = block.slice(1);
     var _to = ast.to;
     var local = {
@@ -257,11 +289,15 @@ Velocity.prototype = {
     //删除临时变量
     this.local[contextId] = {};
     this.conditions.pop();
+    this.condition = '';
 
     return ret;
 
   },
 
+  /**
+   * parse #if
+   */
   getBlockIf: function(block) {
 
     var str = '';
@@ -290,6 +326,11 @@ Velocity.prototype = {
     return this._render(asts);
   },
 
+  /**
+   * 表达式求值，表达式主要是数学表达式，逻辑运算和比较运算，到最底层数据结构，
+   * 基本数据类型，使用 getLiteral求值，getLiteral遇到是引用的时候，使用
+   * getReferences求值
+   */
   getExpression: function(ast){
 
     var exp = ast.expression;
@@ -353,11 +394,23 @@ Velocity.prototype = {
   },
 
   /**
+   * 获取执行环境，对于macro中定义的变量，为局部变量，不贮存在全局中，执行后销毁
+   */
+  getContext: function(){
+    var condition = this.condition;
+    var local = this.local;
+    if (condition) {
+      return local[condition];
+    } else {
+      return this.context;
+    }
+  },
+  /**
    * parse #set
    */
   setValue: function(ast){
     var ref = ast.equal[0];
-    var context  = this.context;
+    var context  = this.getContext();
     var valAst = ast.equal[1];
     var val;
 
@@ -395,6 +448,9 @@ Velocity.prototype = {
     }
   },
 
+  /**
+   * 引用求值
+   */
   getReferences: function(ast) {
 
     var isSilent= ast.leader === '$!';
@@ -420,7 +476,7 @@ Velocity.prototype = {
   },
 
   /**
-   * 获取局部变量
+   * 获取局部变量，在macro和foreach循环中使用
    */
   getLocal: function(ast){
 
@@ -476,6 +532,9 @@ Velocity.prototype = {
     return ret;
   },
 
+  /**
+   * $foo.bar 属性求值
+   */
   getAttributes: function(property, baseRef, isEnd){
     /**
      * type对应着velocity.yy中的attribute，三种类型: method, index, property
@@ -497,6 +556,9 @@ Velocity.prototype = {
     return ret;
   },
 
+  /**
+   * $foo.bar[1] index求值
+   */
   getPropIndex: function(property, baseRef, isEnd){
     var ast = property.id;
     var key;
@@ -518,6 +580,9 @@ Velocity.prototype = {
     return ret;
   },
 
+  /**
+   * $foo.bar()求值
+   */
   getPropMethod: function(property, baseRef, isEnd){
 
     var id         = property.id;
@@ -561,6 +626,12 @@ Velocity.prototype = {
     return ret;
   },
 
+  /**
+   * 字面量求值，主要包括string, integer, array, map四种数据结构
+   * @param literal {object} 定义于velocity.yy文件，type描述数据类型，value属性
+   * 是literal值描述
+   * @return {object|string|number|array}返回对应的js变量
+   */
   getLiteral: function(literal){
 
     var type = literal.type;
@@ -568,7 +639,7 @@ Velocity.prototype = {
 
     if (type == 'string') {
 
-      ret = literal.value;
+      ret = this.getString(literal);
 
     } else if (type == 'integer') {
 
@@ -576,10 +647,7 @@ Velocity.prototype = {
 
     } else if (type == 'array') {
 
-      ret = [];
-      utils.forEach(literal.value, function(exp){
-        ret.push(this.getLiteral(exp));
-      }, this);
+      ret = this.getArray(literal);
 
     } else if(type == 'map') {
 
@@ -597,7 +665,92 @@ Velocity.prototype = {
     }
 
     return ret;
+  },
+
+  /**
+   * 对字符串求值，对已双引号字符串，需要做变量替换
+   */
+  getString: function(literal){
+    var val = literal.value;
+    var ret = val;
+
+    if (literal.isEval && (val.indexOf('#') !== -1 || val.indexOf('$') !== -1)) {
+      ret = this.evalStr(val);
+    }
+
+    return ret;
+  },
+
+  /**
+   * 对array字面量求值，比如[1, 2]=> [1,2]，[1..5] => [1,2,3,4,5]
+   * @param literal {object} array字面量的描述对象，分为普通数组和range数组两种
+   * ，和js基本一致
+   * @return {array} 求值得到的数组
+   */
+  getArray: function(literal){
+
+    var ret = [];
+
+    if (literal.isRange) {
+      var begin = parseInt(literal.value[0], 10);
+      var end   = parseInt(literal.value[1], 10);
+      var i;
+
+      if (begin < end) {
+        for (i = begin; i <= end; i++) ret.push(i);
+      } else {
+        for (i = begin; i >= end; i--) ret.push(i);
+      }
+
+    } else {
+      utils.forEach(literal.value, function(exp){
+        ret.push(this.getLiteral(exp));
+      }, this);
+    }
+
+    return ret;
+  },
+
+  /**
+   * 对双引号字符串进行eval求值，替换其中的变量，只支持最基本的变量类型替换
+   */
+  evalStr: function(str){
+    var ret = str;
+    var reg = /\$\{{0,1}([a-z][a-z_\-0-9.]*)\}{0,1}/gi;
+    var self = this;
+    ret = ret.replace(reg, function(){
+      return self._getFromVarname(arguments[1]);
+    });
+    return ret;
+  },
+
+  /**
+   * 通过变量名获取变量的值
+   * @param varname {string} 变量名，比如$name.name，只支持一种形式，变量和属性
+   * 的取值，index和method不支持，在字符处理中，只处理"$varname1 $foo.bar" 类似
+   * 的变量，对于复杂类型不支持
+   * @return ret {string} 变量对应的值
+   */
+  _getFromVarname: function(varname){
+    var varPath = varname.split('.');
+    var ast = {
+      type   : "references",
+      id     : varPath[0],
+      leader : '$'
+    };
+
+    var path = [];
+    for (var i=1; i < varPath.length; i++) {
+      path.push({
+        type: 'property',
+        id: varPath[i]
+      });
+    }
+
+    if (path.length) ast.path = path;
+    return this.getReferences(ast);
   }
+
 
 };
 

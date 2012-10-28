@@ -1,0 +1,5 @@
+#set($color = "#CC00FF")
+#set($ad = "world")
+#set($something = "$color hello $ad")
+<tr><td bgcolor="#CC00FF">$something</td></tr>
+#CC00FF

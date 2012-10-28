@@ -14,6 +14,6 @@
   },
   "main": "src/velocity.js",
   "bin": {
-    "handlebars": "bin/velocity"
+    "velocity": "bin/velocity"
   }
 }

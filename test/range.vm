@@ -1,0 +1,9 @@
+First example:
+#foreach( $foo in [1..5] )
+$foo
+#end
+
+Second example:
+#foreach( $bar in [2..-2] )
+$bar
+#end
