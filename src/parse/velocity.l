@@ -36,19 +36,19 @@
 <h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
 <h>"##"[^\n]+/\n                  { this.popState(); return 'COMMENT'; }
 <h>"#"/[^\s]                      { return 'HASH'; }
-<h>"set"                          { return 'SET'; }
-<h>"if"                           { return 'IF'; }
-<h>"elseif"                       { return 'ELSEIF'; }
+<h>"set"[ ]*                      { return 'SET'; }
+<h>"if"[ ]*                       { return 'IF'; }
+<h>"elseif"[ ]*                   { return 'ELSEIF'; }
 <h>"else"                         { this.popState(); return 'ELSE'; }
 <h>"{else}"                       { this.popState(); return 'ELSE'; }
 <h>"end"                          { this.popState(); return 'END'; }
 <h>"break"                        { this.popState(); return 'BREAK'; }
-<h>"foreach"                      { return 'FOREACH'; }
+<h>"foreach"[ ]*                  { return 'FOREACH'; }
 <h>"include"[ ]*                  { return 'INCLUDE'; }
-<h>"parse"                        { return 'PARSE'; }
+<h>"parse"[ ]*                    { return 'PARSE'; }
 <h>"evaluate"                     { return 'EVAL'; }
-<h>"define"                       { return 'DEFINE'; }
-<h>"macro"                        { return 'MACRO'; }
+<h>"define"[ ]*                   { return 'DEFINE'; }
+<h>"macro"[ ]*                    { return 'MACRO'; }
 <c,i>"in"                         { return 'IN'; }
 <c,i>[\+\-\*/]                    { return yytext; }
 <c,i>[><]                         { return yytext; }

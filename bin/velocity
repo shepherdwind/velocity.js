@@ -27,8 +27,7 @@ if (!exists(vmfile)) {
   console.log('velocity xx.vm [xx.js | xx.json]');
 } else {
   var str = fs.readFileSync(vmfile).toString();
-  var vm = new Velocity(str);
-  console.log(vm.render(data));
+  console.log(Velocity.render(str, data));
 }
 
 /**

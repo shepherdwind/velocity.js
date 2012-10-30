@@ -78,7 +78,7 @@ if
 
 elseif
   : HASH ELSEIF PARENTHESIS expression CLOSE_PARENTHESIS
-      { $$ = {type: $2, condition: $4}; }
+      { $$ = {type: 'elseif', condition: $4}; }
   ;
 
 else
@@ -93,9 +93,9 @@ end
 
 foreach
   : HASH FOREACH PARENTHESIS DOLLAR ID IN references CLOSE_PARENTHESIS
-      { $$ = {type: $2, to: $5, from: $7}; }
+      { $$ = {type: 'foreach', to: $5, from: $7}; }
   | HASH FOREACH PARENTHESIS DOLLAR ID IN array CLOSE_PARENTHESIS
-      { $$ = {type: $2, to: $5, from: $7}; }
+      { $$ = {type: 'foreach', to: $5, from: $7}; }
   ;
 
 break
@@ -105,29 +105,29 @@ break
 
 include
   : HASH INCLUDE PARENTHESIS params CLOSE_PARENTHESIS
-      { $$ = {type: $2, args: $4}; }
+      { $$ = {type: 'include', args: $4}; }
   ;
 
 parse
   : HASH PARSE PARENTHESIS string CLOSE_PARENTHESIS
-      { $$ = {type: $2, id: $4}; }
+      { $$ = {type: 'parse', id: $4}; }
   ;
 
 evaluate
   : HASH EAVL PARENTHESIS DOLLAR ID CLOSE_PARENTHESIS
-      { $$ = {type: $2, id: $5}; }
+      { $$ = {type: 'evaluate', id: $5}; }
   ;
 
 define
   : HASH DEFINE PARENTHESIS DOLLAR ID CLOSE_PARENTHESIS
-      { $$ = {type: $2, id: $5}; }
+      { $$ = {type: 'define', id: $5}; }
   ;
 
 macro
   : HASH MACRO PARENTHESIS ID macro_args CLOSE_PARENTHESIS
-      { $$ = {type: $2, id: $4, args: $5}; }
+      { $$ = {type: 'macro', id: $4, args: $5}; }
   | HASH MACRO PARENTHESIS ID CLOSE_PARENTHESIS
-      { $$ = {type: $2, id: $4}; }
+      { $$ = {type: 'macro', id: $4}; }
   ;
 
 macro_args

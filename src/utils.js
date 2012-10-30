@@ -45,7 +45,8 @@ utils.walks = function walks(arr, fn, callback){
 
   });
 };
-utils.mixin = function (from, to){
+
+utils.mixin = function (to, from){
   utils.forEach(from, function(val, key){
     var toString = {}.toString.call(val);
     if (toString == '[object Array]' || toString == '[object Object]') {
@@ -57,4 +58,8 @@ utils.mixin = function (from, to){
   return to;
 };
 
-odule.exports = utils;
+utils.isArray = function(obj){
+  return {}.toString.call(obj) === '[object Array]';
+};
+
+module.exports = utils;
