@@ -15,9 +15,9 @@ module.exports = function(Velocity, utils){
       var blockTypes = ['if', 'foreach', 'macro'];
 
       /**
-       * 处理block嵌套，重新构造_block，把block中有嵌套的放入数组_inBlock，_inBlock
-       * 最后成为_block的一个元素，_inBlock数组作为一个block数组，求值过程中，可以
-       * 通过递归求值，进入下一层嵌套
+       * 处理block嵌套，重新构造_block，把block中有嵌套的放入数组_inBlock,
+       * _inBlock 最后成为_block的一个元素，_inBlock数组作为一个block数组，求值
+       * 过程中，可以通过递归求值，进入下一层嵌套
        */
       utils.forEach(block, function(ast, i){
         if (i) {

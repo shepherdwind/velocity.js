@@ -11,7 +11,7 @@ if (vmfile && vmfile.indexOf('.vm')) {
   vmfile = path.resolve(process.cwd(), vmfile);
 }
 
-var dataFile = argv[2];
+var dataFile = argv[1];
 
 var data = {};
 var ext = path.extname(dataFile);

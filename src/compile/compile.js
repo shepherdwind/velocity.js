@@ -8,8 +8,6 @@ module.exports = function(Velocity, utils){
       this.macros = {};
       this.conditions = [];
       this.local = {};
-      //模拟数据
-      this._context = {};
 
       utils.forEach(this.asts, this._init, this);
     },

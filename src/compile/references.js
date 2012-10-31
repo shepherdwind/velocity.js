@@ -137,8 +137,6 @@ module.exports = function(Velocity, utils){
           ret = ret.apply(baseRef, args); 
         } else {
           ret = undefined;
-          //spy fn
-          //baseRef[id] = noop(isEnd?'spy>>> string': {});
         }
       }
 

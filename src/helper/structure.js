@@ -1,7 +1,9 @@
+"use strict";
 /**
  * velocity数据结构构造，根据vm文件，构造数据结构
  */
-var utils = require('./utils');
+var utils = require('../utils');
+var Helper = require('./index');
 function Structure(){
   this.init.apply(this, arguments);
 }
@@ -10,29 +12,73 @@ Structure.prototype = {
 
   init: function(asts){
     this.context = {};
+    this.conditions = [];
+    this.local = {};
+    this.leval = 0;
+    this.ignores = {};
     utils.forEach(asts, this._render, this);
   },
 
   _render: function(ast){
-    if (ast.type === 'references'){
+    var type = ast.type;
+    var leval = this.leval;
+    if (type === 'references'){
       this._setRefs(ast);
+    } else if (type === 'if' || type === 'elseif') {
+      this._setIf(ast.condition);
+    } else if (type === 'set') {
+      this.setValue(ast);
+      leval++;
+    } else if (type === 'foreach') {
+      this.leval = leval++;
+      this._setForEach(ast);
+      leval++;
+    } else if (type === 'end') {
+      this.leval = leval++;
+    }
+
+  },
+
+  _setForEach: function(ast){
+    this._setRefs(ast.from, ['string']);
+  },
+
+  _setIf: function(condition){
+    var type = condition.type;
+    if (type === 'references') {
+      this._setRefs(condition);
+    } else if (type === 'math') {
+      utils.forEach(condition.expression, function(ast){
+        this._setIf(ast);
+      }, this);
     }
   },
 
-  _setRefs: function(ast){
+  getReferences: Helper.getRefText,
+
+  _setRefs: function(ast, spyData){
+    var context = this.context;
+    spyData = spyData || 'string';
     if (ast.path) {
-      if (!ret) ret = context[ast.id] = {};
+      context[ast.id] = context[ast.id] || {};
+      var ret = context[ast.id];
       var len = ast.path.length;
       utils.forEach(ast.path, function(property, i){
         var isEnd = len === i + 1;
-        this._setAttributes(property, ret, isEnd);
+        var spy = isEnd? spyData: {};
+        ret = this._setAttributes(property, ret, spy);
       }, this);
     } else {
-      context[ast.id] = 'string';
+      //强制设值
+      if (spyData !== 'string'){
+        context[ast.id] = spyData;
+      } else {
+        context[ast.id] = context[ast.id] || spyData;
+      }
     }
   },
 
-  _setAttributes: function(property, baseRef, isEnd){
+  _setAttributes: function(property, baseRef, spy){
     /**
      * type对应着velocity.yy中的attribute，三种类型: method, index, property
      */
@@ -40,32 +86,33 @@ Structure.prototype = {
     var ret;
     var id = property.id;
     if (type === 'method'){
-      this._setPropMethod(property, baseRef, isEnd);
+      ret = this._setPropMethod(property, baseRef, spy);
     } else if (type === 'property') {
-      baseRef = baseRef || {};
-      baseRef[id] = isEnd? 'string': {};
+      baseRef[id] = spy;
+      ret = baseRef[id];
     } else {
-      this._setPropIndex(property, baseRef, isEnd);
+      ret = this._setPropIndex(property, baseRef, spy);
     }
+    return ret;
   },
 
   /**
    * $foo.bar[1] index求值
    */
-  _setPropIndex: function(property, baseRef, isEnd){
+  _setPropIndex: function(property, baseRef, spy){
     var ast = property.id;
     var key;
     if (ast.type === 'references'){
-      key = this._setRefs(ast);
+      key = this.getReferences(ast);
     } else {
       key = ast.value;
     }
 
-    baseRef = baseRef || {};
-    baseRef[key] = isEnd?'string': {};
+    baseRef[key] = spy;
+    return baseRef[key];
   },
 
-  _setPropMethod: function(property, baseRef, isEnd){
+  _setPropMethod: function(property, baseRef, spy){
 
     var id         = property.id;
     var ret        = '';
@@ -74,15 +121,12 @@ Structure.prototype = {
     var specialFns = ['keySet'];
 
     if (id.indexOf('get') === 0){
-      if (_id) {
-        ret = baseRef[_id];
-      } else {
+      if (!_id) {
         //map 对应的get方法
         _id = this.getLiteral(property.args[0]);
-        ret = baseRef[_id];
       }
-      //spy data
-      if (ret === undefined) baseRef[_id] = 'spy>>> string';
+      baseRef[_id] = spy;
+      ret = baseRef[_id];
     } else if (id.indexOf('set') === 0) {
       ret = '';
       baseRef[_id] = this.getLiteral(property.args[0]);
@@ -99,18 +143,18 @@ Structure.prototype = {
       if (ret && ret.call) {
         ret = ret.apply(baseRef, args); 
       } else {
-        ret = undefined;
         //spy fn
-        //baseRef[id] = noop(isEnd?'spy>>> string': {});
+        baseRef[id] = utils.noop(spy);
+        ret = baseRef[id];
       }
     }
 
     return ret;
-  },
-
-  getStruct: function(){
-
   }
+
 };
 
+require('../compile/expression')(Structure, utils);
+require('../compile/literal')(Structure, utils);
+require('../compile/set')(Structure, utils);
 module.exports = Structure;
