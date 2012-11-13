@@ -1,0 +1,3 @@
+#foreach($p in $pg.getSlider())
+    <a href="$tmp.url&page=$p">$p</a>
+#end

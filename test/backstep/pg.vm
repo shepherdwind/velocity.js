@@ -1,0 +1,36 @@
+<div class="pagination" id="J_pg_box">
+    #set($tmpUrl = "baseList.htm?baseName=$!baseName&state=$!state")
+    #if($pg.getPage() > 1)
+        <a class="prev" style="border-right:0px " href="$tmpUrl&page=1">首页</a>
+    #end
+    #if($pg.getPage() == 1)
+        <a class="disable prev" href="#nowhere">上一页</a>
+    #else
+        #if($pg.getLastPage() > 0)
+            <a class="prev" href="$tmpUrl&page=$pg.getPreviousPage()">上一页</a>
+        #end
+
+    #end
+
+    #set($slider = $pg.getSlider())
+
+    #foreach($p in $pg.getSlider())
+        #if($pg.isDisabledPage($p))
+            <span class="page-cur">$p</span>
+        #else
+            <a href="$tmpUrl&page=$p" >$p</a>
+        #end
+    #end
+
+    #if($pg.getPage() == $pg.getLastPage() && $pg.getLastPage() > 0)
+        <a class="disable next J_Md">下一页</a>
+    #else
+        #if($pg.getLastPage() > 0)
+            <a class="next" href="$tmpUrl&page=$pg.getNextPage()">下一页</a>
+        #end
+    #end
+    #if($pg.getPage() < $pg.getLastPage())
+        <a class="next" href="$tmpUrl&page=$pg.getLastPage()">末页</a>
+    #end
+
+</div>

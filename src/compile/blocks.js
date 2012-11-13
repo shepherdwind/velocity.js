@@ -161,7 +161,6 @@ module.exports = function(Velocity, utils){
 
       }, this);
 
-      //console.log(asts);
       return this._render(asts);
     }
   });
