@@ -118,7 +118,12 @@ module.exports = function(Velocity, utils){
         if (this.setBreak) return;
         //构造临时变量
         local[_to] = val;
-        local['foreach']['count'] = i;
+        //TODO: here, the foreach variable give to local, when _from is not an
+        //array, count and hasNext would be undefined, also i is not the
+        //index.
+        local['foreach']['count'] = i + 1;
+        local['foreach']['index'] = i;
+        local['foreach']['hasNext'] = !!val[i + 1];
         this.local[contextId] = local;
         ret += this._render(_block, contextId);
 

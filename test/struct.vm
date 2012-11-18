@@ -18,7 +18,7 @@
         #if($pg.isDisabledPage($p))
             <span class="page-cur">$p</span>
         #else
-            <a href="$tmpUrl&page=$p" >$p</a>
+            <a href="$tmpUrl&page=$p">$p</a>
         #end
     #end
 

@@ -17,6 +17,7 @@ BackStep.prototype = {
     this.html = html.replace(TRIM, '');
     this.references = [];
     this.local = {};
+    this.macros = {};
     this.conditions = [];
 
     utils.forEach(this.asts, this._trim, this);
@@ -164,39 +165,27 @@ BackStep.prototype = {
     this.position = index + ast.length - 1;
   },
 
-  getContext: function(ref){
-    var text1 = Helper.getRefText(ref);
-    var len = this.conditions.length;
-    if (len) {
-      var context = this.conditions[len - 1];
-      var local   = this.local[context];
-    } else {
-      return this.context;
-    }
-  },
+  getLocal: function(ref){
+    var ret = this.context;
+    utils.some(this.conditions, function(content){
+      var local = this.local[content];
+      if (local.variable.indexOf(ref.id) > -1){
+        ret = local.context;
+        return true;
+      }
+    }, this);
 
-  getLocal: function(){
-    var len = this.conditions.length;
-    if (len) {
-      var context = this.conditions[len - 1];
-      var local   = this.local[context];
-      return local;
-    } else {
-      return {};
-    }
+    return ret;
   },
 
   storeValue: function(ref, val){
-    //var context = this.getContext(ref);
-    var context = this.context;
-    var local = this.getLocal();
+    //var o = this.getLocal(ref);
+    //var local = o.local;
+    var context = this.getLocal(ref);
 
     if (!ref.path) {
 
       context[ref.id] = val;
-      if (local.type && local.type === 'foreach' && local.variable.indexOf(ref.id) > -1) {
-        local.value = val;
-      }
 
     } else {
 
@@ -265,15 +254,94 @@ BackStep.prototype = {
     return ret;
   },
 
+  getBlockIf: function(block){
+    var str = '';
+    var asts = [];
+    var condition = block[0].condition;
+
+    utils.some(block, function(ast, i){
+
+      if (!i) return;
+
+      var ret = false;
+      if (ast.condition || ast.type === 'else') {
+        if (asts.length) {
+          ret  = this._tryIf(asts, condition);
+          asts = [];
+          condition = ast.condition || 'else';
+        }
+      } else {
+        asts.push(ast);
+      }
+
+      return ret;
+
+    }, this);
+
+    if (asts.length) this._tryIf(asts, condition);
+  },
+
+  _setCondiction: function(condition, value){
+    var type = condition.type;
+    var exp= condition.expression;
+    if (type == 'math') {
+      //处理一个变量和一个字符串，数字比较
+      if (exp.length === 2 && exp[0].type === 'references' &&
+        exp[1].value !== undefined && value) {
+        var val = this.getExpression(exp[1]);
+        switch(condition.operator) {
+          case '==':
+            this.storeValue(exp[0], value);
+            break;
+          case '>':
+            this.storeValue(exp[0], val + 1);
+            break;
+          case '<':
+            this.storeValue(exp[0], val - 1);
+            break;
+          default:
+            return;
+        }
+      }
+    }
+  },
+
+  _tryIf: function(asts, condition){
+
+    var isPass = this.countLoopTimes(asts);
+
+    if (isPass) {
+      this._render(asts);
+      this._setCondiction(condition, true);
+    } else {
+      this._setCondiction(condition, false);
+    }
+
+    return isPass;
+  },
+
+  /**
+   * define macro
+   */
+  setBlockMacro: function(block){
+    var ast = block[0];
+    var _block = block.slice(1);
+    var macros = this.macros;
+
+    macros[ast.id] = {
+      asts: _block,
+      args: ast.args
+    };
+  },
+
   getBlockEach: function(block){
     var ast = block[0];
     var guid = utils.guid();
     var contextId = 'foreach:' + guid;
     var local = {
-      ast: ast.from,
       type: 'foreach',
       variable: [ast.to],
-      value: undefined
+      context: {}
     };
 
     this.local[contextId] = local;
@@ -285,7 +353,7 @@ BackStep.prototype = {
     var value = [];
     for (var i=0; i < times; i++) {
       this._render(asts);
-      value.push(local.value);
+      value.push(local.context[ast.to]);
     }
 
     this.storeValue(ast.from, value);
@@ -301,30 +369,72 @@ BackStep.prototype = {
     var len = html.length;
     var ret = 0;
 
-    var isNotPass = false;
+    var isOver = false;
+    var maxTimes = 10000;
+    var t = 0;
     do {
+      debugger;
+      t = t + 1;
       utils.forEach(asts, function(ast){
+
         if (typeof ast === 'string') {
+
           ast = ast.replace(TRIM, '').replace(/^\s+|\s+$/g, '');
+
+          if (!ast) return;
+
           var index = html.indexOf(ast, position);
           if (index > -1) {
             position = index + ast.length - 1;
           } else {
-            isNotPass = true;
+            isOver = true;
           }
         }
 
-        if (position > len) isNotPass = true;
+        if (position > len) isOver = true;
       });
 
-      if (!isNotPass) ret = ret + 1;
-    } while(!isNotPass);
+      if (!isOver) ret = ret + 1;
+      if (t > maxTimes) {
+        console.log('Error, max time runed!');
+        break;
+      }
+    } while(!isOver);
 
     return ret;
   },
 
   getReferences: function(ast){
     this.references.push(ast);
+  },
+
+  getMacro: function(ast){
+    var macro = this.macros[ast.id];
+    var guid = utils.guid();
+    var contextId = 'macro:' + guid;
+    var local = {
+      type: 'macro',
+      variable: this._getArgus(macro.args),
+      context: {}
+    };
+
+    this.local[contextId] = local;
+    this.conditions.push(contextId);
+    this._render(macro.asts);
+
+    utils.forEach(macro.args, function(actual, i){
+      this.storeValue(ast.args[i], local.context[actual.id]);
+    }, this);
+
+    this.conditions.pop();
+  },
+
+  _getArgus: function(args){
+    var ret = [];
+    utils.forEach(args, function(arg){
+      ret.push(arg.id);
+    });
+    return ret;
   }
 
 };

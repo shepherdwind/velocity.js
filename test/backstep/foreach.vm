@@ -1,3 +1,17 @@
 #foreach($p in $pg.getSlider())
-    <a href="$tmp.url&page=$p">$p</a>
+  <a href="$tmp.url&page=$p.value">$p.value</a>
+#end
+#macro( tablerows $color $somelist)
+  $page.title
+  #foreach( $something in $somelist )
+    <tr><td bgcolor=$color>$something.title</td></tr>
+  #end
+#end
+#tablerows($c $list)
+#if($pg.getPage() > 1)
+  <a class="prev" style="border-right:0px " href="$tmpUrl&page=1">首页</a>
+#elseif($pg.getPage() == 1)
+  <a class="disable prev" href="#nowhere">上一页</a>
+#else
+  <a class="prev" href="$tmpUrl&page=$pg.getPreviousPage()">上一页</a>
 #end
