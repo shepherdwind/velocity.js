@@ -271,7 +271,8 @@ KISSY.add(function(S){
       var str = this._render();
       var t2 = Date.now();
       var cost = t2 - t1;
-      return str + "finished, cout time:" + cost + 'ms';
+      console && console.log("velocity finished, cout time:" + cost + 'ms');
+      return str ;
     },
 
     /**

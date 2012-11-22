@@ -1,0 +1,11 @@
+#parse("web/macro.vm")
+#set( $greatlakes = ["Superior","Michigan","Huron","Erie","Ontario"] )
+#set( $color = "blue" )
+<table>
+  #tablerows( $color $greatlakes )
+</table>
+#set( $parts = ["volva","stipe","annulus","gills","pileus"] )
+#set( $cellbgcol = "#CC00FF" )
+<table>
+  #tablerows( $cellbgcol $parts )
+</table>

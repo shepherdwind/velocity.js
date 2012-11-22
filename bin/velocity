@@ -1,35 +1,21 @@
 #!/usr/bin/env node
 
-var argv   = process.argv.slice(2);
-var path   = require('path');
-var fs     = require('fs');
-var exists = fs.existsSync || path.existsSync;
+var cli = require('./velocity-cli');
+var argv = process.argv.slice(2);
+var argType = argv[0];
+if (argType.indexOf('-') > -1){
 
-var Velocity = require('../src/velocity');
-var vmfile = argv[0];
-if (vmfile && vmfile.indexOf('.vm')) {
-  vmfile = path.resolve(process.cwd(), vmfile);
-}
+  //离线编译vm文件
+  if (argType === '--build' || argType === '-b') {
+    cli.buildAst(argv.slice(1));
+  }
 
-var dataFile = argv[1];
-
-var data = {};
-var ext = path.extname(dataFile);
-dataFile = path.resolve(process.cwd(), dataFile);
-
-if (ext === '.json') {
-  if (exists(dataFile)) data = fs.readFileSync(dataFile).toString();
-} else if(ext ==='.js') {
-  if (exists(dataFile)) data = require(dataFile);
-}
-
-if (!exists(vmfile)) {
-  console.log('velocity xx.vm [xx.js | xx.json]');
 } else {
-  var str = fs.readFileSync(vmfile).toString();
-  console.log(Velocity.render(str, data));
-}
 
+  //解析vm
+  cli.parse(argv);
+
+}
 /**
  * vim: ft=javascript:tw=80:
  */

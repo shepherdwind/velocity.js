@@ -1,6 +1,4 @@
 fs = require 'fs'
-spawn = (require 'child_process').spawn
-#option  '-o', '--output [DIR]', 'directory for compiled code'
 exec  = (require 'child_process').exec
 
 buildCompile = (tplfile)->
@@ -30,9 +28,11 @@ buildParse = ()->
     if error isnt null
       console.log 'exec error: ' + error
 
+#编译为velocity语法分析器
 task 'parse', 'rebuild the Jison parser', (options) ->
   do buildParse
 
+#编译为kissy的模块
 task 'build', 'build velocity for kissy', (options) ->
   buildCompile "./build/tpl.js"
   do buildParse
