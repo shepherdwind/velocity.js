@@ -79,7 +79,7 @@ module.exports = function(Velocity, utils){
 
         switch(type) {
           case 'references':
-          str += this.getReferences(ast);
+          str += this.getReferences(ast, true);
           break;
 
           case 'set':

@@ -15,7 +15,8 @@ KISSY.add(function(S){
     mixin   : S.mix,
     guid    : S.guid,
     isArray : S.isArray,
-    indexOf : S.indexOf
+    indexOf : S.indexOf,
+    keys    : S.keys
   };
 
   {helper}

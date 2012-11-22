@@ -16,6 +16,7 @@ JavaScript版本VTL，Velocity是基于Java的模板引擎，veloctiy.js是JS版
 ##Use
 
 velocity.js使用分为web端和本地使用，web端作为一个模板引擎，本地作为node模板使用。
+web端，使用build/velocity，本地通过npm安装`npm install velocity.js`。
 
 ###On Web
 

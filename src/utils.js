@@ -71,4 +71,6 @@ utils.indexOf = function(elem, arr){
   }
 };
 
+utils.keys = Object.keys;
+
 module.exports = utils;

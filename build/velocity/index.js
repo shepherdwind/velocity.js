@@ -15,7 +15,8 @@ KISSY.add(function(S){
     mixin   : S.mix,
     guid    : S.guid,
     isArray : S.isArray,
-    indexOf : S.indexOf
+    indexOf : S.indexOf,
+    keys    : S.keys
   };
 
   !function(Helper, utils){
@@ -23,35 +24,68 @@ KISSY.add(function(S){
    * 获取引用文本，当引用自身不存在的情况下，需要返回原来的模板字符串
    */
   function getRefText(ast){
+
     var ret = ast.leader;
+
     if (ast.isWraped) ret += '{';
 
     ret += ast.id;
     utils.forEach(ast.path, function(ref){
       //不支持method并且传递参数
       if (ref.type == 'method') {
+
         var args = [];
+
         utils.forEach(ref.args, function(arg){
-          args.push(getRefText(arg));
+
+          if (arg.type === 'string') {
+
+            var sign = arg.isEval? '"': "'";
+            var text = sign + arg.value + sign;
+            args.push(text);
+
+          } else {
+
+            args.push(getRefText(arg));
+
+          }
+
         });
+
         ret += '.' + ref.id + '(' + args.join(',') + ')';
+
       } else if (ref.type == 'index') {
+
         var text = '';
         var id = ref.id;
+
         if (id.type === 'integer') {
+
           text = id.value;
+
         } else if (id.type === 'string') {
-          text = id.value;
+
+          var sign = id.isEval? '"': "'";
+          text = sign + id.value + sign;
+
         } else {
+
           text = getRefText(id);
+
         }
+
         ret += '[' + text + ']';
+
       } else if (ref.type == 'property') {
+
         ret += '.' + ref.id;
+
       }
+
     }, this);
 
     if (ast.isWraped) ret += '}';
+
     return ret;
   }
 
@@ -142,7 +176,11 @@ KISSY.add(function(S){
         var contextId = ast.id + ':' + guid;
 
         utils.forEach(args, function(ref, i){
-          local[ref.id] = this.getLiteral(_call_args[i]);
+          if (_call_args[i]) {
+            local[ref.id] = this.getLiteral(_call_args[i]);
+          } else {
+            local[ref.id] = undefined;
+          }
         }, this);
 
         this.local[contextId] = local;
@@ -313,7 +351,7 @@ KISSY.add(function(S){
 
         switch(type) {
           case 'references':
-          str += this.getReferences(ast);
+          str += this.getReferences(ast, true);
           break;
 
           case 'set':
@@ -564,8 +602,11 @@ KISSY.add(function(S){
   utils.mixin(Velocity.prototype, {
     /**
      * 引用求值
+     * @param {object} ast 结构来自velocity.yy
+     * @param {bool} isVal 取值还是获取字符串，两者的区别在于，求值返回结果，求
+     * 字符串，如果没有返回变量自身，比如$foo
      */
-    getReferences: function(ast) {
+    getReferences: function(ast, isVal) {
 
       var isSilent= ast.leader === "$!";
       var context = this.context;
@@ -574,18 +615,14 @@ KISSY.add(function(S){
 
       if (local.isLocaled) ret = local['value'];
 
-      if (ast.path) {
-        if (!ret) ret = context[ast.id] = {};
-        var len = ast.path.length;
-        utils.forEach(ast.path, function(property, i){
-          var isEnd = len === i + 1;
-          ret = this.getAttributes(property, ret, isEnd);
+      if (ast.path && ret !== undefined) {
+        utils.some(ast.path, function(property, i){
+          ret = this.getAttributes(property, ret);
+          return ret === undefined;
         }, this);
-      } else if (ret === undefined) {
-        context[ast.id] = '>>>string';
       }
 
-      if (ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
+      if (isVal && ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
       return ret;
     },
 
@@ -616,7 +653,7 @@ KISSY.add(function(S){
     /**
      * $foo.bar 属性求值
      */
-    getAttributes: function(property, baseRef, isEnd){
+    getAttributes: function(property, baseRef){
       /**
        * type对应着velocity.yy中的attribute，三种类型: method, index, property
        */
@@ -624,15 +661,11 @@ KISSY.add(function(S){
       var ret;
       var id = property.id;
       if (type === 'method'){
-        ret = this.getPropMethod(property, baseRef, isEnd);
+        ret = this.getPropMethod(property, baseRef);
       } else if (type === 'property') {
-        ret = baseRef && baseRef[id];
-        if (ret === undefined) {
-          baseRef = baseRef || {};
-          baseRef[id] = isEnd? 'spy>>>string': {};
-        }
+        ret = baseRef[id];
       } else {
-        ret = this.getPropIndex(property, baseRef, isEnd);
+        ret = this.getPropIndex(property, baseRef);
       }
       return ret;
     },
@@ -640,7 +673,7 @@ KISSY.add(function(S){
     /**
      * $foo.bar[1] index求值
      */
-    getPropIndex: function(property, baseRef, isEnd){
+    getPropIndex: function(property, baseRef){
       var ast = property.id;
       var key;
       if (ast.type === 'references'){
@@ -652,11 +685,7 @@ KISSY.add(function(S){
       }
 
       var ret;
-      ret = baseRef && baseRef[key];
-      if (!ret){
-        baseRef = baseRef || {};
-        baseRef[key] = isEnd?'spy>>> string': {};
-      }
+      ret = baseRef[key];
 
       return ret;
     },
@@ -664,7 +693,7 @@ KISSY.add(function(S){
     /**
      * $foo.bar()求值
      */
-    getPropMethod: function(property, baseRef, isEnd){
+    getPropMethod: function(property, baseRef){
 
       var id         = property.id;
       var ret        = '';
@@ -673,6 +702,7 @@ KISSY.add(function(S){
       var specialFns = ['keySet'];
 
       if (id.indexOf('get') === 0){
+
         if (_id) {
           ret = baseRef[_id];
         } else {
@@ -680,14 +710,16 @@ KISSY.add(function(S){
           _id = this.getLiteral(property.args[0]);
           ret = baseRef[_id];
         }
-        //spy data
-        if (ret === undefined) baseRef[_id] = 'spy>>> string';
+
       } else if (id.indexOf('set') === 0) {
+
         ret = '';
         baseRef[_id] = this.getLiteral(property.args[0]);
+
       } else if (id === 'keySet') {
-        ret = Object.keys(baseRef);
+        ret = utils.keys(baseRef);
       } else {
+
         ret = baseRef[id];
         var args = [];
 

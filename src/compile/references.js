@@ -2,8 +2,11 @@ module.exports = function(Velocity, utils){
   utils.mixin(Velocity.prototype, {
     /**
      * 引用求值
+     * @param {object} ast 结构来自velocity.yy
+     * @param {bool} isVal 取值还是获取字符串，两者的区别在于，求值返回结果，求
+     * 字符串，如果没有返回变量自身，比如$foo
      */
-    getReferences: function(ast) {
+    getReferences: function(ast, isVal) {
 
       var isSilent= ast.leader === "$!";
       var context = this.context;
@@ -12,18 +15,14 @@ module.exports = function(Velocity, utils){
 
       if (local.isLocaled) ret = local['value'];
 
-      if (ast.path) {
-        if (!ret) ret = context[ast.id] = {};
-        var len = ast.path.length;
-        utils.forEach(ast.path, function(property, i){
-          var isEnd = len === i + 1;
-          ret = this.getAttributes(property, ret, isEnd);
+      if (ast.path && ret !== undefined) {
+        utils.some(ast.path, function(property, i){
+          ret = this.getAttributes(property, ret);
+          return ret === undefined;
         }, this);
-      } else if (ret === undefined) {
-        context[ast.id] = '>>>string';
       }
 
-      if (ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
+      if (isVal && ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
       return ret;
     },
 
@@ -54,7 +53,7 @@ module.exports = function(Velocity, utils){
     /**
      * $foo.bar 属性求值
      */
-    getAttributes: function(property, baseRef, isEnd){
+    getAttributes: function(property, baseRef){
       /**
        * type对应着velocity.yy中的attribute，三种类型: method, index, property
        */
@@ -62,15 +61,11 @@ module.exports = function(Velocity, utils){
       var ret;
       var id = property.id;
       if (type === 'method'){
-        ret = this.getPropMethod(property, baseRef, isEnd);
+        ret = this.getPropMethod(property, baseRef);
       } else if (type === 'property') {
-        ret = baseRef && baseRef[id];
-        if (ret === undefined) {
-          baseRef = baseRef || {};
-          baseRef[id] = isEnd? 'spy>>>string': {};
-        }
+        ret = baseRef[id];
       } else {
-        ret = this.getPropIndex(property, baseRef, isEnd);
+        ret = this.getPropIndex(property, baseRef);
       }
       return ret;
     },
@@ -78,7 +73,7 @@ module.exports = function(Velocity, utils){
     /**
      * $foo.bar[1] index求值
      */
-    getPropIndex: function(property, baseRef, isEnd){
+    getPropIndex: function(property, baseRef){
       var ast = property.id;
       var key;
       if (ast.type === 'references'){
@@ -90,11 +85,7 @@ module.exports = function(Velocity, utils){
       }
 
       var ret;
-      ret = baseRef && baseRef[key];
-      if (!ret){
-        baseRef = baseRef || {};
-        baseRef[key] = isEnd?'spy>>> string': {};
-      }
+      ret = baseRef[key];
 
       return ret;
     },
@@ -102,7 +93,7 @@ module.exports = function(Velocity, utils){
     /**
      * $foo.bar()求值
      */
-    getPropMethod: function(property, baseRef, isEnd){
+    getPropMethod: function(property, baseRef){
 
       var id         = property.id;
       var ret        = '';
@@ -111,6 +102,7 @@ module.exports = function(Velocity, utils){
       var specialFns = ['keySet'];
 
       if (id.indexOf('get') === 0){
+
         if (_id) {
           ret = baseRef[_id];
         } else {
@@ -118,14 +110,16 @@ module.exports = function(Velocity, utils){
           _id = this.getLiteral(property.args[0]);
           ret = baseRef[_id];
         }
-        //spy data
-        if (ret === undefined) baseRef[_id] = 'spy>>> string';
+
       } else if (id.indexOf('set') === 0) {
+
         ret = '';
         baseRef[_id] = this.getLiteral(property.args[0]);
+
       } else if (id === 'keySet') {
-        ret = Object.keys(baseRef);
+        ret = utils.keys(baseRef);
       } else {
+
         ret = baseRef[id];
         var args = [];
 

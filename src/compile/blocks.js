@@ -82,7 +82,11 @@ module.exports = function(Velocity, utils){
         var contextId = ast.id + ':' + guid;
 
         utils.forEach(args, function(ref, i){
-          local[ref.id] = this.getLiteral(_call_args[i]);
+          if (_call_args[i]) {
+            local[ref.id] = this.getLiteral(_call_args[i]);
+          } else {
+            local[ref.id] = undefined;
+          }
         }, this);
 
         this.local[contextId] = local;
