@@ -16,7 +16,8 @@ KISSY.add(function(S){
     guid    : S.guid,
     isArray : S.isArray,
     indexOf : S.indexOf,
-    keys    : S.keys
+    keys    : S.keys,
+    now     : S.now
   };
 
   !function(Helper, utils){
@@ -305,9 +306,9 @@ KISSY.add(function(S){
 
     render: function(context){
       this.context = context || {};
-      var t1 = Date.now();
+      var t1 = utils.now();
       var str = this._render();
-      var t2 = Date.now();
+      var t2 = utils.now();
       var cost = t2 - t1;
       console && console.log("velocity finished, cout time:" + cost + 'ms');
       return str ;
