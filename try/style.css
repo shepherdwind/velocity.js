@@ -1,0 +1,181 @@
+/* --- reset and general --- */
+
+* { margin: 0; padding: 0; }
+
+body {
+	font-family: Serif;
+	line-height: 20px;
+	color: #333;
+	background: #fff;
+}
+
+h1,h2 {
+	font-family: Sans-Serif;
+	letter-spacing: -.04em;
+	color: #000;
+}
+
+h1 { font-size: 40px; line-height: 50px; }
+h2 { font-size: 20px; line-height: 30px; }
+
+body.dropit { background: #eee; }
+
+body.dropit:after {
+	content: "Drop it!";
+	font-family: sans-serif;
+	position: fixed; 
+	z-index: 200; 
+	top: 50%; 
+	left: 50%; 
+	background: red; 
+	color: #fff; 
+	display: block; 
+	width: 200px; 
+	height: 200px; 
+	border-radius: 110px; 
+	line-height: 200px; 
+	text-align: center; 
+	font-weight: bold; 
+	font-size: 40px; 
+	margin: -100px 0 0 -100px;
+	border: 5px solid #fff;
+	box-shadow: 0 0 15px rgba(0,0,0,.5), 0 0 100px #000;
+}
+
+body.error h1, body.error p, body.error pre { margin: 0 0 15px 0; }
+
+body.error pre {
+	background: #eee;
+	padding: 15px 30px 15px 15px;
+}
+
+a {
+	color: #E90094;
+	text-decoration: none;
+}
+
+/* --- loading --- */
+
+body.loading:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	color: #666;
+	background: rgba(255, 255, 255, 0.3) url("images/loading.gif") center center no-repeat;
+	text-align: center;
+	z-index: 1000;
+}
+
+/* --- nav --- */
+
+nav {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	background: #ccc;
+	font-family: sans-serif;
+	padding: 2px 10px 2px 8px;
+	z-index: 200;
+	border-radius: 0 5px 0 0;
+	font-size: 12px;
+}
+
+nav * { margin: 0 0 0 2px; }
+nav a { font-weight: bold; margin: 0 0 0 8px; }
+nav label { cursor: pointer; }
+
+/* --- ace editor stuff --- */
+
+div[role="input"] section {
+	position: relative;
+	height: 50%;
+	margin: 0 10px 0 0;
+	overflow: hidden;
+}
+
+div[role="input"] pre {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+section label {
+	position: absolute;
+	top: 0;
+	right: 15px;
+	color: #000;
+	background: rgba(255,255,255,.75);
+	font-family: sans-serif;
+	padding: 2px 7px;
+	z-index: 100;
+	border-radius: 0 0 0 5px;
+	font-size: 14px;
+	transition: all .2s ease;
+}
+
+pre.focus + label { top:  -30px; }
+
+pre.invalid + label {
+	top: 0;
+	background: #E00000;
+}
+
+pre.invalid + label:before { content: "Invalid "; }
+
+/* --- layout --- */
+
+div[role="input"], div[role="output"] {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	min-height: 400px;
+}
+
+div[role="input"] {
+	width: auto; 
+	bottom: 20px;
+	width: 320px;
+}
+
+div[role="output"] {
+	right: 20px;
+	left: 340px;
+	bottom: 20px;
+}
+
+@media all and (min-width: 1200px) {
+	div[role="input"] { width: 420px; }
+	div[role="output"] { left: 440px; }
+}
+@media all and (min-width: 1600px) {
+	div[role="input"] { width: 620px; }
+	div[role="output"] { left: 640px; }
+}
+
+/* --- output --- */
+
+#ifrOutput {
+	width: 100%;
+	border: none;
+	outline: 1px dashed #ccc;
+	height: 100%;
+}
+
+/* --- view overrides (default=split) --- */
+
+body[role="edit"] div[role="input"] { width: auto; right: 10px; }
+body[role="edit"] div[role="input"] section {
+	width:  50%;
+	float: left;
+	height: 100%;
+	margin: 0;
+}
+body[role="edit"] div[role="output"] { display: none; }
+
+body[role="result"] div[role="input"] { display: none; }
+body[role="result"] div[role="output"] { left: 20px; }

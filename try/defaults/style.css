@@ -1,0 +1,58 @@
+/* --- reset and general styles --- */
+
+body {
+	font-family: arial;
+	line-height: 20px;
+	font-size: 14px;
+	color: #333;
+	background: #fff;
+	margin: 20px;
+	max-width: 940px;
+}
+
+h1,h2 {
+	font-family: Sans-Serif;
+	letter-spacing: -.04em;
+	color: #000;
+}
+
+h1 { font-size: 40px; line-height: 50px; }
+h2 { font-size: 20px; line-height: 30px; }
+
+h1,h2,p,ul,table { margin: 0 0 15px 0;  }
+
+table th, table a { white-space: pre; }
+
+th {
+	padding: 0 20px 0 0;
+	text-align: left;
+	font-weight: bold;
+	vertical-align: top;
+}
+
+tr.child, tr.child th { font-size: 14px; }
+
+tr.child th {
+	font-weight: normal;
+	text-indent: .5em;
+}
+
+a {
+	color: #CA0080;
+	text-decoration: none;
+}
+
+a:hover { color: #E90094; }
+code,pre { font-family: Consolas, monospace; }
+
+/* --- header --- */
+
+header ul { color: #666; }
+
+/* --- footer --- */
+
+footer {
+	margin: 25px 0 0 0;
+	font-size: 12px;
+	opacity: .75;
+}
