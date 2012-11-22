@@ -30,4 +30,8 @@
     <a class="next" href="$tmpUrl&page=$pg.getLastPage()">末页</a>
   #end
 
+  #foreach($metaTag in $page.metaTags.keySet())
+    <meta name="$metaTag" content="$page.metaTags.get($metaTag)">
+  #end
+
 </div>

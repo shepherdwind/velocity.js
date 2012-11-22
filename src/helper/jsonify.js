@@ -15,7 +15,6 @@ Jsonify.prototype = {
   init: function(asts){
     this.context = {};
     this.asts = asts;
-    this.position = -1;
     this.references = [];
     this.local = {};
     this.macros = {};
@@ -82,11 +81,13 @@ Jsonify.prototype = {
   },
 
   getLocal: function(ref){
-    var ret = this.context;
+    var ret = this;
     utils.some(this.conditions, function(content){
       var local = this.local[content];
-      if (local.variable.indexOf(ref.id) > -1){
-        ret = local.context;
+      var index = local.variable.indexOf(ref.id);
+      if (index > -1){
+        ret = local;
+        ret['real'] = ret.maps? ret.maps[index]: ref;
         return true;
       }
     }, this);
@@ -182,25 +183,37 @@ Jsonify.prototype = {
 
     var asts = block.slice(1);
 
-    var endPart = " #end ]";
-    var value = '[ #foreach($' + ast.to + ' in ' + Helper.getRefText(ast.from) + ")";
     this._render(asts);
+
+    this.getReferences(ast.from, this._setEachVTL(ast, local));
+    this.conditions.pop();
+  },
+
+  _setEachVTL: function(ast, local){
+
+    var from = this.getLocal(ast.from)['real'];
+    console.log();
+    if (from === undefined) from = ast.from;
+
+    var endPart = " #end ]";
+    var value = '[ #foreach($' + ast.to + ' in ' + Helper.getRefText(from) + ")";
     //ast.to取值
     var vm = local.context[ast.to];
     if (typeof vm === 'string') {
-      value += vm + '#if( $foreach.hasNext ), #end';
+      value += vm + ' #if( $foreach.hasNext ), #end';
     } else {
       value += JSON.stringify(vm) + '#if( $foreach.hasNext ), #end';
     }
     value += endPart;
-
-    this.getReferences(ast.from, value);
-    this.conditions.pop();
+    return value;
   },
 
   getReferences: function(ast, spyData){
-    var context = this.getLocal(ast);
-    spyData = spyData !== undefined ? spyData: Helper.getRefText(ast);
+    var local = this.getLocal(ast);
+    var context = local.context;
+    var _ast = local === this? ast: local['real'];
+    spyData = spyData !== undefined ? spyData: Helper.getRefText(_ast);
+
     if (ast.path) {
       context[ast.id] = context[ast.id] || {};
       var ret = context[ast.id];
@@ -274,19 +287,8 @@ Jsonify.prototype = {
       baseRef[_id] = this.getLiteral(property.args[0]);
     } else {
       ret = baseRef[id];
-      var args = [];
-
-      utils.forEach(property.args, function(exp){
-        args.push(this.getLiteral(exp));
-      }, this);
-
-      if (ret && ret.call) {
-        ret = ret.apply(baseRef, args); 
-      } else {
-        //spy fn
-        baseRef[id] = spy;
-        ret = baseRef[id];
-      }
+      baseRef[id] = spy;
+      ret = baseRef[id];
     }
 
     return ret;
@@ -299,6 +301,7 @@ Jsonify.prototype = {
     var local = {
       type: 'macro',
       variable: this._getArgus(macro.args),
+      maps: ast.args,
       context: {}
     };
 
@@ -308,12 +311,12 @@ Jsonify.prototype = {
 
     utils.forEach(macro.args, function(formal, i){
       var val = local.context[formal.id];
-      if (val.indexOf('#foreach') > -1) {
-        //replace formal parameter as actual parameter
-        val = val.replace('$' + formal.id, Helper.getRefText(ast.args[i]));
-      } else {
-        val = Helper.getRefText(ast.args[i]);
-      }
+      //if (val.indexOf('#foreach') > -1) {
+      ////replace formal parameter as actual parameter
+      //val = val.replace('$' + formal.id, Helper.getRefText(ast.args[i]));
+      //} else {
+      //val = Helper.getRefText(ast.args[i]);
+      //}
       this.getReferences(ast.args[i], val);
     }, this);
 
