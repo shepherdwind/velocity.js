@@ -1,10 +1,15 @@
 Velocity Template Language(VTL) for JavaScript
 ---------------------------------------------
 
-JavaScript版本VTL，Velocity是基于Java的模板引擎，veloctiy.js是JS版本的实现，实现
-依据[velocity user guide](http://velocity.apache.org/engine/devel/user-guide.html)。
+JavaScript版本VTL，Velocity是基于Java的模板引擎，veloctiy.js是JS版本的实现。
 
-##Doc
+特点：
+
+- 语法分析和模板渲染分离(参考xtemplate方案)，本地编译模板
+- 基本完全支持velocity语法
+- 支持模板之间相互引用，依据kissy木块加载机制(可推及其他模块加载器)
+
+##Documents
 
 [velocity user guide](http://velocity.apache.org/engine/devel/user-guide.html)
 
