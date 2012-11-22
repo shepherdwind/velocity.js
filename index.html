@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Velocity.js by shepherdwind</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Velocity.js</h1>
+        <p>velocity for js</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/shepherdwind/velocity.js" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/shepherdwind/velocity.js/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/shepherdwind/velocity.js/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h2>Velocity Template Language(VTL) for JavaScript</h2>
+
+<p>JavaScript版本VTL，Velocity是基于Java的模板引擎，veloctiy.js是JS版本的实现。</p>
+
+<p>特点：</p>
+
+<ul>
+<li>语法分析和模板渲染分离(参考xtemplate方案)，本地编译模板</li>
+<li>基本完全支持velocity语法</li>
+<li>支持模板之间相互引用，依据kissy木块加载机制(可推及其他模块加载器)</li>
+</ul><h2>Documents</h2>
+
+<p><a href="http://velocity.apache.org/engine/devel/user-guide.html">velocity user guide</a></p>
+
+<h2>Use</h2>
+
+<p>velocity.js使用分为web端和本地使用，web端作为一个模板引擎，本地作为node模板使用。
+web端，使用build/velocity，本地通过npm安装<code>npm install velocity.js</code>。</p>
+
+<h3>On Web</h3>
+
+<p>web浏览器使用，作为KISSY的一个模块，编译通过<code>Cakefile</code>完成，同样可以编译适用其他
+库，使用js在<code>build/veloctiy/</code>目录中: </p>
+
+<ul>
+<li>
+<code>index.js</code> Velocity解释器</li>
+<li>
+<code>parse.js</code> Velocity语法分析器</li>
+</ul><p>把语法分析和解释器分开，为了方便在本地编译语法书，在web端少做一些计算。本地编译
+模板的思路，源自KISSY的<a href="http://docs.kissyui.com/docs/html/api/component/xtemplate/">xtemplate</a>。</p>
+
+<p>虽然语法解释器可以在浏览器端执行，但是，不推荐那么使用。</p>
+
+<p>第一种方式，解释和语法分析同时执行：</p>
+
+<div class="highlight"><pre><span class="nx">KISSY</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'velocity/index, velocity/parse'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">,</span> <span class="nx">Parser</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="p">(</span><span class="nx">S</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">'#tpl'</span><span class="p">).</span><span class="nx">html</span><span class="p">());</span>
+  <span class="kd">var</span> <span class="nx">asts</span> <span class="o">=</span> <span class="nx">Parser</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">compile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Velocity</span><span class="p">(</span><span class="nx">asts</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">compile</span><span class="p">.</span><span class="nx">render</span><span class="p">());</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>第二种方式，线下编译：</p>
+
+<pre><code>使用velocity命令行工具打包
+veloctiy --build *.vm
+veloctiy -b *.vm
+</code></pre>
+
+<p>浏览器使用：</p>
+
+<div class="highlight"><pre><span class="nx">KISSY</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'velocity/index, web/directives'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">,</span> <span class="nx">asts</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">compile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Velocity</span><span class="p">(</span><span class="nx">asts</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">compile</span><span class="p">.</span><span class="nx">render</span><span class="p">());</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>模板引用</h3>
+
+<p>支持模板使用<code>#parse('file.vm')</code>形式引用其他模板，在web端引用依据kissy的模块加载
+机制。</p>
+
+<div class="highlight"><pre>#parse("web/macro.vm")
+#set( $parts = ["volva","stipe","annulus","gills","pileus"] )
+#set( $cellbgcol = "#CC00FF" )
+<span class="nt">&lt;table&gt;</span>
+  #tablerows( $cellbgcol $parts )
+<span class="nt">&lt;/table&gt;</span>
+</pre></div>
+
+<p>macro.vm中定义：</p>
+
+<pre><code>#macro( tablerows $color $somelist )
+  #foreach( $something in $somelist )
+    &lt;tr&gt;&lt;td bgcolor=$color&gt;$something&lt;/td&gt;&lt;/tr&gt;
+  #end
+#end
+</code></pre>
+
+<h3>On nodejs</h3>
+
+<p>node端和web端api使用一致。</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/shepherdwind">shepherdwind</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
