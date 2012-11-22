@@ -651,9 +651,9 @@ dt {
 }
 
 header {
-  padding: 25px 20px 40px 20px;
+  padding: 25px 20px 20px 20px;
   margin: 0;
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -692,7 +692,7 @@ header p {
   right: 50%;
   height: 50px;
   margin-right: -382px;
-  position: fixed;
+  /*position: fixed;*/
   top: 115px;
   background: #ffcc00;
   border: 1px solid #f0b500;
@@ -746,10 +746,17 @@ header p {
   background: linear-gradient(#ffe788, #ffe788);
   background-color: #ffeca0;
 }
-#banner .fork {
-  position: fixed;
+#banner .navr {
+  position: absolute;
+  left: 50%;
+  margin-left: 265px;
+}
+#banner .navs {
+  position: absolute;
   left: 50%;
   margin-left: -325px;
+}
+#banner .fork {
   padding: 10px 12px;
   margin-top: 6px;
   line-height: 14px;
@@ -795,7 +802,7 @@ section {
   width: 590px;
   padding: 30px 30px 50px 30px;
   margin: 20px 0;
-  margin-top: 190px;
+  /*margin-top: 190px;*/
   position: relative;
   background: #fbfbfb;
   -moz-border-radius: 3px;
