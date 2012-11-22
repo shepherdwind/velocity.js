@@ -16,7 +16,8 @@ KISSY.add(function(S){
     guid    : S.guid,
     isArray : S.isArray,
     indexOf : S.indexOf,
-    keys    : S.keys
+    keys    : S.keys,
+    now     : S.now
   };
 
   {helper}
