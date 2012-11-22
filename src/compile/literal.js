@@ -52,7 +52,7 @@ module.exports = function(Velocity, utils){
       var val = literal.value;
       var ret = val;
 
-      if (literal.isEval && (val.indexOf('#') !== -1 || val.indexOf('$') !== -1)) {
+      if (literal.isEval && (val.indexOf('#') !== -1 || val.indexOf("$") !== -1)) {
         ret = this.evalStr(val);
       }
 
@@ -114,7 +114,7 @@ module.exports = function(Velocity, utils){
       var ast = {
         type   : "references",
         id     : varPath[0],
-        leader : '$'
+        leader : "$"
       };
 
       var path = [];

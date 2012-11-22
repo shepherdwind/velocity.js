@@ -21,7 +21,7 @@ module.exports = function(Velocity, utils){
        */
       utils.forEach(block, function(ast, i){
         if (i) {
-          if (blockTypes.indexOf(ast.type) !== -1) {
+          if (utils.indexOf(ast.type, blockTypes) !== -1) {
             index ++;
             _inBlock.push(ast);
           } else if (ast.type === 'end') {

@@ -1,5 +1,5 @@
 KISSY.add(function(S){
-  var Velocity = function(ast, context){
+  var Velocity = function(asts){
     this.asts = asts;
     this.init();
   };
@@ -18,5 +18,7 @@ KISSY.add(function(S){
     indexOf : S.indexOf
   };
 
-  #helper
-  #velocity
+  {helper}
+  {velocity}
+  return Velocity;
+});

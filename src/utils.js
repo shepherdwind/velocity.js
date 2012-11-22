@@ -65,4 +65,10 @@ utils.isArray = function(obj){
   return {}.toString.call(obj) === '[object Array]';
 };
 
+utils.indexOf = function(elem, arr){
+  if (utils.isArray(arr)) {
+    return arr.indexOf(elem);
+  }
+};
+
 module.exports = utils;

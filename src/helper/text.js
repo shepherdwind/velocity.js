@@ -34,4 +34,6 @@ module.exports = function(Helper, utils){
     if (ast.isWraped) ret += '}';
     return ret;
   }
+
+  Helper.getRefText = getRefText;
 };

@@ -1,4 +1,5 @@
 module.exports = function(Velocity, utils){
+  var BLOCK_TYPES = ['if', 'foreach', 'macro'];
   /**
    * compile
    */
@@ -60,77 +61,51 @@ module.exports = function(Velocity, utils){
       }
 
       utils.forEach(asts, function(ast){
+        var type = ast.type;
 
-        switch(ast.type) {
-          case 'references':
+        //foreach if macro时，index加一
+        if (utils.indexOf(type, BLOCK_TYPES) > -1) index ++;
+
+        if (type === 'comment') return;
+
+        if (index) {
+          type === 'end' && index--;
           if (index) {
             block.push(ast);
-          } else {
-            str += this.getReferences(ast);
+            return;
           }
+        }
+
+        switch(type) {
+          case 'references':
+          str += this.getReferences(ast);
           break;
 
           case 'set':
-          if (index) {
-            block.push(ast);
-          } else {
-            this.setValue(ast);
-          }
-          break;
-
-          case 'comment':
+          this.setValue(ast);
           break;
 
           case 'break':
-
-          if (!index){
-            this.setBreak = true;
-          } else {
-            block.push(ast);
-          }
-
-          break;
-
-          case 'macro':
-          case 'if':
-          case 'foreach':
-          block.push(ast);
-          index++;
+          this.setBreak = true;
           break;
 
           case 'macro_call':
-          if (index) {
-            block.push(ast);
-          } else {
-            str += this.getMacro(ast);
-          }
-
+          str += this.getMacro(ast);
           break;
 
           case 'end':
-          index--;
-          if (!index){
-            //使用slide获取block的拷贝
-            str += this.getBlock(block.slice());
-            block = [];
-          } else {
-            block.push(ast);
-          }
-
+          //使用slide获取block的拷贝
+          str += this.getBlock(block.slice());
+          block = [];
           break;
 
           default:
-          if (index) {
-            block.push(ast);
+          if (utils.isArray(ast)) {
+            str += this.getBlock(ast);
           } else {
-            if (utils.isArray(ast)) {
-              str += this.getBlock(ast);
-            } else {
-              str += ast;
-            }
+            str += ast;
           }
           break;
-          // code
         }
       }, this);
 

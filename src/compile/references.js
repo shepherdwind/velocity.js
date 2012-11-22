@@ -5,7 +5,7 @@ module.exports = function(Velocity, utils){
      */
     getReferences: function(ast) {
 
-      var isSilent= ast.leader === '$!';
+      var isSilent= ast.leader === "$!";
       var context = this.context;
       var ret = context[ast.id];
       var local = this.getLocal(ast);

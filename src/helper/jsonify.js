@@ -192,7 +192,7 @@ Jsonify.prototype = {
   _setEachVTL: function(ast, local){
 
     var from = this.getLocal(ast.from)['real'];
-    console.log();
+    
     if (from === undefined) from = ast.from;
 
     var endPart = " #end ]";
