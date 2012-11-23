@@ -6,12 +6,11 @@ velocity.js是velocity模板语法的javascript实现。
 基本数据类型、变量赋值和函数等功能。
 
 velocity.js特点：
-
 - 支持客户端和服务器端使用
 - 语法是富逻辑的，构成门微型的语言
 - 语法分析和模板渲染分离
 - 基本完全支持velocity语法
-- 浏览器使用支持模板之间相互引用，依据kissy木块加载机制
+- 浏览器使用支持模板之间相互引用，依据js模块加载机制，比如kissy
 - 三个Helper，友好的数据模拟解决方案
 - [Vim Syntax](https://github.com/shepherdwind/vim-velocity)
 
