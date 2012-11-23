@@ -5,23 +5,6 @@
   <title>velocity</title>
 </head>
 <body>
-  <script type="text/template" id="tpl">
-    #macro( tablerows $color $somelist )
-    #foreach( $something in $somelist )
-    <tr><td bgcolor=$color>$something</td></tr>
-    #end
-    #end
-    #set( $greatlakes = ["Superior","Michigan","Huron","Erie","Ontario"] )
-    #set( $color = "blue" )
-    <table>
-      #tablerows( $color $greatlakes )
-    </table>
-    #set( $parts = ["volva","stipe","annulus","gills","pileus"] )
-    #set( $cellbgcol = "#CC00FF" )
-    <table>
-      #tablerows( $cellbgcol $parts )
-    </table>
-  </script>
   <script src="http://a.tbcdn.cn/??s/kissy/1.2.0/kissy.js" charset="utf-8"></script>
   <script src="v.js" charset="utf-8"></script>
 </body>
