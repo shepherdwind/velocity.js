@@ -98,6 +98,29 @@ var asts = Parser.parse('string of velocity');
 
 ###On Broswer
 
+1. 使用线下打包方案：
+
+```js
+KISSY.use('velocity/index, web/directives', function(S, Velocity, asts){
+  var compile = new Velocity(asts);
+  S.all('body').html(compile.render());
+});
+```
+
+2. 使用线上编译：
+
+```js
+KISSY.use('velocity/index, velocity/parse', function(S, Velocity, Parser){
+  var html = (S.all('#tpl').html());
+  var asts = Parser.parse(html);
+  var compile = new Velocity(asts);
+  console.log(compile.render());
+});
+```
+
+两者的区别在于asts的获取，第一种方式，直接取asts，第二种，需要首先执行语法分析过
+程。
+
 ##Syntax
 
 具体语法请访问官网文档：[velocity user guide](http://velocity.apache.org/engine/devel/user-guide.html)。
