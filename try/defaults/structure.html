@@ -21,30 +21,33 @@
 <section>
 <h2>语法说明</h2>
 <p>
-本页面可以动态修改，点击左下角的渲染按钮，可以重新渲染页面，点击reset，回到当前页。
-打开控制台可以看到解析所运行的时间，注意：这里在web端同时执行了语法解析和模板渲染
-过程，实际使用，推荐本地编译，然后使用编译后的js替代vm模板，这样可以省去语法解析
-运算。
+本页面可以动态修改，点击左下角的渲染按钮，可以重新渲染页面，点击reset，回到当前
+页。打开控制台可以看到解析所运行的时间，注意：这里在web端同时执行了语法解析和模
+板渲染过程，实际使用，推荐本地编译，然后使用编译后的js替代vm模板，这样可以省去语
+法解析运算。
 </p>
 <p>
 支持velocity所有语法解析，不过鉴于web浏览器的限制，velocity的
-<a href="http://velocity.apache.org/engine/devel/user-guide.html#Directives">Directives</a>
+<a href="http://velocity.apache.org/engine/devel/user-guide.html#Directives">
+Directives</a>
 只支持几种<code>set, foreach, if, elseif, macro, parse</code>，所有相关的逻辑
 运算都支持。
 </p>
 <h3>parse</h3>
 <p>
 web使用velocity引用其他vm，vm文件路径需要遵循kissy模块机制，比如，有一个文件夹
-web， web文件夹下有两个vm文件macro.vm，directives.vm，可以通过<code>velocity --build *.vm</code>对
-所有vm文件进行编译，生成两个js，directions.vm中可以写parse('web/macro.vm')，打包后，自动处理
-依赖关系。
+web， web文件夹下有两个vm文件macro.vm，directives.vm，可以通过<code>velocity
+--build *.vm</code>对所有vm文件进行编译，生成两个js，directions.vm中可以写
+parse('web/macro.vm')，打包后，自动处理依赖关系。
 </p>
 <h3>foreach</h3>
-<p>对于foreach，velocity和javascript对象读取有差距，为了兼容velocity语法，所以暂时
-采用和velocity一致的语法，对对象进行foreach的时候需要使用<code>$obj.keyset()</code>
-然后使用get取值。推荐foreach对数组进行操作，那样行为是一致。</p>
+<p>对于foreach，velocity和javascript对象读取有差距，为了兼容velocity语法，所以暂
+时采用和velocity一致的语法，对对象进行foreach的时候需要使用
+<code>$obj.keyset()</code> 然后使用get取值。推荐foreach对数组进行操作，那样行为
+是一致。</p>
 </section>
 <footer>
-<p>Made by #author($author.name $author.site), based on <a href="http://mynameistommy.com/" target="_blank">Tommy</a>'s work tmpltr.
+<p>Made by #author($author.name $author.site), based on 
+<a href="http://mynameistommy.com/" target="_blank">Tommy</a>'s work tmpltr.
 </p>
 </footer>
