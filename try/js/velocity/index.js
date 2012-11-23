@@ -305,12 +305,18 @@ KISSY.add(function(S){
     },
 
     render: function(context){
+
       this.context = context || {};
       var t1 = utils.now();
       var str = this._render();
       var t2 = utils.now();
       var cost = t2 - t1;
-      console && console.log("velocity finished, cout time:" + cost + 'ms');
+
+      //ie中始终会报错
+      try {
+        console.log("velocity finished, cout time:" + cost + 'ms');
+      } catch(e) {}
+
       return str ;
     },
 
