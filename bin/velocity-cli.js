@@ -81,7 +81,18 @@ function parseVelocity(argv){
   }
 }
 
+function showHelp(){
+  console.log(fs.readFileSync(__dirname + '/help.txt').toString());
+}
+
+function showVersion() {
+  var data = fs.readFileSync(__dirname + '/../package.json').toString();
+  console.log('v' + JSON.parse(data).version);
+}
+
 module.exports = {
   parse: parseVelocity,
-  buildAst: buildAst
+  buildAst: buildAst,
+  showHelp: showHelp,
+  showVersion: showVersion
 };
