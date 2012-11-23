@@ -2,14 +2,18 @@
 
 velocity.js是velocity模板语法的javascript实现。
 [Velocity](http://velocity.apache.org/) 是基于Java的模板引擎，广泛应用在阿里集
-体各个子公司。Velocity模板适用与大量模板使用的场景，支持复杂的逻辑运算，包含逻辑
-运算、基本数据类型、变量赋值和函数等功能。
+体各个子公司。Velocity模板适用于大量模板使用的场景，支持复杂的逻辑运算，包含
+基本数据类型、变量赋值和函数等功能。
 
 velocity.js特点：
 
-- 语法分析和模板渲染分离(参考xtemplate方案)，本地编译模板
+- 支持客户端和服务器端使用
+- 语法是富逻辑的，构成门微型的语言
+- 语法分析和模板渲染分离
 - 基本完全支持velocity语法
-- 支持模板之间相互引用，依据kissy木块加载机制(可推及其他模块加载器)
+- 浏览器使用支持模板之间相互引用，依据kissy木块加载机制
+- 三个Helper，友好的数据模拟解决方案
+- [Vim Syntax](https://github.com/shepherdwind/vim-velocity)
 
 ##Install
 
@@ -72,6 +76,8 @@ veloctiy -b *.vm
 
 ##Public API
 
+###node_module
+
 ```js
 var Velocity = require('../src/velocity');
 
@@ -85,11 +91,12 @@ var Compile = Velocity.Compile;
 var asts = Parser.parse('string of velocity');
 (new Compile(asts)).render(context);
 ```
-
-###context
+####context
 
 `context`是一个对象，可以为空，执行中`$foo.bar`，访问路径是`context.foo.bar`，
 `context`的属性可以是函数，和vm中定义保持一致。
+
+###On Broswer
 
 ##Syntax
 
@@ -158,6 +165,21 @@ Example:
 
   # build asts module of kissy
   $ velocity *.vm
+```
+
+##Helper
+
+Helper提供一些额外的功能，都在`src/helper/`目录下，使用方式参考`test/`下对应文件，
+Helper功能还在开发中，可能不太完善。
+
+- `structure` 获取vm中所有变量的结构: `$foo.bar` => `foo: {bar: 'string'}`
+- `backstep` vm逆推，根据velocity文件和解析后的结果，计算数据结构和内容
+- `jsonify` 把vm转换为json结构，去除其中的html标签，比如：
+
+```
+hello world $foo.name.
+=>
+{foo: { name: $foo.name }}
 ```
 
 ##License
