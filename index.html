@@ -38,42 +38,113 @@
       <nav>
         <ul></ul>
       </nav>
-      <section>
-        <h2>Velocity Template Language(VTL) for JavaScript</h2>
+      
+      <section style="height: 4911px;">
+        <h2 id="velocity---template-engine">Velocity - Template Engine</h2>
 
-<p>JavaScript版本VTL，Velocity是基于Java的模板引擎，veloctiy.js是JS版本的实现。</p>
+<p>velocity.js是velocity模板语法的javascript实现。
+<a href="http://velocity.apache.org/">Velocity</a> 是基于Java的模板引擎，广泛应用在阿里集
+体各个子公司。Velocity模板适用于大量模板使用的场景，支持复杂的逻辑运算，包含
+基本数据类型、变量赋值和函数等功能。</p>
 
-<p>特点：</p>
+<p>velocity.js特点：</p>
 
 <ul>
-<li>语法分析和模板渲染分离(参考xtemplate方案)，本地编译模板</li>
+<li>支持客户端和服务器端使用</li>
+<li>语法是富逻辑的，构成门微型的语言</li>
+<li>语法分析和模板渲染分离</li>
 <li>基本完全支持velocity语法</li>
-<li>支持模板之间相互引用，依据kissy木块加载机制(可推及其他模块加载器)</li>
-</ul><h2>Documents</h2>
+<li>浏览器使用支持模板之间相互引用，依据kissy木块加载机制</li>
+<li>三个Helper，友好的数据模拟解决方案</li>
+<li><a href="https://github.com/shepherdwind/vim-velocity">Vim Syntax</a></li>
+</ul><h2 id="install">Install</h2>
 
-<p><a href="http://velocity.apache.org/engine/devel/user-guide.html">velocity user guide</a></p>
+<p>via npm:</p>
 
-<h2>Use</h2>
+<div class="highlight"><pre><span class="nv">$ </span>npm install velocity.js
+</pre></div>
 
-<p>velocity.js使用分为web端和本地使用，web端作为一个模板引擎，本地作为node模板使用。
-web端，使用build/velocity，本地通过npm安装<code>npm install velocity.js</code>。</p>
+<h2 id="broswer-support">Broswer Support</h2>
 
-<h3>On Web</h3>
+<p>点击<a href="http://git.shepherdwind.com/velocity.js/try/index.html">此处</a>可以体验web
+端velocity语法解析过程，注：使用ACE作为代码编辑器，仅支持高级浏览器访问。</p>
 
-<p>web浏览器使用，作为KISSY的一个模块，编译通过<code>Cakefile</code>完成，同样可以编译适用其他
-库，使用js在<code>build/veloctiy/</code>目录中: </p>
+<p>执行<code>cake</code>命令进行打包velocity.js浏览器端脚本:</p>
 
-<ul>
-<li>
-<code>index.js</code> Velocity解释器</li>
-<li>
-<code>parse.js</code> Velocity语法分析器</li>
-</ul><p>把语法分析和解释器分开，为了方便在本地编译语法书，在web端少做一些计算。本地编译
+<div class="highlight"><pre><span class="nv">$ </span>cake --build
+</pre></div>
+
+<p>需要cli下安装coffeejs，暂时打包是为kissy所使用的，velocity.js需要的一些常用的
+ecma5功能，比如<code>foreach, some, isArray</code>等，在node环境下是自带的功能，而web端的兼
+容是交给已有的类库解决。需要自行提供一组跨浏览器的api，比如kissy打包：</p>
+
+<div class="highlight"><pre>  <span class="c1">//api map</span>
+  <span class="kd">var</span> <span class="nx">utils</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">forEach</span> <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">each</span><span class="p">,</span>
+    <span class="nx">some</span>    <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">some</span><span class="p">,</span>
+    <span class="nx">mixin</span>   <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">mix</span><span class="p">,</span>
+    <span class="nx">guid</span>    <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">guid</span><span class="p">,</span>
+    <span class="nx">isArray</span> <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">isArray</span><span class="p">,</span>
+    <span class="nx">indexOf</span> <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">,</span>
+    <span class="nx">keys</span>    <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">keys</span><span class="p">,</span>
+    <span class="nx">now</span>     <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">now</span>
+  <span class="p">};</span>
+
+</pre></div>
+
+<p>Velocity语法具有很高的容错能力，类似于html结构的解析，同时语法规则复杂，所以语法
+解释器执行性能可能比较慢，<code>velocity.js</code>把语法结构分析运算和语法执行两个过程独立出来，
+第一步，语法结构分析返回一个数组(语法树)，描述velocity语法，语法执行使用数据和语
+法树，计算模板最终结果。</p>
+
+<p>执行build后，得到两个文件，分别是<code>build/velocity/</code>下的<code>index.js</code>和<code>parse.js</code>，两者
+相互独立，<code>parse.js</code>语法分析过程可以放在本地完成，执行命令：</p>
+
+<p>把语法分析和模板拼接分开，为了方便在本地编译语法树，减少在web端js运算。本地编译
 模板的思路，源自KISSY的<a href="http://docs.kissyui.com/docs/html/api/component/xtemplate/">xtemplate</a>。</p>
 
 <p>虽然语法解释器可以在浏览器端执行，但是，不推荐那么使用。</p>
 
-<p>第一种方式，解释和语法分析同时执行：</p>
+<div class="highlight"><pre><span class="c">#使用velocity命令行工具打包</span>
+veloctiy --build *.vm
+veloctiy -b *.vm
+</pre></div>
+
+<p>源码中<code>test/web/</code>目录的js，一部分就是线下编译后的得到的，此处可<a href="http://git.shepherdwind.com/velocity.js/web/index.html">直接访问</a>。</p>
+
+<h2 id="public-api">Public API</h2>
+
+<h3>node_module</h3>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">Velocity</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'../src/velocity'</span><span class="p">);</span>
+
+<span class="c1">//1. 直接解析</span>
+<span class="nx">Velocity</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">'string of velocity'</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+
+<span class="c1">//2. 使用Parser和Compile</span>
+<span class="kd">var</span> <span class="nx">Parser</span> <span class="o">=</span> <span class="nx">Velocity</span><span class="p">.</span><span class="nx">Parser</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Compile</span> <span class="o">=</span> <span class="nx">Velocity</span><span class="p">.</span><span class="nx">Compile</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">asts</span> <span class="o">=</span> <span class="nx">Parser</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="s1">'string of velocity'</span><span class="p">);</span>
+<span class="p">(</span><span class="k">new</span> <span class="nx">Compile</span><span class="p">(</span><span class="nx">asts</span><span class="p">)).</span><span class="nx">render</span><span class="p">(</span><span class="nx">context</span><span class="p">);</span>
+</pre></div>
+
+<h4>context</h4>
+
+<p><code>context</code>是一个对象，可以为空，执行中<code>$foo.bar</code>，访问路径是<code>context.foo.bar</code>，
+<code>context</code>的属性可以是函数，和vm中定义保持一致。</p>
+
+<h3>On Broswer</h3>
+
+<p>1 . 使用线下打包方案：</p>
+
+<div class="highlight"><pre><span class="nx">KISSY</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'velocity/index, web/directives'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">,</span> <span class="nx">asts</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">compile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Velocity</span><span class="p">(</span><span class="nx">asts</span><span class="p">);</span>
+  <span class="nx">S</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">'body'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">compile</span><span class="p">.</span><span class="nx">render</span><span class="p">());</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>2 . 使用线上编译：</p>
 
 <div class="highlight"><pre><span class="nx">KISSY</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'velocity/index, velocity/parse'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">,</span> <span class="nx">Parser</span><span class="p">){</span>
   <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="p">(</span><span class="nx">S</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">'#tpl'</span><span class="p">).</span><span class="nx">html</span><span class="p">());</span>
@@ -83,46 +154,116 @@ web端，使用build/velocity，本地通过npm安装<code>npm install velocity.
 <span class="p">});</span>
 </pre></div>
 
-<p>第二种方式，线下编译：</p>
+<p>两者的区别在于asts的获取，第一种方式，直接取asts，第二种，需要首先执行语法分析过
+程。</p>
 
-<pre><code>使用velocity命令行工具打包
-veloctiy --build *.vm
-veloctiy -b *.vm
-</code></pre>
+<h2 id="syntax">Syntax</h2>
 
-<p>浏览器使用：</p>
+<p>具体语法请访问官网文档：<a href="http://velocity.apache.org/engine/devel/user-guide.html">velocity user guide</a>。</p>
 
-<div class="highlight"><pre><span class="nx">KISSY</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'velocity/index, web/directives'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">,</span> <span class="nx">asts</span><span class="p">){</span>
-  <span class="kd">var</span> <span class="nx">compile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Velocity</span><span class="p">(</span><span class="nx">asts</span><span class="p">);</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">compile</span><span class="p">.</span><span class="nx">render</span><span class="p">());</span>
-<span class="p">});</span>
-</pre></div>
+<h3>Directives</h3>
 
-<h3>模板引用</h3>
+<p>Directives支持<code>set</code>, <code>foreach</code>, <code>if|else|elseif</code>, <code>macro</code>, <code>parse</code>, <code>break</code>。不
+支持有，<code>stop</code>, <code>evaluate</code>, <code>define</code>，感觉这些语法比较偏，用处不大，暂时没有实现。
+其中<code>parse</code>，在web端，使用kissy的模块加载器加载，需要首先线下编译打包，<a href="http://git.shepherdwind.com/velocity.js/web/index.html">例子</a>。</p>
 
-<p>支持模板使用<code>#parse('file.vm')</code>形式引用其他模板，在web端引用依据kissy的模块加载
-机制。</p>
+<h3>foreach</h3>
 
-<div class="highlight"><pre>#parse("web/macro.vm")
-#set( $parts = ["volva","stipe","annulus","gills","pileus"] )
-#set( $cellbgcol = "#CC00FF" )
-<span class="nt">&lt;table&gt;</span>
-  #tablerows( $cellbgcol $parts )
-<span class="nt">&lt;/table&gt;</span>
-</pre></div>
+<p>foreach在velocity中对对象的遍历，和js有区别，java中对象是一个map，需要通过方法
+<code>keyset</code>来获取map中的key，foreach循环写法等同于js的for in循环，感觉有点怪异。在
+一个foreach，有一个<code>$foreach</code>的对象可以使用，此变量作用域为当前循环范围。</p>
 
-<p>macro.vm中定义：</p>
-
-<pre><code>#macro( tablerows $color $somelist )
-  #foreach( $something in $somelist )
-    &lt;tr&gt;&lt;td bgcolor=$color&gt;$something&lt;/td&gt;&lt;/tr&gt;
-  #end
+<pre><code>#foreach($num as [1..5])
+  index =&gt; $foreach.index 
+  count =&gt; $foreach.count
+  #if (!$foreach.hasNext) end #end
 #end
+结果：
+index =&gt; 0
+count =&gt; 1
+
+index =&gt; 1
+count =&gt; 2
+...
+index =&gt; 4
+count =&gt; 5
+end
 </code></pre>
 
-<h3>On nodejs</h3>
+<h3>string</h3>
 
-<p>node端和web端api使用一致。</p>
+<p>velocity中字符串求值和php类似，双引号字符串里面的变量会被替换变量对应的值，单引
+号原样返回，推荐尽量使用单引号，那样性能好一些。此外，双引号中变量替换，没有再次
+调用语法分析器，而是使用正则，只支持简单的引用替换，比如<code>"$varname1 $foo.bar"</code>，
+<code>"$foo.bar[1] $foo.bar()"</code>都不支持。如果需要完整支持字符串双引号，需要反复调用语
+法分析器，考虑到性能，基本引用基本够用了，vm本身支持强大的变量赋值，可以先赋值，
+在放入字符串，或者使用加法进行字符串拼接。</p>
+
+<p>在java中可能大量使用双引号方式，因为java对象无法自动转换类型，双引号做类型转换用，
+而在web端，js无此需要。</p>
+
+<h3>velocity</h3>
+
+<pre><code>Usage: velocity [options] [file ...]
+
+Options:
+
+  -h, --help         output usage information
+  -V, --version      output the version number
+  -b, --build        build .vm file to js ast module of kissy
+
+Example:
+
+  # parse vm file
+  $ velocity a.vm 
+
+  # parse vm file with json data
+  $ velocity a.vm  a.json
+
+  # build asts module of kissy
+  $ velocity *.vm
+</code></pre>
+
+<h2 id="helper">Helper</h2>
+
+<p>Helper提供一些额外的功能，都在<code>src/helper/</code>目录下，使用方式参考<code>test/</code>下对应文件，
+Helper功能还在开发中，可能不太完善。</p>
+
+<ul>
+<li>
+<code>structure</code> 获取vm中所有变量的结构: <code>$foo.bar</code> =&gt; <code>foo: {bar: 'string'}</code>
+</li>
+<li>
+<code>backstep</code> vm逆推，根据velocity文件和解析后的结果，计算数据结构和内容</li>
+<li>
+<code>jsonify</code> 把vm转换为json结构，去除其中的html标签，比如：</li>
+</ul><pre><code>hello world $foo.name.
+=&gt;
+{foo: { name: $foo.name }}
+</code></pre>
+
+<h2 id="license">License</h2>
+
+<p>(The MIT License)</p>
+
+<p>Copyright (c) 2012-2013 Eward Song<a href="mailto:eward.song@gmail.com">eward.song@gmail.com</a></p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the 'Software'), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/shepherdwind">shepherdwind</a></p>
