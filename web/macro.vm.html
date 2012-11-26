@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>~/code/gh-pages/velocity.js/web/macro.vm.html</title>
+<meta name="Generator" content="Vim/7.3">
+<meta name="plugin-version" content="vim7.3_v12">
+<meta name="syntax" content="velocity">
+<meta name="settings" content="use_css,pre_wrap,no_foldcolumn,expand_tabs,prevent_copy=">
+<meta name="colorscheme" content="Tomorrow-Night">
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #c5c8c6; background-color: #1d1f21; }
+body { font-family: monospace; color: #c5c8c6; background-color: #1d1f21; }
+* { font-size: 1em; }
+.Function { color: #81a2be; }
+.Statement { color: #c5c8c6; font-weight: bold; }
+.PreProc { color: #b294bb; }
+.Type { color: #81a2be; }
+.Identifier { color: #cc6666; }
+-->
+</style>
+</head>
+<body>
+<pre id='vimCodeElement'>
+<span class="PreProc">#</span><span class="Statement">macro</span><span class="PreProc">( tablerows </span><span class="Identifier">$color</span><span class="PreProc"> </span><span class="Identifier">$somelist</span><span class="PreProc"> )</span>
+  <span class="PreProc">#</span><span class="Statement">foreach</span><span class="PreProc">( </span><span class="Identifier">$something</span><span class="PreProc"> </span><span class="Statement">in</span><span class="PreProc"> </span><span class="Identifier">$somelist</span><span class="PreProc"> )</span>
+    <span class="Function">&lt;</span><span class="Statement">tr</span><span class="Function">&gt;&lt;</span><span class="Statement">td</span><span class="Function"> </span><span class="Type">bgcolor</span><span class="Function">=</span><span class="Identifier">$color</span><span class="Function">&gt;</span><span class="Identifier">$something</span><span class="Identifier">&lt;/</span><span class="Statement">td</span><span class="Identifier">&gt;&lt;/</span><span class="Statement">tr</span><span class="Identifier">&gt;</span>
+  <span class="PreProc">#</span><span class="Statement">end</span>
+<span class="PreProc">#</span><span class="Statement">end</span>
+</pre>
+</body>
+</html>
