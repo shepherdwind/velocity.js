@@ -94,7 +94,7 @@
 <c,i>'"'(\\\"|[^\"])*'"'          { yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'EVAL_STRING'; }
 <c,i>"'"(\\\'|[^\'])*"'"          { yytext = yytext.substr(1, yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
 <h,c,i>[0-9]+                     { return 'INTEGER'; }
-<mu,h,c,i>[a-zA-Z][a-zA-Z0-9_]*   { return 'ID'; }
+<mu,h,c,i>[a-zA-Z][a-zA-Z0-9_\-]* { return 'ID'; }
 <mu>"#"                           { this.begin('h'); return 'HASH'; }
 <h,mu>.                           { this.popState(); return 'CONTENT'; }
 <h,mu>\s+                         { this.popState(); return 'CONTENT'; }

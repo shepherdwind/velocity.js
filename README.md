@@ -98,7 +98,7 @@ var asts = Parser.parse('string of velocity');
 
 ###On Broswer
 
-1. 使用线下打包方案：
+1 . 使用线下打包方案：
 
 ```js
 KISSY.use('velocity/index, web/directives', function(S, Velocity, asts){
@@ -107,7 +107,7 @@ KISSY.use('velocity/index, web/directives', function(S, Velocity, asts){
 });
 ```
 
-2. 使用线上编译：
+2 . 使用线上编译：
 
 ```js
 KISSY.use('velocity/index, velocity/parse', function(S, Velocity, Parser){

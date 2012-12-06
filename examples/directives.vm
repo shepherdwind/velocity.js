@@ -13,3 +13,5 @@
 <table>
 #tablerows( $cellbgcol $parts )
 </table>
+
+hello $foo.name world
