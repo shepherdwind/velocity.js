@@ -238,7 +238,7 @@ attribute
   | index 
       { $$ = {type: "index", id: $1}; }
   | property 
-      { $$ = {type: "property", id: $1}; }
+      { $$ = {type: "property", id: $1}; if ($1.type === 'content') $$ = $1; }
   ;
 
 method
@@ -263,7 +263,7 @@ property
   : DOT ID 
       { $$ = $2; }
   | DOT CONTENT 
-      { $$ = '<<<' + $1 + $2; }
+      { $$ = {type: 'content', value: $1 + $2}; }
   ;
 
 index
@@ -272,11 +272,11 @@ index
   | BRACKET references CLOSE_BRACKET 
       { $$ = $2; } 
   | BRACKET literal CONTENT 
-      { $$ = "<<<" + $1 + $2 + $3; } 
+      { $$ = {type: "content", value: $1 + $2.value + $3}; } 
   | BRACKET CONTENT 
-      { $$ = "<<<" + $1 + $2; } 
+      { $$ = {type: "content", value: $1 + $2}; } 
   | BRACKET CLOSE_BRACKET 
-      { $$ = "<<<" + $1 + $2; } 
+      { $$ = {type: "content", value: $1 + $2}; } 
   ;
 
 literal
