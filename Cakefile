@@ -1,5 +1,6 @@
 fs = require 'fs'
 exec  = (require 'child_process').exec
+path = require 'path'
 
 buildCompile = (tplfile)->
   files = fs.readdirSync 'src/compile'
@@ -44,3 +45,13 @@ task 'build', 'build velocity for kissy', (options) ->
   });
   "
   console.log 'build parse to build/velocity/parse.js'
+
+task 'runner', 'build runner', (options) ->
+  files = fs.readdirSync 'tests'
+  ret = ''
+  files.forEach (file) ->
+    if (path.extname file) is '.js'
+      str = fs.readFileSync "./tests/#{file}"
+      ret += str.toString().replace /^[\S\s]*?describe/, 'describe'
+  fs.writeFileSync "./tests/runner/spec.js", ret
+  console.log 'build runner finish'

@@ -1,7 +1,7 @@
 var Velocity = require('../src/velocity');
+var assert = require("assert");
 var Parser = Velocity.Parser;
 var Compile = Velocity.Compile;
-var assert = require("assert");
 
 describe('Compile', function(){
 
