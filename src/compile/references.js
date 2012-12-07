@@ -8,10 +8,15 @@ module.exports = function(Velocity, utils){
      */
     getReferences: function(ast, isVal) {
 
-      var isSilent= ast.leader === "$!";
-      var context = this.context;
-      var ret = context[ast.id];
-      var local = this.getLocal(ast);
+      var isSilent = ast.leader === "$!";
+      var isfn     = ast.args !== undefined;
+      var context  = this.context;
+      var ret      = context[ast.id];
+      var local    = this.getLocal(ast);
+
+      if (ret !== undefined && isfn) {
+        ret = this.getPropMethod(ast, context);
+      }
 
       if (local.isLocaled) ret = local['value'];
 

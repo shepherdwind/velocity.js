@@ -27,34 +27,20 @@ KISSY.add(function(S){
   function getRefText(ast){
 
     var ret = ast.leader;
+    var isFn = ast.args !== undefined;
 
     if (ast.isWraped) ret += '{';
 
-    ret += ast.id;
+    if (isFn) {
+      ret += getMethodText(ast);
+    } else {
+      ret += ast.id;
+    }
+
     utils.forEach(ast.path, function(ref){
       //不支持method并且传递参数
       if (ref.type == 'method') {
-
-        var args = [];
-
-        utils.forEach(ref.args, function(arg){
-
-          if (arg.type === 'string') {
-
-            var sign = arg.isEval? '"': "'";
-            var text = sign + arg.value + sign;
-            args.push(text);
-
-          } else {
-
-            args.push(getRefText(arg));
-
-          }
-
-        });
-
-        ret += '.' + ref.id + '(' + args.join(',') + ')';
-
+        ret += '.' + getMethodText(ref);
       } else if (ref.type == 'index') {
 
         var text = '';
@@ -88,6 +74,33 @@ KISSY.add(function(S){
     if (ast.isWraped) ret += '}';
 
     return ret;
+  }
+
+  function getMethodText(ref) {
+
+    var args = [];
+    var ret = '';
+
+    utils.forEach(ref.args, function(arg){
+
+      if (arg.type === 'string') {
+
+        var sign = arg.isEval? '"': "'";
+        var text = sign + arg.value + sign;
+        args.push(text);
+
+      } else {
+
+        args.push(getRefText(arg));
+
+      }
+
+    });
+
+    ret += ref.id + '(' + args.join(',') + ')';
+
+    return ret;
+
   }
 
   Helper.getRefText = getRefText;
@@ -312,10 +325,7 @@ KISSY.add(function(S){
       var t2 = utils.now();
       var cost = t2 - t1;
 
-      //ie中始终会报错
-      try {
-        console.log("velocity finished, cout time:" + cost + 'ms');
-      } catch(e) {}
+      this.cost = cost;
 
       return str ;
     },
@@ -619,10 +629,15 @@ KISSY.add(function(S){
      */
     getReferences: function(ast, isVal) {
 
-      var isSilent= ast.leader === "$!";
-      var context = this.context;
-      var ret = context[ast.id];
-      var local = this.getLocal(ast);
+      var isSilent = ast.leader === "$!";
+      var isfn     = ast.args !== undefined;
+      var context  = this.context;
+      var ret      = context[ast.id];
+      var local    = this.getLocal(ast);
+
+      if (ret !== undefined && isfn) {
+        ret = this.getPropMethod(ast, context);
+      }
 
       if (local.isLocaled) ret = local['value'];
 

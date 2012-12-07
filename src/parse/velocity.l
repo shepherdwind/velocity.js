@@ -34,7 +34,7 @@
 
 [^\x00]+                          { return 'CONTENT'; }
 <h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
-<h>"##"[^\n]+/\n                  { this.popState(); return 'COMMENT'; }
+<h>"##"[^\n]+                     { this.popState(); return 'COMMENT'; }
 <h>"#"/[^\s]                      { return 'HASH'; }
 <h>"set"[ ]*                      { return 'SET'; }
 <h>"if"[ ]*                       { return 'IF'; }
@@ -55,6 +55,7 @@
 <c,i>"=="                         { return yytext; }
 <c,i>"||"                         { return yytext; }
 <c,i>"&&"                         { return yytext; }
+<c,i>"!="                         { return yytext; }
 <mu,c,i>"$!"                      { return 'DOLLAR'; }
 <mu,h,c,i>"$"                     { return 'DOLLAR'; }
 <h,c,i>"!"                        { return yytext; }

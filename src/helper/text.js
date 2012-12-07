@@ -5,34 +5,20 @@ module.exports = function(Helper, utils){
   function getRefText(ast){
 
     var ret = ast.leader;
+    var isFn = ast.args !== undefined;
 
     if (ast.isWraped) ret += '{';
 
-    ret += ast.id;
+    if (isFn) {
+      ret += getMethodText(ast);
+    } else {
+      ret += ast.id;
+    }
+
     utils.forEach(ast.path, function(ref){
       //不支持method并且传递参数
       if (ref.type == 'method') {
-
-        var args = [];
-
-        utils.forEach(ref.args, function(arg){
-
-          if (arg.type === 'string') {
-
-            var sign = arg.isEval? '"': "'";
-            var text = sign + arg.value + sign;
-            args.push(text);
-
-          } else {
-
-            args.push(getRefText(arg));
-
-          }
-
-        });
-
-        ret += '.' + ref.id + '(' + args.join(',') + ')';
-
+        ret += '.' + getMethodText(ref);
       } else if (ref.type == 'index') {
 
         var text = '';
@@ -66,6 +52,33 @@ module.exports = function(Helper, utils){
     if (ast.isWraped) ret += '}';
 
     return ret;
+  }
+
+  function getMethodText(ref) {
+
+    var args = [];
+    var ret = '';
+
+    utils.forEach(ref.args, function(arg){
+
+      if (arg.type === 'string') {
+
+        var sign = arg.isEval? '"': "'";
+        var text = sign + arg.value + sign;
+        args.push(text);
+
+      } else {
+
+        args.push(getRefText(arg));
+
+      }
+
+    });
+
+    ret += ref.id + '(' + args.join(',') + ')';
+
+    return ret;
+
   }
 
   Helper.getRefText = getRefText;

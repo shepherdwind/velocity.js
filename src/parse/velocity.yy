@@ -1,5 +1,5 @@
 %left '||' '&&'
-%left '>' '==' '<'
+%left '>' '==' '<' '!='
 %left '+' '-'
 %left '*' '/' 
 %left '!'
@@ -202,6 +202,8 @@ math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | math '==' math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+  | math '!=' math
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | PARENTHESIS math CLOSE_PARENTHESIS
       { $$ = {type: 'math', expression: [$2], operator: 'parenthesis'}; }
   | '!' math
@@ -219,10 +221,18 @@ references
       { $$ = {type: "references", id: $3, path: $4, isWraped: true, leader: $1}; }
   | DOLLAR ID attributes 
       { $$ = {type: "references", id: $2, path: $3, leader: $1}; }
+  | DOLLAR VAR_BEGIN methodbd attributes VAR_END 
+      { $$ = {type: "references", id: $3.id, path: $4, isWraped: true, leader: $1, args: $3.args}; }
+  | DOLLAR methodbd attributes 
+      { $$ = {type: "references", id: $2.id, path: $3, leader: $1, args: $3.args}; }
   | DOLLAR ID 
       { $$ = {type: "references", id: $2, leader: $1}; }
   | DOLLAR VAR_BEGIN ID VAR_END 
       { $$ = {type: "references", id: $3, isWraped: true, leader: $1}; }
+  | DOLLAR methodbd
+      { $$ = {type: "references", id: $2.id, leader: $1, args: $2.args}; }
+  | DOLLAR VAR_BEGIN methodbd VAR_END 
+      { $$ = {type: "references", id: $3.id, isWraped: true, args: $3.args, leader: $1}; }
   ;
 
 attributes
@@ -242,10 +252,15 @@ attribute
   ;
 
 method
-  : DOT ID PARENTHESIS params CLOSE_PARENTHESIS 
-      { $$ = {id: $2, args: $4}; }
+  : DOT methodbd
+      { $$ = $2; }
+  ;
+
+methodbd
+  : ID PARENTHESIS params CLOSE_PARENTHESIS
+      { $$ = {id: $1, args: $3}; }
   | DOT ID PARENTHESIS CLOSE_PARENTHESIS 
-      { $$ = {id: $2, args: false}; }
+      { $$ = {id: $1, args: false}; }
   ;
 
 params

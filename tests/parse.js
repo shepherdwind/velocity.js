@@ -1,7 +1,7 @@
 var Parser = require('../src/velocity').Parser;
 var assert = require("assert");
 
-describe('Parser references', function(){
+describe('Parser', function(){
 
   describe('simple references', function(){
 
@@ -179,6 +179,21 @@ describe('Parser references', function(){
       }, /Lexical error/);
 
     });
+
+  });
+
+  describe('comment identify', function(){
+
+    it('one line comment', function(){
+
+      var asts = Parser.parse('#set( $monkey.Number = 123)##number literal');
+
+      assert.equal(2         , asts.length);
+      assert.equal('comment' , asts[1].type);
+
+    });
+
+    //it('escape slash');
 
   });
 

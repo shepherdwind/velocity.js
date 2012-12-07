@@ -39,10 +39,7 @@ module.exports = function(Velocity, utils){
       var t2 = utils.now();
       var cost = t2 - t1;
 
-      //ie中始终会报错
-      try {
-        console.log("velocity finished, cout time:" + cost + 'ms');
-      } catch(e) {}
+      this.cost = cost;
 
       return str ;
     },
