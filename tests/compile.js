@@ -65,8 +65,26 @@ describe('Compile', function(){
 
     it('expression complex math', function(){
       assert.equal(20  , render('#set($foo = (7 + 3) * (10 - 8))').foo);
-      assert.equal(-20  , render('#set($foo = -(7 + 3) * (10 - 8))').foo);
+      assert.equal(-20 , render('#set($foo = -(7 + 3) * (10 - 8))').foo);
+      assert.equal(-1  , render('#set($foo = -7 + 3 * (10 - 8))').foo);
     })
+
+    it('expression compare', function(){
+      assert.equal(false , render('#set($foo = 10 > 11)').foo);
+      assert.equal(true  , render('#set($foo = 10 < 11)').foo);
+      assert.equal(true  , render('#set($foo = 10 != 11)').foo);
+      assert.equal(false , render('#set($foo = 10 == 11)').foo);
+    });
+
+    it('expression logic', function(){
+      assert.equal(false , render('#set($foo = 10 == 11 && 3 > 1)').foo);
+      assert.equal(true  , render('#set($foo = 10 < 11 && 3 > 1)').foo);
+      assert.equal(true  , render('#set($foo = 10 > 11 || 3 > 1)').foo);
+      assert.equal(true  , render('#set($foo = !(10 > 11) && 3 > 1)').foo);
+      assert.equal(false , render('#set($foo = $a > $b)', {a: 1, b: 2}).foo);
+      assert.equal(false , render('#set($foo = $a && $b)', {a: 1, b: 0}).foo);
+      assert.equal(true  , render('#set($foo = $a || $b)', {a: 1, b: 0}).foo);
+    });
 
   });
 
