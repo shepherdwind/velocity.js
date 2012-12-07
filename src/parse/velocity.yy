@@ -208,7 +208,7 @@ math
       { $$ = {type: 'math', expression: [$2], operator: 'parenthesis'}; }
   | '!' math
       { $$ = {type: 'math', expression: [$2], operator: 'not'}; }
-  | '-' references %prec UMINUS
+  | '-' math %prec UMINUS
       { $$ = {type: 'math', expression: [$2], operator: 'minus'}; }
   | references
       { $$ = $1; }
