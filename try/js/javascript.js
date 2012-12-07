@@ -3,6 +3,7 @@ var tmpltr;		// kept outside for console inspection
 KISSY.config({
   packages: [
     {
+      tag: 20121212,
       name: 'velocity',
       path: './js/'
     }
