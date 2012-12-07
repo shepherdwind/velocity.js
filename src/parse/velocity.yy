@@ -259,7 +259,7 @@ method
 methodbd
   : ID PARENTHESIS params CLOSE_PARENTHESIS
       { $$ = {id: $1, args: $3}; }
-  | DOT ID PARENTHESIS CLOSE_PARENTHESIS 
+  | ID PARENTHESIS CLOSE_PARENTHESIS 
       { $$ = {id: $1, args: false}; }
   ;
 
