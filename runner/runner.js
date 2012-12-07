@@ -2,7 +2,8 @@ KISSY.config({
   packages: [
     {
       name: 'velocity',
-      path: '../try/js/'
+      path: '../try/js/',
+      tag: 20121208
     }
   ]
 });
