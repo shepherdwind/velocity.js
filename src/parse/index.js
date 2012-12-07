@@ -554,39 +554,39 @@ case 2: return 77;
 break;
 case 3: this.popState(); return 11; 
 break;
-case 4: this.popState(); return 11; 
+case 4: this.popState(); yy_.yytext = yy_.yytext.replace(/^#\[\[|\]\]#$/g, ''); return 77
 break;
-case 5: return 25; 
+case 5: this.popState(); return 11; 
 break;
-case 6: return 26; 
+case 6: return 25; 
 break;
-case 7: return 30; 
+case 7: return 26; 
 break;
-case 8: return 32; 
+case 8: return 30; 
 break;
-case 9: this.popState(); return 33; 
+case 9: return 32; 
 break;
 case 10: this.popState(); return 33; 
 break;
-case 11: this.popState(); return 34; 
+case 11: this.popState(); return 33; 
 break;
-case 12: this.popState(); return 40; 
+case 12: this.popState(); return 34; 
 break;
-case 13: return 35; 
+case 13: this.popState(); return 40; 
 break;
-case 14: return 41; 
+case 14: return 35; 
 break;
-case 15: return 43; 
+case 15: return 41; 
 break;
-case 16: return 'EVAL'; 
+case 16: return 43; 
 break;
-case 17: return 46; 
+case 17: return 'EVAL'; 
 break;
-case 18: return 47; 
+case 18: return 46; 
 break;
-case 19: return 38; 
+case 19: return 47; 
 break;
-case 20: return yy_.yytext; 
+case 20: return 38; 
 break;
 case 21: return yy_.yytext; 
 break;
@@ -598,29 +598,31 @@ case 24: return yy_.yytext;
 break;
 case 25: return yy_.yytext; 
 break;
-case 26: return 36; 
+case 26: return yy_.yytext; 
 break;
 case 27: return 36; 
 break;
-case 28: return yy_.yytext; 
+case 28: return 36; 
 break;
-case 29: return 52; 
+case 29: return yy_.yytext; 
 break;
-case 30: /*ignore whitespace*/ 
+case 30: return 52; 
 break;
-case 31: return 85; 
+case 31: /*ignore whitespace*/ 
 break;
-case 32: return 87; 
+case 32: return 85; 
 break;
-case 33: return 88; 
+case 33: return 87; 
 break;
-case 34: return 66; 
+case 34: return 88; 
 break;
-case 35: this.popState(); return 68; 
+case 35: return 66; 
 break;
-case 36: this.begin("c"); return 27; 
+case 36: this.popState(); return 68; 
 break;
-case 37: 
+case 37: this.begin("c"); return 27; 
+break;
+case 38: 
                                     if (this.popState() === "c") {
                                       var len = this.conditionStack.length;
                                       /** 遇到#set(a = b)括号结束后结束状态h*/
@@ -633,9 +635,9 @@ case 37:
                                     }
                                   
 break;
-case 38: this.begin("i"); return 78; 
+case 39: this.begin("i"); return 78; 
 break;
-case 39: 
+case 40: 
                                     if (this.popState() === "i") {
                                       return 79; 
                                     } else {
@@ -643,36 +645,36 @@ case 39:
                                     }
                                   
 break;
-case 40: return 84; 
+case 41: return 84; 
 break;
-case 41: return 74; 
+case 42: return 74; 
 break;
-case 42: return 76; 
+case 43: return 76; 
 break;
-case 43: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\"/g,'"'); return 83; 
+case 44: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\"/g,'"'); return 83; 
 break;
-case 44: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\'/g,"'"); return 82; 
+case 45: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\'/g,"'"); return 82; 
 break;
-case 45: return 81; 
+case 46: return 81; 
 break;
-case 46: return 37; 
+case 47: return 37; 
 break;
-case 47: this.begin('h'); return 25; 
-break;
-case 48: this.popState(); return 77; 
+case 48: this.begin('h'); return 25; 
 break;
 case 49: this.popState(); return 77; 
 break;
 case 50: this.popState(); return 77; 
 break;
-case 51: this.popState(); return 5; 
+case 51: this.popState(); return 77; 
 break;
-case 52: return 5; 
+case 52: this.popState(); return 5; 
+break;
+case 53: return 5; 
 break;
 }
 };
-lexer.rules = [/^(?:[^#]*?(?=\$))/,/^(?:[^\$]*?(?=#))/,/^(?:[^\x00]+)/,/^(?:#\*[\s\S]+?\*#)/,/^(?:##[^\n]+)/,/^(?:#(?=[^\s]))/,/^(?:set[ ]*)/,/^(?:if[ ]*)/,/^(?:elseif[ ]*)/,/^(?:else\b)/,/^(?:\{else\})/,/^(?:end\b)/,/^(?:break\b)/,/^(?:foreach[ ]*)/,/^(?:include[ ]*)/,/^(?:parse[ ]*)/,/^(?:evaluate\b)/,/^(?:define[ ]*)/,/^(?:macro[ ]*)/,/^(?:in\b)/,/^(?:[\+\-\*/])/,/^(?:[><])/,/^(?:==)/,/^(?:\|\|)/,/^(?:&&)/,/^(?:!=)/,/^(?:\$!)/,/^(?:\$)/,/^(?:!)/,/^(?:=)/,/^(?:\s+)/,/^(?:\{)/,/^(?:\})/,/^(?::)/,/^(?:\{)/,/^(?:\})/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\.\.)/,/^(?:\.)/,/^(?:,)/,/^(?:"(\\"|[^\"])*")/,/^(?:'(\\'|[^\'])*')/,/^(?:[0-9]+)/,/^(?:[a-zA-Z][a-zA-Z0-9_\-]*)/,/^(?:#)/,/^(?:.)/,/^(?:\s+)/,/^(?:[\$#])/,/^(?:$)/,/^(?:$)/];
-lexer.conditions = {"mu":{"rules":[26,27,34,35,36,37,38,39,41,42,46,47,48,49,51],"inclusive":false},"c":{"rules":[19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,36,37,38,39,41,42,43,44,45,46],"inclusive":false},"i":{"rules":[19,20,21,22,23,24,25,26,27,28,29,30,36,37,38,39,40,41,42,43,44,45,46],"inclusive":false},"h":{"rules":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,27,28,29,31,32,33,36,37,38,39,41,42,45,46,48,49,51],"inclusive":false},"esc":{"rules":[50],"inclusive":false},"INITIAL":{"rules":[0,1,2,52],"inclusive":true}};
+lexer.rules = [/^(?:[^#]*?(?=\$))/,/^(?:[^\$]*?(?=#))/,/^(?:[^\x00]+)/,/^(?:#\*[\s\S]+?\*#)/,/^(?:#\[\[[\s\S]+?\]\]#)/,/^(?:##[^\n]+)/,/^(?:#(?=[^\s]))/,/^(?:set[ ]*)/,/^(?:if[ ]*)/,/^(?:elseif[ ]*)/,/^(?:else\b)/,/^(?:\{else\})/,/^(?:end\b)/,/^(?:break\b)/,/^(?:foreach[ ]*)/,/^(?:include[ ]*)/,/^(?:parse[ ]*)/,/^(?:evaluate\b)/,/^(?:define[ ]*)/,/^(?:macro[ ]*)/,/^(?:in\b)/,/^(?:[\+\-\*/])/,/^(?:[><])/,/^(?:==)/,/^(?:\|\|)/,/^(?:&&)/,/^(?:!=)/,/^(?:\$!)/,/^(?:\$)/,/^(?:!)/,/^(?:=)/,/^(?:\s+)/,/^(?:\{)/,/^(?:\})/,/^(?::)/,/^(?:\{)/,/^(?:\})/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\.\.)/,/^(?:\.)/,/^(?:,)/,/^(?:"(\\"|[^\"])*")/,/^(?:'(\\'|[^\'])*')/,/^(?:[0-9]+)/,/^(?:[a-zA-Z][a-zA-Z0-9_\-]*)/,/^(?:#)/,/^(?:.)/,/^(?:\s+)/,/^(?:[\$#])/,/^(?:$)/,/^(?:$)/];
+lexer.conditions = {"mu":{"rules":[27,28,35,36,37,38,39,40,42,43,47,48,49,50,52],"inclusive":false},"c":{"rules":[20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,37,38,39,40,42,43,44,45,46,47],"inclusive":false},"i":{"rules":[20,21,22,23,24,25,26,27,28,29,30,31,37,38,39,40,41,42,43,44,45,46,47],"inclusive":false},"h":{"rules":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,28,29,30,32,33,34,37,38,39,40,42,43,46,47,49,50,52],"inclusive":false},"esc":{"rules":[51],"inclusive":false},"INITIAL":{"rules":[0,1,2,53],"inclusive":true}};
 return lexer;})()
 parser.lexer = lexer;
 function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;

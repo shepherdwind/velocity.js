@@ -5,14 +5,16 @@ describe('Parser', function(){
 
   describe('simple references', function(){
 
-    var vm = 'hello world: $foo';
-    var ret = Parser.parse(vm);
-
     it('simple references', function(){
+
+      var vm = 'hello world: $foo';
+      var ret = Parser.parse(vm);
+
       assert.ok(ret instanceof Array);
       assert.equal(2               , ret.length);
       assert.equal('hello world: ' , ret[0]);
       assert.equal('foo'           , ret[1].id);
+
     });
 
     it('valid variable references', function(){
@@ -25,6 +27,12 @@ describe('Parser', function(){
       var ast = Parser.parse(vm)[0];
       assert.equal(true         , ast.isWraped);
       assert.equal('mudSlinger' , ast.id);
+    });
+
+    it('function call references', function(){
+      var ast = Parser.parse('$foo()')[0];
+      assert.equal(false, ast.args);
+      assert.equal('references', ast.type);
     });
 
   });
