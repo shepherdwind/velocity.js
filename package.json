@@ -1,10 +1,11 @@
 {
   "name": "velocity.js",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "keywords": [
     "velocity template"
   ],
+  "homepage": "http://git.shepherdwind.com/velocity.js/",
   "repository": {
     "type": "git",
     "url": "git://github.com/shepherdwind/velocity.js.git"
@@ -15,5 +16,8 @@
   "main": "src/velocity.js",
   "bin": {
     "velocity": "bin/velocity"
+  },
+  "scripts": {
+    "test" : "make test"
   }
 }
