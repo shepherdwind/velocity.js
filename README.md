@@ -1,5 +1,7 @@
 ##Velocity - Template Engine
 
+[![Build Status](https://secure.travis-ci.org/shepherdwind/velocity.js.png)](https://travis-ci.org/shepherdwind/velocity.js)
+
 velocity.js是velocity模板语法的javascript实现。
 [Velocity](http://velocity.apache.org/) 是基于Java的模板引擎，广泛应用在阿里集
 体各个子公司。Velocity模板适用于大量模板使用的场景，支持复杂的逻辑运算，包含
@@ -25,6 +27,8 @@ $ npm install velocity.js
 ```
 
 ##Broswer Support
+
+[test case](http://git.shepherdwind.com/velocity.js/runner/tests.html)
 
 点击[此处](http://git.shepherdwind.com/velocity.js/try/index.html)可以体验web
 端velocity语法解析过程，注：使用ACE作为代码编辑器，仅支持高级浏览器访问。
