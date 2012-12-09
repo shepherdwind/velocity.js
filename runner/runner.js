@@ -3,7 +3,7 @@ KISSY.config({
     {
       name: 'velocity',
       path: '../try/js/',
-      tag: 20121208
+      tag: 20121210
     }
   ]
 });
@@ -11,7 +11,7 @@ KISSY.config({
 KISSY.use('velocity/index, velocity/parse', function(S, Compile, Parser){
   window.Compile = Compile;
   window.Parser = Parser;
-  S.getScript('./spec.js', function(){
+  S.getScript('./spec.js?' + S.now, function(){
     mocha.run();
   });
 });
