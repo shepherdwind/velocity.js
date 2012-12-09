@@ -14,11 +14,20 @@ module.exports = function(Velocity, utils){
       var ret      = context[ast.id];
       var local    = this.getLocal(ast);
 
+
       if (ret !== undefined && isfn) {
         ret = this.getPropMethod(ast, context);
       }
 
       if (local.isLocaled) ret = local['value'];
+
+      // 如果是$page.setTitle('xx')类似的方法，需要设置page为对象
+      var isSet = this.hasSetMethod(ast, ret);
+      if (isSet !== false) {
+        if (!context[ast.id]) context[ast.id] = {};
+        utils.mixin(context[ast.id], isSet);
+        return '';
+      }
 
       if (ast.path && ret !== undefined) {
         utils.some(ast.path, function(property, i){
@@ -29,6 +38,33 @@ module.exports = function(Velocity, utils){
 
       if (isVal && ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
       return ret;
+    },
+
+    /**
+     * set方法需要单独处理，假设set只在references最后$page.setTitle('')
+     * 对于set连缀的情况$page.setTitle('sd').setName('haha')
+     */
+    hasSetMethod: function(ast, context){
+      var len = ast.path && ast.path.length;
+      if (!len) return false;
+
+      var lastId = ast.path[len - 1].id;
+
+      if (lastId.indexOf('set') !== 0) {
+        return false;
+      } else {
+
+        context = context || {};
+        utils.forEach(ast.path, function(ast){
+          if (ast.type === 'method' && ast.id.indexOf('set') === 0) {
+            context[ast.id.slice(3)] = this.getLiteral(ast.args[0]);
+          } else {
+            context[ast.id] = context[ast.id] || {};
+          }
+        }, this);
+
+        return context;
+      }
     },
 
     /**

@@ -6,7 +6,6 @@ describe('Parser', function(){
   describe('simple references', function(){
 
     it('simple references', function(){
-
       var vm = 'hello world: $foo';
       var ret = Parser.parse(vm);
 
@@ -94,7 +93,6 @@ describe('Parser', function(){
   describe('Index', function(){
 
     it('all kind of indexs', function(){
-
       var vm = '$foo[0] $foo[$i] $foo["bar"]';
       var asts = Parser.parse(vm);
 
@@ -125,7 +123,6 @@ describe('Parser', function(){
   describe('complex references', function(){
 
     it('property + index + property', function(){
-
       var vm = '$foo.bar[1].junk';
       var ast = Parser.parse(vm)[0];
 
@@ -142,7 +139,6 @@ describe('Parser', function(){
 
 
     it('method + index', function(){
-
       var vm = '$foo.callMethod()[1]';
       var ast = Parser.parse(vm)[0];
 
@@ -158,7 +154,6 @@ describe('Parser', function(){
     });
 
     it('property should not start with alphabet', function(){
-
       var asts = Parser.parse('$foo.124');
       var ast1 = Parser.parse('$foo._24')[0];
       var ast2 = Parser.parse('$foo.-24')[0];
@@ -177,7 +172,6 @@ describe('Parser', function(){
     });
 
     it('index should end with close bracket', function(){
-
       assert.throws(function(){
         Parser.parse("$foo.bar['a'12]");
       }, /Parse error/);
@@ -193,12 +187,10 @@ describe('Parser', function(){
   describe('comment identify', function(){
 
     it('one line comment', function(){
-
       var asts = Parser.parse('#set( $monkey.Number = 123)##number literal');
 
       assert.equal(2         , asts.length);
       assert.equal('comment' , asts[1].type);
-
     });
 
     //it('escape slash');
