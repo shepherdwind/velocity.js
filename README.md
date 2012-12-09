@@ -28,7 +28,7 @@ $ npm install velocity.js
 
 ##Broswer Support
 
-[test case](http://git.shepherdwind.com/velocity.js/runner/tests.html)
+兼容ie6+，chrome等其他浏览器，[test case](http://git.shepherdwind.com/velocity.js/runner/tests.html)
 
 点击[此处](http://git.shepherdwind.com/velocity.js/try/index.html)可以体验web
 端velocity语法解析过程，注：使用ACE作为代码编辑器，仅支持高级浏览器访问。

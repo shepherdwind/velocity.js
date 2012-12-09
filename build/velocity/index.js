@@ -8,6 +8,27 @@ KISSY.add(function(S){
     constructor: Velocity
   };
 
+  var hasEnumBug = !({toString: 1}.propertyIsEnumerable('toString'));
+
+  var keys = Object.keys || function (o) {
+    var result = [], p, i;
+
+    for (p in o) {
+      result.push(p);
+    }
+
+    if (hasEnumBug) {
+      for (i = enumProperties.length - 1; i >= 0; i--) {
+        p = enumProperties[i];
+        if (o.hasOwnProperty(p)) {
+          result.push(p);
+        }
+      }
+    }
+
+    return result;
+  };
+
   //api map
   var utils = {
     forEach : S.each,
@@ -16,7 +37,8 @@ KISSY.add(function(S){
     guid    : S.guid,
     isArray : S.isArray,
     indexOf : S.indexOf,
-    keys    : S.keys,
+    // 1.2没有keys方法，考虑独立utils
+    keys    : keys,
     now     : S.now
   };
 
@@ -639,11 +661,20 @@ KISSY.add(function(S){
       var ret      = context[ast.id];
       var local    = this.getLocal(ast);
 
+
       if (ret !== undefined && isfn) {
         ret = this.getPropMethod(ast, context);
       }
 
       if (local.isLocaled) ret = local['value'];
+
+      // 如果是$page.setTitle('xx')类似的方法，需要设置page为对象
+      var isSet = this.hasSetMethod(ast, ret);
+      if (isSet !== false) {
+        if (!context[ast.id]) context[ast.id] = {};
+        utils.mixin(context[ast.id], isSet);
+        return '';
+      }
 
       if (ast.path && ret !== undefined) {
         utils.some(ast.path, function(property, i){
@@ -654,6 +685,33 @@ KISSY.add(function(S){
 
       if (isVal && ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
       return ret;
+    },
+
+    /**
+     * set方法需要单独处理，假设set只在references最后$page.setTitle('')
+     * 对于set连缀的情况$page.setTitle('sd').setName('haha')
+     */
+    hasSetMethod: function(ast, context){
+      var len = ast.path && ast.path.length;
+      if (!len) return false;
+
+      var lastId = '' + ast.path[len - 1].id;
+
+      if (lastId.indexOf('set') !== 0) {
+        return false;
+      } else {
+
+        context = context || {};
+        utils.forEach(ast.path, function(ast){
+          if (ast.type === 'method' && ast.id.indexOf('set') === 0) {
+            context[ast.id.slice(3)] = this.getLiteral(ast.args[0]);
+          } else {
+            context[ast.id] = context[ast.id] || {};
+          }
+        }, this);
+
+        return context;
+      }
     },
 
     /**
@@ -731,7 +789,7 @@ KISSY.add(function(S){
       //特殊方法
       var specialFns = ['keySet'];
 
-      if (id.indexOf('get') === 0){
+      if (id.indexOf('get') === 0) {
 
         if (_id) {
           ret = baseRef[_id];
@@ -741,10 +799,10 @@ KISSY.add(function(S){
           ret = baseRef[_id];
         }
 
-      } else if (id.indexOf('set') === 0) {
+      } else if (id.indexOf('is') === 0) {
 
-        ret = '';
-        baseRef[_id] = this.getLiteral(property.args[0]);
+        _id = id.slice(2);
+        ret = baseRef[_id];
 
       } else if (id === 'keySet') {
         ret = utils.keys(baseRef);

@@ -48,7 +48,7 @@ module.exports = function(Velocity, utils){
       var len = ast.path && ast.path.length;
       if (!len) return false;
 
-      var lastId = ast.path[len - 1].id;
+      var lastId = '' + ast.path[len - 1].id;
 
       if (lastId.indexOf('set') !== 0) {
         return false;
@@ -142,7 +142,7 @@ module.exports = function(Velocity, utils){
       //特殊方法
       var specialFns = ['keySet'];
 
-      if (id.indexOf('get') === 0){
+      if (id.indexOf('get') === 0) {
 
         if (_id) {
           ret = baseRef[_id];
@@ -152,10 +152,10 @@ module.exports = function(Velocity, utils){
           ret = baseRef[_id];
         }
 
-      } else if (id.indexOf('set') === 0) {
+      } else if (id.indexOf('is') === 0) {
 
-        ret = '';
-        baseRef[_id] = this.getLiteral(property.args[0]);
+        _id = id.slice(2);
+        ret = baseRef[_id];
 
       } else if (id === 'keySet') {
         ret = utils.keys(baseRef);

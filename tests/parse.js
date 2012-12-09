@@ -193,8 +193,6 @@ describe('Parser', function(){
       assert.equal('comment' , asts[1].type);
     });
 
-    //it('escape slash');
-
   });
 
 });

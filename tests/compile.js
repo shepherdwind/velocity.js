@@ -12,16 +12,29 @@ describe('Compile', function(){
 
   describe('References', function(){
 
-    it('get method', function(){
+    it('get/is method', function(){
       var vm = '$customer.getAddress()';
-      var vm1 = '$customer.get("Address")';
-      assert.equal('bar', render(vm, {customer: {Address: "bar"}}));
-      assert.equal('bar', render(vm, {customer: {Address: "bar"}}));
+      var vm1 = '$customer.get("Address") $customer.isAddress()';
+
+      assert.equal('bar'    , render(vm, {customer: {Address: "bar"}}));
+      assert.equal('bar bar', render(vm1, {customer: {Address: "bar"}}));
+    });
+
+    it('index notation', function(){
+      var vm = '$foo[0] $foo[$i] $foo.get(1)';
+      assert.equal('bar haha haha', render(vm, {foo: ["bar", "haha"], i: 1}));
     });
 
     it('set method', function(){
       var vm = '$page.setTitle( "My Home Page" ).setname("haha")$page.Title $page.name';
       assert.equal('My Home Page haha', render(vm));
+    });
+
+    it('quiet reference', function(){
+      var vm = 'my email is $email';
+      var vmquiet = 'my email is $!email';
+      assert.equal(vm, render(vm));
+      assert.equal('my email is ', render(vmquiet));
     });
 
   });
@@ -35,7 +48,7 @@ describe('Compile', function(){
         var compile = new Compile(Parser.parse(str));
         compile.render(context);
         return compile.context;
-      }
+      };
 
       var vm = '#set( $monkey = $bill ) ## variable reference';
       assert.equal("hello", render(vm, {bill: 'hello'}).monkey);
@@ -89,7 +102,7 @@ describe('Compile', function(){
       assert.equal(20  , render('#set($foo = (7 + 3) * (10 - 8))').foo);
       assert.equal(-20 , render('#set($foo = -(7 + 3) * (10 - 8))').foo);
       assert.equal(-1  , render('#set($foo = -7 + 3 * (10 - 8))').foo);
-    })
+    });
 
     it('expression compare', function(){
       assert.equal(false , render('#set($foo = 10 > 11)').foo);
@@ -127,7 +140,7 @@ describe('Compile', function(){
     });
 
     it('not parse #[[ ]]#', function(){
-      var vm = '#foreach ($woogie in $boogie) nothing to $woogie #end'
+      var vm = '#foreach ($woogie in $boogie) nothing to $woogie #end';
       assert.equal(vm, render('#[[' + vm + ']]#'));
     });
 
@@ -157,6 +170,18 @@ describe('Compile', function(){
       assert.equal('<li>book</li><li>phone</li>', render(vm, data));
     });
 
+    it('#foreach with map', function(){
+      var vm   = '#foreach($key in $products) name => $products.name #end';
+      var data = {products: {name: "hanwen"}};
+      assert.equal(' name => hanwen ', render(vm, data));
+    });
+
+    it('#foreach with map keySet', function(){
+      var vm = '#foreach($key in $products.keySet()) $key => $products.get($key) #end';
+      var data = {products: {name: "hanwen"}};
+      assert.equal(' name => hanwen ', render(vm, data));
+    });
+
     it('#break', function(){
       var vm = '#foreach($num in [1..6]) #if($foreach.count > 3) #break #end $num #end';
       assert.equal('  1   2   3     4 ', render(vm));
@@ -178,7 +203,21 @@ describe('Compile', function(){
       assert.equal(' <tr><td>hanwen</td></tr>', render(vm, {foo: 'hanwen'}));
       assert.equal(' <tr><td></td></tr>'      , render(vm));
       assert.equal(' '          , render(vm1, {foo: "haha", bar: false}));
+      assert.equal(' '          , render(vm1, {foo: "haha"}));
       assert.equal(' haha'      , render(vm1, {foo: "haha", bar: true}));
+    });
+
+  });
+
+  describe('Escaping', function(){
+    it('escape slash', function(){
+      var vm = '#set( $email = "foo" )$email \\$email';
+      assert.equal('foo $email', render(vm));
+    });
+
+    it('double slash', function(){
+      var vm = '#set( $email = "foo" )\\\\$email \\\\\\$email';
+      assert.equal("\\foo \\$email", render(vm));
     });
 
   });
