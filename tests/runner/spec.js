@@ -36,24 +36,22 @@ describe('Compile', function(){
 
   describe('Set', function(){
 
-    var render;
+    var getContext = function(str, context){
+      var compile = new Compile(Parser.parse(str));
+      compile.render(context);
+      return compile.context;
+    };
 
     it('set equal to reference', function(){
-      render = function(str, context){
-        var compile = new Compile(Parser.parse(str));
-        compile.render(context);
-        return compile.context;
-      };
-
       var vm = '#set( $monkey = $bill ) ## variable reference';
-      assert.equal("hello", render(vm, {bill: 'hello'}).monkey);
+      assert.equal("hello", getContext(vm, {bill: 'hello'}).monkey);
     });
 
     it('set equal to literal', function(){
       var vm = "#set( $monkey.Friend = 'monica' ) ## string literal\n" +
                '#set( $monkey.Number = 123 ) ##number literal';
-      assert.equal("monica", render(vm).monkey.Friend);
-      assert.equal("123"   , render(vm).monkey.Number);
+      assert.equal("monica", getContext(vm).monkey.Friend);
+      assert.equal("123"   , getContext(vm).monkey.Number);
     });
 
     it('equal to method/property reference', function(){
@@ -69,8 +67,8 @@ describe('Compile', function(){
         web: "name"
       };
 
-      assert.equal("hello world" , render(vm, obj).monkey.Blame);
-      assert.equal("name"        , render(vm, obj).monkey.Plan);
+      assert.equal("hello world" , getContext(vm, obj).monkey.Blame);
+      assert.equal("name"        , getContext(vm, obj).monkey.Plan);
     });
 
 
@@ -82,38 +80,38 @@ describe('Compile', function(){
 
       var list = ["Not", "my", "fault"];
       var map = {"banana" : "good", "roast beef" : "bad"};
-      assert.deepEqual(list , render(vms[0], {my: "my"}).monkey.Say);
-      assert.deepEqual(map  , render(vms[1]).monkey.Map);
+      assert.deepEqual(list , getContext(vms[0], {my: "my"}).monkey.Say);
+      assert.deepEqual(map  , getContext(vms[1]).monkey.Map);
     });
 
     it('expression simple math', function(){
-      assert.equal(10 , render('#set($foo = 2 * 5)').foo);
-      assert.equal(2  , render('#set($foo = 4 / 2)').foo);
-      assert.equal(-3 , render('#set($foo = 2 - 5)').foo);
-      assert.equal(7  , render('#set($foo = 7)').foo);
+      assert.equal(10 , getContext('#set($foo = 2 * 5)').foo);
+      assert.equal(2  , getContext('#set($foo = 4 / 2)').foo);
+      assert.equal(-3 , getContext('#set($foo = 2 - 5)').foo);
+      assert.equal(7  , getContext('#set($foo = 7)').foo);
     });
 
     it('expression complex math', function(){
-      assert.equal(20  , render('#set($foo = (7 + 3) * (10 - 8))').foo);
-      assert.equal(-20 , render('#set($foo = -(7 + 3) * (10 - 8))').foo);
-      assert.equal(-1  , render('#set($foo = -7 + 3 * (10 - 8))').foo);
+      assert.equal(20  , getContext('#set($foo = (7 + 3) * (10 - 8))').foo);
+      assert.equal(-20 , getContext('#set($foo = -(7 + 3) * (10 - 8))').foo);
+      assert.equal(-1  , getContext('#set($foo = -7 + 3 * (10 - 8))').foo);
     });
 
     it('expression compare', function(){
-      assert.equal(false , render('#set($foo = 10 > 11)').foo);
-      assert.equal(true  , render('#set($foo = 10 < 11)').foo);
-      assert.equal(true  , render('#set($foo = 10 != 11)').foo);
-      assert.equal(false , render('#set($foo = 10 == 11)').foo);
+      assert.equal(false , getContext('#set($foo = 10 > 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 10 < 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 10 != 11)').foo);
+      assert.equal(false , getContext('#set($foo = 10 == 11)').foo);
     });
 
     it('expression logic', function(){
-      assert.equal(false , render('#set($foo = 10 == 11 && 3 > 1)').foo);
-      assert.equal(true  , render('#set($foo = 10 < 11 && 3 > 1)').foo);
-      assert.equal(true  , render('#set($foo = 10 > 11 || 3 > 1)').foo);
-      assert.equal(true  , render('#set($foo = !(10 > 11) && 3 > 1)').foo);
-      assert.equal(false , render('#set($foo = $a > $b)', {a: 1, b: 2}).foo);
-      assert.equal(false , render('#set($foo = $a && $b)', {a: 1, b: 0}).foo);
-      assert.equal(true  , render('#set($foo = $a || $b)', {a: 1, b: 0}).foo);
+      assert.equal(false , getContext('#set($foo = 10 == 11 && 3 > 1)').foo);
+      assert.equal(true  , getContext('#set($foo = 10 < 11 && 3 > 1)').foo);
+      assert.equal(true  , getContext('#set($foo = 10 > 11 || 3 > 1)').foo);
+      assert.equal(true  , getContext('#set($foo = !(10 > 11) && 3 > 1)').foo);
+      assert.equal(false , getContext('#set($foo = $a > $b)', {a: 1, b: 2}).foo);
+      assert.equal(false , getContext('#set($foo = $a && $b)', {a: 1, b: 0}).foo);
+      assert.equal(true  , getContext('#set($foo = $a || $b)', {a: 1, b: 0}).foo);
     });
 
   });

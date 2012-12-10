@@ -3,7 +3,6 @@
 %left '+' '-'
 %left '*' '/' 
 %left '!'
-%left UMINUS
 
 %start root
 
@@ -68,12 +67,12 @@ directives
 
 set
   : HASH SET PARENTHESIS equal CLOSE_PARENTHESIS 
-      { $$ = {type: $2, equal: $4}; }
+      { $$ = {type: 'set', equal: $4}; }
   ;
 
 if
   : HASH IF PARENTHESIS expression CLOSE_PARENTHESIS
-      { $$ = {type: $2, condition: $4}; }
+      { $$ = {type: 'if', condition: $4}; }
   ;
 
 elseif
@@ -204,16 +203,21 @@ math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
   | math '!=' math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
-  | PARENTHESIS math CLOSE_PARENTHESIS
-      { $$ = {type: 'math', expression: [$2], operator: 'parenthesis'}; }
+  | parenthesis
+      { $$ = $1; }
+  | '-' parenthesis
+      { $$ = {type: 'math', expression: [$2], operator: 'minus'}; }
   | '!' math
       { $$ = {type: 'math', expression: [$2], operator: 'not'}; }
-  | '-' math %prec UMINUS
-      { $$ = {type: 'math', expression: [$2], operator: 'minus'}; }
   | references
       { $$ = $1; }
   | literal
       { $$ = $1; }
+  ;
+
+parenthesis
+  : PARENTHESIS math CLOSE_PARENTHESIS
+      { $$ = {type: 'math', expression: [$2], operator: 'parenthesis'}; }
   ;
 
 references
