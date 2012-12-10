@@ -130,6 +130,8 @@ body {
 
 #mocha .test pre {
   display: inline-block;
+  *zoom: 1;
+  *display: inline;
   font: 12px/1.5 monaco, monospace;
   margin: 5px;
   padding: 15px;
@@ -215,6 +217,8 @@ body {
 
 #mocha-stats li {
   display: inline-block;
+  *zoom: 1;
+  *display: inline;
   margin: 0 5px;
   list-style: none;
   padding-top: 11px;
