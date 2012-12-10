@@ -14,10 +14,11 @@ var Velocity = {
 };
 
 Velocity.render = function(template, context){
+
   var t1   = Date.now();
   var asts = Parser.parse(template);
   var t2   = Date.now();
-  var str  = 'parse syntax tree finished, cost time: ' + (t2 - t1)+ 'ms.';
+  //var str  = 'parse syntax tree finished, cost time: ' + (t2 - t1)+ 'ms.';
 
   var compile = new Compile(asts);
   return compile.render(context);
