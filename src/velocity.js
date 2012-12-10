@@ -4,7 +4,7 @@ var Compile = require('./compile/');
 var Helper  = {};
 
 Helper.Structure = require('./helper/structure');
-Helper.Jsonify   = require('./helper/Jsonify');
+Helper.Jsonify   = require('./helper/jsonify');
 Helper.BackStep  = require('./helper/backstep');
 
 var Velocity = {
