@@ -317,8 +317,8 @@ literal
       { $$ = $1; }
   | integer
       { $$ = {type: 'integer', value: $1 }; }
-  | NULL
-      { $$ = {type: 'null' }; }
+  | BOOL
+      { $$ = {type: 'bool', value: $1 }; }
   ;
 
 integer

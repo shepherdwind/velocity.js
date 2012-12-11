@@ -95,7 +95,8 @@
 <c,i>","                          { return 'COMMA'; }
 <c,i>'"'(\\\"|[^\"])*'"'          { yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'EVAL_STRING'; }
 <c,i>"'"(\\\'|[^\'])*"'"          { yytext = yytext.substr(1, yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
-<c,i>"null"                       { return 'NULL'; }
+<c,i>"null"                       { return 'BOOL'; }
+<c,i>"false"                      { return 'BOOL'; }
 <h,c,i>[0-9]+                     { return 'INTEGER'; }
 <mu,h,c,i>[a-zA-Z][a-zA-Z0-9_\-]* { return 'ID'; }
 <mu>"#"                           { this.begin('h'); return 'HASH'; }
