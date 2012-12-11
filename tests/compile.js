@@ -200,8 +200,8 @@ describe('Compile', function(){
 
       assert.equal(' <tr><td>hanwen</td></tr>', render(vm, {foo: 'hanwen'}));
       assert.equal(' <tr><td></td></tr>'      , render(vm));
-      assert.equal(' '          , render(vm1, {foo: "haha", bar: false}));
       assert.equal(' '          , render(vm1, {foo: "haha"}));
+      assert.equal(' '          , render(vm1, {foo: "haha", bar: false}));
       assert.equal(' haha'      , render(vm1, {foo: "haha", bar: true}));
     });
 

@@ -35,7 +35,7 @@
 [^\x00]+                          { return 'CONTENT'; }
 <h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
 <h>"#"\[\[[\s\S]+?\]\]"#"         { this.popState(); yytext = yytext.replace(/^#\[\[|\]\]#$/g, ''); return 'CONTENT'}
-<h>"##"[^\n]+                     { this.popState(); return 'COMMENT'; }
+<h,mu>"##"[^\n]+                  { this.popState(); return 'COMMENT'; }
 <h>"#"/[^\s]                      { return 'HASH'; }
 <h>"set"[ ]*                      { return 'SET'; }
 <h>"if"[ ]*                       { return 'IF'; }
@@ -100,6 +100,7 @@
 <c,i>"true"                       { return 'BOOL'; }
 <h,c,i>[0-9]+                     { return 'INTEGER'; }
 <mu,h,c,i>[a-zA-Z][a-zA-Z0-9_\-]* { return 'ID'; }
+<mu>"#"                           { this.begin('h'); return 'HASH'; }
 <h,mu>.                           { this.popState(); return 'CONTENT'; }
 <h,mu>\s+                         { this.popState(); return 'CONTENT'; }
 <esc>[\$#]                        { this.popState(); return 'CONTENT'; }

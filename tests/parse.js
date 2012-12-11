@@ -184,6 +184,16 @@ describe('Parser', function(){
 
   });
 
+  describe('Directives', function(){
+
+    it('#macro', function(){
+      var vm = '#macro( d $a $b)#if($b)$a#end#end #d($foo $bar)';
+      var asts = Parser.parse(vm);
+      assert.equal(asts.length, 7);
+    });
+
+  });
+
   describe('comment identify', function(){
 
     it('one line comment', function(){

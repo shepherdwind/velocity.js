@@ -547,6 +547,15 @@ KISSY.add(function(S){
         utils.forEach(map, function(exp, key){
           ret[key] = this.getLiteral(exp);
         }, this);
+      } else if(type == 'bool') {
+
+        if (literal.value === "null") {
+          ret = null;
+        } else if (literal.value === 'false') {
+          ret = false;
+        } else if (literal.value === 'true') {
+          ret = true;
+        }
 
       } else {
 
