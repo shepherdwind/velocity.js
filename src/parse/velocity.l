@@ -92,7 +92,7 @@
 
 <i>".."                           { return 'RANGE'; }
 <mu,h,c,i>"."                     { return 'DOT'; }
-<mu,h,c,i>","                     { return 'COMMA'; }
+<c,i>","                          { return 'COMMA'; }
 <c,i>'"'(\\\"|[^\"])*'"'          { yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'EVAL_STRING'; }
 <c,i>"'"(\\\'|[^\'])*"'"          { yytext = yytext.substr(1, yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }
 <c,i>"null"                       { return 'NULL'; }
