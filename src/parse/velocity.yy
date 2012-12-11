@@ -221,22 +221,36 @@ parenthesis
   ;
 
 references
-  : DOLLAR VAR_BEGIN ID attributes VAR_END 
+  : DOLLAR brace_begin ID attributes brace_end
       { $$ = {type: "references", id: $3, path: $4, isWraped: true, leader: $1 }; }
   | DOLLAR ID attributes 
       { $$ = {type: "references", id: $2, path: $3, leader: $1 }; }
-  | DOLLAR VAR_BEGIN methodbd attributes VAR_END 
+  | DOLLAR brace_begin methodbd attributes brace_end
       { $$ = {type: "references", id: $3.id, path: $4, isWraped: true, leader: $1, args: $3.args }; }
   | DOLLAR methodbd attributes 
       { $$ = {type: "references", id: $2.id, path: $3, leader: $1, args: $3.args }; }
   | DOLLAR ID 
       { $$ = {type: "references", id: $2, leader: $1 }; }
-  | DOLLAR VAR_BEGIN ID VAR_END 
+  | DOLLAR brace_begin ID brace_end
       { $$ = {type: "references", id: $3, isWraped: true, leader: $1 }; }
   | DOLLAR methodbd
       { $$ = {type: "references", id: $2.id, leader: $1, args: $2.args }; }
-  | DOLLAR VAR_BEGIN methodbd VAR_END 
+  | DOLLAR brace_end methodbd brace_end
       { $$ = {type: "references", id: $3.id, isWraped: true, args: $3.args, leader: $1 }; }
+  ;
+
+brace_begin
+  : VAR_BEGIN 
+      { $$ = $1; }
+  | MAP_BEGIN
+      { $$ = $1; }
+  ;
+
+brace_end
+  : VAR_END
+      { $$ = $1; }
+  | MAP_END
+      { $$ = $1; }
   ;
 
 attributes
