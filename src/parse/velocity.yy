@@ -33,7 +33,7 @@ statement
   | content 
       { $$ = $1; }
   | COMMENT
-      { $$ = {type: 'comment', value: $1}; }
+      { $$ = {type: 'comment', value: $1 }; }
   ;
 
 directives
@@ -67,66 +67,66 @@ directives
 
 set
   : HASH SET PARENTHESIS equal CLOSE_PARENTHESIS 
-      { $$ = {type: 'set', equal: $4}; }
+      { $$ = {type: 'set', equal: $4 }; }
   ;
 
 if
   : HASH IF PARENTHESIS expression CLOSE_PARENTHESIS
-      { $$ = {type: 'if', condition: $4}; }
+      { $$ = {type: 'if', condition: $4 }; }
   ;
 
 elseif
   : HASH ELSEIF PARENTHESIS expression CLOSE_PARENTHESIS
-      { $$ = {type: 'elseif', condition: $4}; }
+      { $$ = {type: 'elseif', condition: $4 }; }
   ;
 
 else
   : HASH ELSE
-      { $$ = {type: 'else'}; }
+      { $$ = {type: 'else' }; }
   ;
 
 end
   : HASH END
-      { $$ = {type: 'end'}; }
+      { $$ = {type: 'end' }; }
   ;
 
 foreach
   : HASH FOREACH PARENTHESIS DOLLAR ID IN references CLOSE_PARENTHESIS
-      { $$ = {type: 'foreach', to: $5, from: $7}; }
+      { $$ = {type: 'foreach', to: $5, from: $7 }; }
   | HASH FOREACH PARENTHESIS DOLLAR ID IN array CLOSE_PARENTHESIS
-      { $$ = {type: 'foreach', to: $5, from: $7}; }
+      { $$ = {type: 'foreach', to: $5, from: $7 }; }
   ;
 
 break
   : HASH BREAK
-      { $$ = {type: $2}; }
+      { $$ = {type: $2 }; }
   ;
 
 include
   : HASH INCLUDE PARENTHESIS params CLOSE_PARENTHESIS
-      { $$ = {type: 'include', args: $4}; }
+      { $$ = {type: 'include', args: $4 }; }
   ;
 
 parse
   : HASH PARSE PARENTHESIS string CLOSE_PARENTHESIS
-      { $$ = {type: 'parse', id: $4}; }
+      { $$ = {type: 'parse', id: $4 }; }
   ;
 
 evaluate
   : HASH EAVL PARENTHESIS DOLLAR ID CLOSE_PARENTHESIS
-      { $$ = {type: 'evaluate', id: $5}; }
+      { $$ = {type: 'evaluate', id: $5 }; }
   ;
 
 define
   : HASH DEFINE PARENTHESIS DOLLAR ID CLOSE_PARENTHESIS
-      { $$ = {type: 'define', id: $5}; }
+      { $$ = {type: 'define', id: $5 }; }
   ;
 
 macro
   : HASH MACRO PARENTHESIS ID macro_args CLOSE_PARENTHESIS
-      { $$ = {type: 'macro', id: $4, args: $5}; }
+      { $$ = {type: 'macro', id: $4, args: $5 }; }
   | HASH MACRO PARENTHESIS ID CLOSE_PARENTHESIS
-      { $$ = {type: 'macro', id: $4}; }
+      { $$ = {type: 'macro', id: $4 }; }
   ;
 
 macro_args
@@ -138,9 +138,9 @@ macro_args
 
 macro_call
   : HASH ID PARENTHESIS macro_call_args CLOSE_PARENTHESIS
-      { $$ = {type:"macro_call", id: $2, args: $4}; }
+      { $$ = {type:"macro_call", id: $2, args: $4 }; }
   | HASH ID PARENTHESIS CLOSE_PARENTHESIS
-      { $$ = {type:"macro_call", id: $2}; }
+      { $$ = {type:"macro_call", id: $2 }; }
   ;
 
 /**
@@ -184,31 +184,31 @@ expression
 
 math
   : math '||' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '&&' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '+' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '-' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '*' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '/' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '>' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '<' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '==' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '!=' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2}; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | parenthesis
       { $$ = $1; }
   | '-' parenthesis
-      { $$ = {type: 'math', expression: [$2], operator: 'minus'}; }
+      { $$ = {type: 'math', expression: [$2], operator: 'minus' }; }
   | '!' math
-      { $$ = {type: 'math', expression: [$2], operator: 'not'}; }
+      { $$ = {type: 'math', expression: [$2], operator: 'not' }; }
   | references
       { $$ = $1; }
   | literal
@@ -217,26 +217,26 @@ math
 
 parenthesis
   : PARENTHESIS math CLOSE_PARENTHESIS
-      { $$ = {type: 'math', expression: [$2], operator: 'parenthesis'}; }
+      { $$ = {type: 'math', expression: [$2], operator: 'parenthesis' }; }
   ;
 
 references
   : DOLLAR VAR_BEGIN ID attributes VAR_END 
-      { $$ = {type: "references", id: $3, path: $4, isWraped: true, leader: $1}; }
+      { $$ = {type: "references", id: $3, path: $4, isWraped: true, leader: $1 }; }
   | DOLLAR ID attributes 
-      { $$ = {type: "references", id: $2, path: $3, leader: $1}; }
+      { $$ = {type: "references", id: $2, path: $3, leader: $1 }; }
   | DOLLAR VAR_BEGIN methodbd attributes VAR_END 
-      { $$ = {type: "references", id: $3.id, path: $4, isWraped: true, leader: $1, args: $3.args}; }
+      { $$ = {type: "references", id: $3.id, path: $4, isWraped: true, leader: $1, args: $3.args }; }
   | DOLLAR methodbd attributes 
-      { $$ = {type: "references", id: $2.id, path: $3, leader: $1, args: $3.args}; }
+      { $$ = {type: "references", id: $2.id, path: $3, leader: $1, args: $3.args }; }
   | DOLLAR ID 
-      { $$ = {type: "references", id: $2, leader: $1}; }
+      { $$ = {type: "references", id: $2, leader: $1 }; }
   | DOLLAR VAR_BEGIN ID VAR_END 
-      { $$ = {type: "references", id: $3, isWraped: true, leader: $1}; }
+      { $$ = {type: "references", id: $3, isWraped: true, leader: $1 }; }
   | DOLLAR methodbd
-      { $$ = {type: "references", id: $2.id, leader: $1, args: $2.args}; }
+      { $$ = {type: "references", id: $2.id, leader: $1, args: $2.args }; }
   | DOLLAR VAR_BEGIN methodbd VAR_END 
-      { $$ = {type: "references", id: $3.id, isWraped: true, args: $3.args, leader: $1}; }
+      { $$ = {type: "references", id: $3.id, isWraped: true, args: $3.args, leader: $1 }; }
   ;
 
 attributes
@@ -248,11 +248,11 @@ attributes
 
 attribute
   : method 
-      { $$ = {type:"method", id: $1.id, args: $1.args}; }
+      { $$ = {type:"method", id: $1.id, args: $1.args }; }
   | index 
-      { $$ = {type: "index", id: $1}; }
+      { $$ = {type: "index", id: $1 }; }
   | property 
-      { $$ = {type: "property", id: $1}; if ($1.type === 'content') $$ = $1; }
+      { $$ = {type: "property", id: $1 }; if ($1.type === 'content') $$ = $1; }
   ;
 
 method
@@ -262,9 +262,9 @@ method
 
 methodbd
   : ID PARENTHESIS params CLOSE_PARENTHESIS
-      { $$ = {id: $1, args: $3}; }
+      { $$ = {id: $1, args: $3 }; }
   | ID PARENTHESIS CLOSE_PARENTHESIS 
-      { $$ = {id: $1, args: false}; }
+      { $$ = {id: $1, args: false }; }
   ;
 
 params
@@ -282,7 +282,7 @@ property
   : DOT ID 
       { $$ = $2; }
   | DOT CONTENT 
-      { $$ = {type: 'content', value: $1 + $2}; }
+      { $$ = {type: 'content', value: $1 + $2 }; }
   ;
 
 index
@@ -291,18 +291,20 @@ index
   | BRACKET references CLOSE_BRACKET 
       { $$ = $2; } 
   | BRACKET literal CONTENT 
-      { $$ = {type: "content", value: $1 + $2.value + $3}; } 
+      { $$ = {type: "content", value: $1 + $2.value + $3 }; } 
   | BRACKET CONTENT 
-      { $$ = {type: "content", value: $1 + $2}; } 
+      { $$ = {type: "content", value: $1 + $2 }; } 
   | BRACKET CLOSE_BRACKET 
-      { $$ = {type: "content", value: $1 + $2}; } 
+      { $$ = {type: "content", value: $1 + $2 }; } 
   ;
 
 literal
   : string 
       { $$ = $1; }
   | integer
-      { $$ = {type: 'integer', value: $1}; }
+      { $$ = {type: 'integer', value: $1 }; }
+  | NULL
+      { $$ = {type: 'null' }; }
   ;
 
 integer
@@ -314,9 +316,9 @@ integer
 
 string
   : STRING
-      { $$ = {type: 'string', value: $1}; }
+      { $$ = {type: 'string', value: $1 }; }
   | EVAL_STRING
-      { $$ = {type: 'string', value: $1, isEval: true}; }
+      { $$ = {type: 'string', value: $1, isEval: true }; }
   ;
 
 literals
@@ -330,16 +332,16 @@ literals
 
 array
   : BRACKET params CLOSE_BRACKET 
-      { $$ = {type: 'array', value: $2}; }
+      { $$ = {type: 'array', value: $2 }; }
   | BRACKET integer RANGE integer CLOSE_BRACKET 
-      { $$ = {type: 'array', isRange: true, value: [$2, $4]}; }
+      { $$ = {type: 'array', isRange: true, value: [$2, $4] }; }
   | BRACKET CLOSE_BRACKET 
-      { $$ = {type: 'array', value: []}; }
+      { $$ = {type: 'array', value: [] }; }
   ;
 
 map
   : MAP_BEGIN map_item MAP_END
-      { $$ = {type: 'map', value: $2}; }
+      { $$ = {type: 'map', value: $2 }; }
   ;
 
 map_item
