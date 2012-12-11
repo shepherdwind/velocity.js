@@ -100,7 +100,6 @@
 <c,i>"true"                       { return 'BOOL'; }
 <h,c,i>[0-9]+                     { return 'INTEGER'; }
 <mu,h,c,i>[a-zA-Z][a-zA-Z0-9_\-]* { return 'ID'; }
-<mu>"#"                           { this.begin('h'); return 'HASH'; }
 <h,mu>.                           { this.popState(); return 'CONTENT'; }
 <h,mu>\s+                         { this.popState(); return 'CONTENT'; }
 <esc>[\$#]                        { this.popState(); return 'CONTENT'; }
