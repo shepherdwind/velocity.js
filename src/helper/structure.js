@@ -40,7 +40,9 @@ Structure.prototype = {
   },
 
   _setForEach: function(ast){
-    this._setRefs(ast.from, ['string']);
+    if (ast.from.type == 'references') {
+      this._setRefs(ast.from, ['string']);
+    }
   },
 
   _setIf: function(condition){
@@ -59,6 +61,7 @@ Structure.prototype = {
   _setRefs: function(ast, spyData){
     var context = this.context;
     spyData = spyData || 'string';
+    debugger;
     if (ast.path) {
       context[ast.id] = context[ast.id] || {};
       var ret = context[ast.id];
@@ -128,8 +131,8 @@ Structure.prototype = {
       baseRef[_id] = spy;
       ret = baseRef[_id];
     } else if (id.indexOf('set') === 0) {
-      ret = '';
       baseRef[_id] = this.getLiteral(property.args[0]);
+      ret = baseRef;
     } else if (id === 'keySet') {
       ret = Object.keys(baseRef);
     } else {

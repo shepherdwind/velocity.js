@@ -5,6 +5,8 @@ Options:
   -h, --help         output usage information
   -V, --version      output the version number
   -b, --build        build .vm file to js ast module of kissy
+  -m, --makeup       show makeup of .vm file variable
+  -j, --jsonify      show jsonify of .vm file variable
 
 Example:
 

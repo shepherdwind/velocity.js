@@ -116,6 +116,7 @@ module.exports = function(Velocity, utils){
       var ret = '';
       var guid = utils.guid();
       var contextId = 'foreach:' + guid;
+      var len = utils.isArray(_from)? _from.length: utils.keys(_from).length;
 
       utils.forEach(_from, function(val, i){
 
@@ -127,7 +128,7 @@ module.exports = function(Velocity, utils){
         //index.
         local['foreach']['count'] = i + 1;
         local['foreach']['index'] = i;
-        local['foreach']['hasNext'] = !!val[i + 1];
+        local['foreach']['hasNext'] = i + 1 < len;
         this.local[contextId] = local;
         ret += this._render(_block, contextId);
 

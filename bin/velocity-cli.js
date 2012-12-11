@@ -5,6 +5,8 @@ var currentPath = process.cwd();
 
 var Velocity = require('../src/velocity');
 var Parser = Velocity.Parser;
+var Structure = Velocity.Helper.Structure;
+var Jsonify = Velocity.Helper.Jsonify;
 
 function buildAst(files){
   var _template = fs.readFileSync(__dirname + '/build-tpl.js').toString();
@@ -90,9 +92,42 @@ function showVersion() {
   console.log('v' + JSON.parse(data).version);
 }
 
+function jsonify(file){
+
+  file = process.cwd() + '/' + file;
+
+  if (!fs.existsSync(file)) {
+    console.log('$ velocity --makeup xx.vm');
+    return;
+  }
+
+  var asts = Parser.parse(fs.readFileSync(file).toString());
+  var makeup = new Jsonify(asts);
+  console.log(makeup.context);
+  //console.log(JSON.stringify(makeup.context, true, 2));
+}
+
+function showMakeup(file){
+
+  file = process.cwd() + '/' + file;
+
+  if (!fs.existsSync(file)) {
+    console.log('$ velocity --makeup xx.vm');
+    return;
+  }
+
+  var asts = Parser.parse(fs.readFileSync(file).toString());
+  var makeup = new Structure(asts);
+  console.log(makeup.context);
+  //console.log(JSON.stringify(makeup.context, true, 2));
+
+}
+
 module.exports = {
   parse: parseVelocity,
   buildAst: buildAst,
   showHelp: showHelp,
-  showVersion: showVersion
+  showVersion: showVersion,
+  showMakeup: showMakeup,
+  jsonify: jsonify
 };

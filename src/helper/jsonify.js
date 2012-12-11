@@ -283,8 +283,8 @@ Jsonify.prototype = {
       baseRef[_id] = spy;
       ret = baseRef[_id];
     } else if (id.indexOf('set') === 0) {
-      ret = '';
       baseRef[_id] = this.getLiteral(property.args[0]);
+      ret = baseRef;
     } else {
       ret = baseRef[id];
       baseRef[id] = spy;
