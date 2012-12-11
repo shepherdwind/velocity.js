@@ -62,8 +62,8 @@
 <h,c,i>"!"                        { return yytext; }
 <h,c,i>"="                        { return 'EQUAL'; }
 <c,i>\s+                          { /*ignore whitespace*/ }
-<h,c>"{"                          { return 'MAP_BEGIN'; }
-<h,c>"}"                          { return 'MAP_END'; }
+<i,c>"{"                          { return 'MAP_BEGIN'; }
+<i,c>"}"                          { return 'MAP_END'; }
 <h,c>":"                          { return 'MAP_SPLIT'; }
 <mu>"{"                           { return 'VAR_BEGIN'; }
 <mu>"}"                           { this.popState(); return 'VAR_END'; }
