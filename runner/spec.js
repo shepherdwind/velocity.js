@@ -195,8 +195,8 @@ describe('Compile', function(){
 
       assert.equal(' <tr><td>hanwen</td></tr>', render(vm, {foo: 'hanwen'}));
       assert.equal(' <tr><td></td></tr>'      , render(vm));
-      assert.equal(' '          , render(vm1, {foo: "haha", bar: false}));
       assert.equal(' '          , render(vm1, {foo: "haha"}));
+      assert.equal(' '          , render(vm1, {foo: "haha", bar: false}));
       assert.equal(' haha'      , render(vm1, {foo: "haha", bar: true}));
     });
 
@@ -395,6 +395,16 @@ describe('Parser', function(){
         Parser.parse("$foo.bar[_a'12]");
       }, /Lexical error/);
 
+    });
+
+  });
+
+  describe('Directives', function(){
+
+    it('#macro', function(){
+      var vm = '#macro( d $a $b)#if($b)$a#end#end #d($foo $bar)';
+      var asts = Parser.parse(vm);
+      assert.equal(asts.length, 7);
     });
 
   });
