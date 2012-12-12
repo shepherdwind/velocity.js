@@ -205,6 +205,11 @@ describe('Compile', function(){
       assert.equal(' haha'      , render(vm1, {foo: "haha", bar: true}));
     });
 
+    it('#noescape', function(){
+      var vm = '#noescape()$hello#end';
+      assert.equal('hello world', render(vm, {hello: 'hello world'}));
+    });
+
   });
 
   describe('Escaping', function(){

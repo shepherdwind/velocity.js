@@ -1,5 +1,5 @@
 module.exports = function(Velocity, utils){
-  var BLOCK_TYPES = ['if', 'foreach', 'macro'];
+  var BLOCK_TYPES = ['if', 'foreach', 'macro', 'noescape'];
   /**
    * compile
    */

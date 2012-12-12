@@ -21,7 +21,6 @@ Jsonify.prototype = {
     this.conditions = [];
 
     this._render(this.asts);
-    console.log(this.context);
   },
 
   toVTL: function(){

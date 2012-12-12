@@ -142,7 +142,7 @@ KISSY.add(function(S){
       var _block = [ast];
       var _inBlock = [];
       var index = 0;
-      var blockTypes = ['if', 'foreach', 'macro'];
+      var blockTypes = ['if', 'foreach', 'macro', 'noescape'];
 
       /**
        * 处理block嵌套，重新构造_block，把block中有嵌套的放入数组_inBlock,
@@ -174,6 +174,8 @@ KISSY.add(function(S){
         ret = this.getBlockEach(_block);
       } else if (ast.type === 'macro') {
         this.setBlockMacro(_block);
+      } else if (ast.type === 'noescape') {
+        ret = this._render(_block.slice(1));
       }
 
       return ret;
@@ -247,6 +249,10 @@ KISSY.add(function(S){
       var guid = utils.guid();
       var contextId = 'foreach:' + guid;
 
+      if (!_from) return;
+
+      var len = utils.isArray(_from)? _from.length: utils.keys(_from).length;
+
       utils.forEach(_from, function(val, i){
 
         if (this.setBreak) return;
@@ -257,7 +263,7 @@ KISSY.add(function(S){
         //index.
         local['foreach']['count'] = i + 1;
         local['foreach']['index'] = i;
-        local['foreach']['hasNext'] = !!val[i + 1];
+        local['foreach']['hasNext'] = i + 1 < len;
         this.local[contextId] = local;
         ret += this._render(_block, contextId);
 
@@ -307,7 +313,7 @@ KISSY.add(function(S){
 
 /** file: ./src/compile/compile.js*/
 !function(Velocity, utils){
-  var BLOCK_TYPES = ['if', 'foreach', 'macro'];
+  var BLOCK_TYPES = ['if', 'foreach', 'macro', 'noescape'];
   /**
    * compile
    */

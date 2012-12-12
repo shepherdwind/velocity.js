@@ -59,6 +59,8 @@ directives
       { $$ = $1; }
   | define
       { $$ = $1; }
+  | HASH NOESCAPE PARENTHESIS CLOSE_PARENTHESIS
+      { $$ = { type: 'noescape' }; }
   | macro
       { $$ = $1; }
   | macro_call
