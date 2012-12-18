@@ -185,16 +185,23 @@ describe('Compile', function(){
       '  "js_alieditControl":"build/js/pa/alieditcontrol-update.js?t=20110608"\n' +
       '})\n' +
       '#foreach($item in $js_file.entrySet())\n'+
-      '$item.key = $item.value'+
+      '$item.key = $staticServer.getURI("/$item.value")'+
       '#end\n';
 
-      var ret = 'js_arale = build/js/arale.js?t=20110608' +
-                'js_ma_template = build/js/ma/template.js?t=20110608' +
-                'js_pa_pa = build/js/pa/pa.js?t=20110608' +
-                'js_swiff = build/js/app/swiff.js?t=20110608' +
-                'js_alieditControl = build/js/pa/alieditcontrol-update.js?t=20110608';
+      var ret = 'js_arale = /path/build/js/arale.js?t=20110608' +
+                'js_ma_template = /path/build/js/ma/template.js?t=20110608' +
+                'js_pa_pa = /path/build/js/pa/pa.js?t=20110608' +
+                'js_swiff = /path/build/js/app/swiff.js?t=20110608' +
+                'js_alieditControl = /path/build/js/pa/alieditcontrol-update.js?t=20110608';
+      var data = {
+        staticServer: {
+          getURI: function(url){
+            return '/path' + url;
+          }
+        }
+      };
 
-      assert.equal(ret, render(vm));
+      assert.equal(ret, render(vm, data));
 
     });
 
