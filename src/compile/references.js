@@ -141,7 +141,7 @@ module.exports = function(Velocity, utils){
       var ret        = '';
       var _id        = id.slice(3);
 
-      if (id.indexOf('get') === 0) {
+      if (!(id in baseRef) && id.indexOf('get') === 0) {
 
         if (_id) {
           ret = baseRef[_id];

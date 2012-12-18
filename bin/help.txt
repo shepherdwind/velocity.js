@@ -13,8 +13,8 @@ Example:
   # parse vm file
   $ velocity a.vm 
 
-  # parse vm file with json data
-  $ velocity a.vm  a.json
+  # parse vm file with json data or js file with module.exports as data
+  $ velocity a.vm  a.js
 
   # build asts module of kissy
   $ velocity *.vm
