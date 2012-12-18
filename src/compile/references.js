@@ -1,4 +1,5 @@
 module.exports = function(Velocity, utils){
+
   utils.mixin(Velocity.prototype, {
     /**
      * 引用求值
@@ -139,8 +140,6 @@ module.exports = function(Velocity, utils){
       var id         = property.id;
       var ret        = '';
       var _id        = id.slice(3);
-      //特殊方法
-      var specialFns = ['keySet'];
 
       if (id.indexOf('get') === 0) {
 
@@ -159,6 +158,11 @@ module.exports = function(Velocity, utils){
 
       } else if (id === 'keySet') {
         ret = utils.keys(baseRef);
+      } else if (id === 'entrySet') {
+        ret = [];
+        utils.forEach(baseRef, function(value, key){
+          ret.push({key: key, value: value});
+        });
       } else {
 
         ret = baseRef[id];
