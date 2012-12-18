@@ -661,6 +661,7 @@ KISSY.add(function(S){
 
 /** file: ./src/compile/references.js*/
 !function(Velocity, utils){
+
   utils.mixin(Velocity.prototype, {
     /**
      * 引用求值
@@ -801,8 +802,6 @@ KISSY.add(function(S){
       var id         = property.id;
       var ret        = '';
       var _id        = id.slice(3);
-      //特殊方法
-      var specialFns = ['keySet'];
 
       if (id.indexOf('get') === 0) {
 
@@ -821,6 +820,11 @@ KISSY.add(function(S){
 
       } else if (id === 'keySet') {
         ret = utils.keys(baseRef);
+      } else if (id === 'entrySet') {
+        ret = [];
+        utils.forEach(baseRef, function(value, key){
+          ret.push({key: key, value: value});
+        });
       } else {
 
         ret = baseRef[id];

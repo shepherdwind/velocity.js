@@ -175,6 +175,29 @@ describe('Compile', function(){
       assert.equal(' name => hanwen ', render(vm, data));
     });
 
+    it('#foreach with map entrySet', function(){
+      var vm = '' +
+      '#set($js_file = {\n' +
+      '  "js_arale":"build/js/arale.js?t=20110608",\n'+
+      '  "js_ma_template":"build/js/ma/template.js?t=20110608",\n'+
+      '  "js_pa_pa":"build/js/pa/pa.js?t=20110608",\n'+
+      '  "js_swiff":"build/js/app/swiff.js?t=20110608",\n' +
+      '  "js_alieditControl":"build/js/pa/alieditcontrol-update.js?t=20110608"\n' +
+      '})\n' +
+      '#foreach($item in $js_file.entrySet())\n'+
+      '$item.key = $item.value'+
+      '#end\n';
+
+      var ret = 'js_arale = build/js/arale.js?t=20110608' +
+                'js_ma_template = build/js/ma/template.js?t=20110608' +
+                'js_pa_pa = build/js/pa/pa.js?t=20110608' +
+                'js_swiff = build/js/app/swiff.js?t=20110608' +
+                'js_alieditControl = build/js/pa/alieditcontrol-update.js?t=20110608';
+
+      assert.equal(ret, render(vm));
+
+    });
+
     it('#break', function(){
       var vm = '#foreach($num in [1..6]) #if($foreach.count > 3) #break #end $num #end';
       assert.equal('  1   2   3     4 ', render(vm));
