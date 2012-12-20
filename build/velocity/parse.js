@@ -650,7 +650,12 @@ case 39:
                                       /** 遇到#set(a = b)括号结束后结束状态h*/
                                       if (len === 2 && this.conditionStack[1] === "h"){
                                         this.popState();
+                                      } else if (len === 3 && this.conditionStack[1] === "mu" && this.conditionStack[2] === "h") {
+                                        // issue#7 $foo#if($a)...#end
+                                        this.popState();
+                                        this.popState();
                                       }
+
                                       return 26; 
                                     } else {
                                       return 'CONTENT'; 

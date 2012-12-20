@@ -279,6 +279,11 @@ describe('Compile', function(){
       assert.equal(vm, render(vm));
     });
 
+    it('issue #7: $ meet with #', function(){
+      var vm = '$bar.foo()#if(1>0)...#end';
+      assert.equal('$bar.foo()...', render(vm));
+    });
+
   });
 
 });
