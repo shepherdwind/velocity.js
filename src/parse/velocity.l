@@ -36,7 +36,7 @@
 <h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
 <h>"#"\[\[[\s\S]+?\]\]"#"         { this.popState(); yytext = yytext.replace(/^#\[\[|\]\]#$/g, ''); return 'CONTENT'}
 <h,mu>"##"[^\n]+                  { this.popState(); return 'COMMENT'; }
-<h>"#"/[^\s]                      { return 'HASH'; }
+<h>"#"/[a-zA-Z{]                  { return 'HASH'; }
 <h>"set"[ ]*                      { return 'SET'; }
 <h>"if"[ ]*                       { return 'IF'; }
 <h>"elseif"[ ]*                   { return 'ELSEIF'; }
@@ -58,8 +58,8 @@
 <c,i>"||"                         { return yytext; }
 <c,i>"&&"                         { return yytext; }
 <c,i>"!="                         { return yytext; }
-<mu,c,i>"$!"                      { return 'DOLLAR'; }
-<mu,h,c,i>"$"                     { return 'DOLLAR'; }
+<mu,c,i>"$!"/[{a-zA-Z_]           { return 'DOLLAR'; }
+<mu,h,c,i>"$"/[{a-zA-Z_]          { return 'DOLLAR'; }
 <h,c,i>"!"                        { return yytext; }
 <h,c,i>"="                        { return 'EQUAL'; }
 <c,i>\s+                          { /*ignore whitespace*/ }

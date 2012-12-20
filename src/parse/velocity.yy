@@ -384,4 +384,6 @@ content
       { $$ = $1 + $2 + $3; }
   | HASH ID EOF
       { $$ = $1 + $2; }
+  | DOLLAR CONTENT
+      { $$ = $1 + $2; }
   ;

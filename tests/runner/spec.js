@@ -250,6 +250,20 @@ describe('Compile', function(){
 
   });
 
+  describe('Error condiction', function(){
+
+    it('css color render', function(){
+      var vm = 'color: #666; height: 39px;';
+      assert.equal(vm, render(vm));
+    });
+
+    it('jquery parse', function(){
+      var vm = '$(function(){ $("a").click(); $.post(); })';
+      assert.equal(vm, render(vm));
+    });
+
+  });
+
 });
 describe('Parser', function(){
 
