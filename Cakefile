@@ -6,7 +6,7 @@ buildCompile = (tplfile)->
   files = fs.readdirSync 'src/compile'
   velocity = ''
   files.forEach (file) ->
-    if file isnt 'index.js'
+    if file isnt 'index.js' and file isnt 'node.js'
       text = (fs.readFileSync "./src/compile/#{file}").toString()
       text = text.replace 'module.exports = ', "/** file: ./src/compile/#{file}*/\n!"
       text = text.replace /;\s*$/ , "(Velocity, utils);\n\n"

@@ -6,18 +6,23 @@ function Jsonify(){
 }
 
 var TRIM = /[\t\n\r]+/g;
-var BLOCK_TYPES = ['if', 'foreach', 'macro'];
+var BLOCK_TYPES = ['if', 'foreach', 'macro', 'noescape'];
 
 Jsonify.prototype = {
 
   constructor: Jsonify,
 
   init: function(asts){
-    this.context = {};
-    this.asts = asts;
-    this.references = [];
-    this.local = {};
-    this.macros = {};
+
+    this.jsonify = {
+      objects : {},
+      methods : {}
+    };
+
+    this.context    = {};
+    this.asts       = asts;
+    this.local      = {};
+    this.macros     = {};
     this.conditions = [];
 
     this._render(this.asts);
@@ -53,11 +58,7 @@ Jsonify.prototype = {
         break;
 
         case 'set':
-        this.setValue(ast);
-        break;
-
-        case 'break':
-        this.setBreak = true;
+        //this.setValue(ast);
         break;
 
         case 'macro_call':
@@ -65,7 +66,7 @@ Jsonify.prototype = {
         break;
 
         case 'end':
-        //使用slide获取block的拷贝
+        //使用slice获取block的拷贝
         this.getBlock(block.slice());
         block = [];
         break;
@@ -80,15 +81,21 @@ Jsonify.prototype = {
   },
 
   getLocal: function(ref){
-    var ret = this;
+
+    var ret = { context: this.context, isGlobal: true };
+
     utils.some(this.conditions, function(content){
+
       var local = this.local[content];
       var index = local.variable.indexOf(ref.id);
-      if (index > -1){
+
+      if (index > -1) {
         ret = local;
+        ret['isGlobal'] = false;
         ret['real'] = ret.maps? ret.maps[index]: ref;
         return true;
       }
+
     }, this);
 
     return ret;
@@ -174,6 +181,7 @@ Jsonify.prototype = {
     var local = {
       type: 'foreach',
       variable: [ast.to],
+      ast : ast,
       context: {}
     };
 
@@ -184,7 +192,7 @@ Jsonify.prototype = {
 
     this._render(asts);
 
-    this.getReferences(ast.from, this._setEachVTL(ast, local));
+    this.getReferences(ast.from, this._setEachVTL(ast, local), this.jsonify.objects);
     this.conditions.pop();
   },
 
@@ -207,10 +215,37 @@ Jsonify.prototype = {
     return value;
   },
 
-  getReferences: function(ast, spyData){
+  isMethodCall: function(ast){
+
+    if (ast.args !== undefined) {
+      return true;
+    } else if (ast.path) {
+
+      var i = 0;
+      utils.forEach(ast.path, function(_ast){
+        if (_ast.type === 'method' && _ast.args) {
+          i ++;
+        }
+      });
+
+      return i;
+    }
+  },
+
+  getReferences: function(ast, spyData, context){
+
     var local = this.getLocal(ast);
-    var context = local.context;
-    var _ast = local === this? ast: local['real'];
+    var isMethod;
+
+    if (context === undefined) {
+      context = local.context;
+      if (this.isMethodCall(ast)) {
+        isMethod = true;
+        context = this.jsonify.methods;
+      }
+    } 
+
+    var _ast = local.isGlobal? ast: local['real'];
     spyData = spyData !== undefined ? spyData: Helper.getRefText(_ast);
 
     if (ast.path) {
@@ -220,7 +255,31 @@ Jsonify.prototype = {
       utils.forEach(ast.path, function(property, i){
         var isEnd = len === i + 1;
         var spy = isEnd? spyData: {};
-        ret = this._setAttributes(property, ret, spy);
+
+        if (isMethod && property.type === 'method') {
+          ret[property.id] = ret[property.id] || [];
+          ret = ret[property.id];
+          var self = this;
+          var foreach = false;
+
+          var args = property.args.map(function(ast){
+            var local = self.getLocal(ast);
+            if (local.isGlobal === false && local.type === 'foreach') {
+              foreach = local.ast;
+            }
+            return Helper.getRefText(ast);
+          });
+
+          if (foreach) {
+            ret.push(this._getObject(foreach, args, spy));
+          } else {
+            ret.push([args, spy]);
+          }
+
+        } else {
+          ret = this._setAttributes(property, ret, spy);
+        }
+
       }, this);
     } else {
       //强制设值
@@ -230,6 +289,13 @@ Jsonify.prototype = {
         context[ast.id] = context[ast.id] || spyData;
       }
     }
+  },
+
+  _getObject: function(ast, args, ret){
+    var from = ast.from;
+    var value = '[#foreach($' + ast.to + ' in ' + Helper.getRefText(from) + ")";
+    value += JSON.stringify(args) + ',"' + ret + '"#end]';
+    return value;
   },
 
   _setAttributes: function(property, baseRef, spy){
@@ -310,12 +376,6 @@ Jsonify.prototype = {
 
     utils.forEach(macro.args, function(formal, i){
       var val = local.context[formal.id];
-      //if (val.indexOf('#foreach') > -1) {
-      ////replace formal parameter as actual parameter
-      //val = val.replace('$' + formal.id, Helper.getRefText(ast.args[i]));
-      //} else {
-      //val = Helper.getRefText(ast.args[i]);
-      //}
       this.getReferences(ast.args[i], val);
     }, this);
 

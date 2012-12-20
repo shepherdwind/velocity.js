@@ -112,6 +112,8 @@ include
 parse
   : HASH PARSE PARENTHESIS string CLOSE_PARENTHESIS
       { $$ = {type: 'parse', id: $4 }; }
+  | HASH PARSE PARENTHESIS references CLOSE_PARENTHESIS
+      { $$ = {type: 'parse', id: $4 }; }
   ;
 
 evaluate

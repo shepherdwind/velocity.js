@@ -3,6 +3,8 @@ var utils   = require('./utils');
 var Compile = require('./compile/');
 var Helper  = {};
 
+Compile.Parser = Parser;
+
 Helper.Structure = require('./helper/structure');
 Helper.Jsonify   = require('./helper/jsonify');
 Helper.BackStep  = require('./helper/backstep');

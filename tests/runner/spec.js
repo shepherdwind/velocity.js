@@ -184,17 +184,24 @@ describe('Compile', function(){
       '  "js_swiff":"build/js/app/swiff.js?t=20110608",\n' +
       '  "js_alieditControl":"build/js/pa/alieditcontrol-update.js?t=20110608"\n' +
       '})\n' +
-      '#foreach($item in $js_file.entrySet())\n'+
-      '$item.key = $item.value'+
+      '#foreach($_item in $js_file.entrySet())\n'+
+      '$_item.key = $staticServer.getURI("/${_item.value}")'+
       '#end\n';
 
-      var ret = 'js_arale = build/js/arale.js?t=20110608' +
-                'js_ma_template = build/js/ma/template.js?t=20110608' +
-                'js_pa_pa = build/js/pa/pa.js?t=20110608' +
-                'js_swiff = build/js/app/swiff.js?t=20110608' +
-                'js_alieditControl = build/js/pa/alieditcontrol-update.js?t=20110608';
+      var ret = 'js_arale = /path/build/js/arale.js?t=20110608' +
+                'js_ma_template = /path/build/js/ma/template.js?t=20110608' +
+                'js_pa_pa = /path/build/js/pa/pa.js?t=20110608' +
+                'js_swiff = /path/build/js/app/swiff.js?t=20110608' +
+                'js_alieditControl = /path/build/js/pa/alieditcontrol-update.js?t=20110608';
+      var data = {
+        staticServer: {
+          getURI: function(url){
+            return '/path' + url;
+          }
+        }
+      };
 
-      assert.equal(ret, render(vm));
+      assert.equal(ret, render(vm, data));
 
     });
 
@@ -398,7 +405,6 @@ describe('Parser', function(){
 
     it('property should not start with alphabet', function(){
       var asts = Parser.parse('$foo.124');
-      var ast1 = Parser.parse('$foo._24')[0];
       var ast2 = Parser.parse('$foo.-24')[0];
 
       assert.equal(2         , asts.length);
@@ -407,8 +413,6 @@ describe('Parser', function(){
       assert.equal('content' , asts[0].path[0].type);
       assert.equal('24'      , asts[1]);
 
-      assert.equal('._'      , ast1.path[0].value);
-      assert.equal('content' , ast1.path[0].type);
       assert.equal('.-'      , ast2.path[0].value);
       assert.equal('content' , ast2.path[0].type);
 
@@ -418,11 +422,6 @@ describe('Parser', function(){
       assert.throws(function(){
         Parser.parse("$foo.bar['a'12]");
       }, /Parse error/);
-
-      assert.throws(function(){
-        Parser.parse("$foo.bar[_a'12]");
-      }, /Lexical error/);
-
     });
 
   });

@@ -97,6 +97,10 @@ module.exports = function(Velocity, utils){
           str += this.getMacro(ast);
           break;
 
+          case 'parse':
+          str += this.getParse(ast);
+          break;
+
           case 'end':
           //使用slide获取block的拷贝
           str += this.getBlock(block.slice());

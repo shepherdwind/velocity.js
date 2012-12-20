@@ -102,12 +102,24 @@ module.exports = function(Velocity, utils){
      * 对双引号字符串进行eval求值，替换其中的变量，只支持最基本的变量类型替换
      */
     evalStr: function(str){
-      var ret = str;
-      var reg = /\$\{{0,1}([a-z][a-z_\-0-9.]*)\}{0,1}/gi;
-      var self = this;
-      ret = ret.replace(reg, function(){
-        return self._getFromVarname(arguments[1]);
-      });
+
+      // 如果是Broswer环境，使用正则执行evalStr，如果是node环境，或者自行设置
+      // Velocity.Parser = Parser，可以对evalStr完整支持
+      if (Velocity.Parser) {
+
+        var asts = Velocity.Parser.parse(str);
+        ret = this._render(asts);
+
+      } else {
+
+        var ret = str;
+        var reg = /\$\{{0,1}([_a-z][a-z_\-0-9.]*)\}{0,1}/gi;
+        var self = this;
+        ret = ret.replace(reg, function(){
+          return self._getFromVarname(arguments[1]);
+        });
+      }
+
       return ret;
     },
 
