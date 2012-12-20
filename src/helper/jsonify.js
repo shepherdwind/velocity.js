@@ -14,12 +14,12 @@ Jsonify.prototype = {
 
   init: function(asts){
 
-    this.jsonify = {
+    this.context = {
       objects : {},
-      methods : {}
+      methods : {},
+      strings : {}
     };
 
-    this.context    = {};
     this.asts       = asts;
     this.local      = {};
     this.macros     = {};
@@ -82,7 +82,7 @@ Jsonify.prototype = {
 
   getLocal: function(ref){
 
-    var ret = { context: this.context, isGlobal: true };
+    var ret = { context: this.context.strings, isGlobal: true };
 
     utils.some(this.conditions, function(content){
 
@@ -192,7 +192,23 @@ Jsonify.prototype = {
 
     this._render(asts);
 
-    this.getReferences(ast.from, this._setEachVTL(ast, local), this.jsonify.objects);
+    var len = ast.from.path && ast.from.path.length;
+    var last = len && ast.from.path[len - 1];
+
+    if (last && last.type === 'method' ) {
+
+      if (last.id === 'keySet') {
+        return;
+      } else {
+        var text = this._getObject(ast, null, '$' + ast.to);
+        this.getReferences(ast.from, text, this.context.methods);
+        return;
+      }
+
+    }
+
+    this.getReferences(ast.from, this._setEachVTL(ast, local), this.context.objects);
+
     this.conditions.pop();
   },
 
@@ -203,7 +219,7 @@ Jsonify.prototype = {
     if (from === undefined) from = ast.from;
 
     var endPart = " #end ]";
-    var value = '[ #foreach($' + ast.to + ' in ' + Helper.getRefText(from) + ")";
+    var value = '[#foreach($' + ast.to + ' in ' + Helper.getRefText(from) + ")";
     //ast.to取值
     var vm = local.context[ast.to];
     if (typeof vm === 'string') {
@@ -222,14 +238,24 @@ Jsonify.prototype = {
     } else if (ast.path) {
 
       var i = 0;
-      utils.forEach(ast.path, function(_ast){
-        if (_ast.type === 'method' && _ast.args) {
+      var num = 0;
+      var len = ast.path.length - 1;
+
+      utils.forEach(ast.path, function(_ast, _i){
+        if (_ast.type === 'method' && _ast.id.indexOf('get') !== 0) {
           i ++;
+          num = _i;
         }
       });
 
-      return i;
+      //如果只有一个方法调用，并且是最后一个，形如: $foo.bar($name)形式
+      if (i === 1 && num === len) {
+        return true;
+      } else if (i) {
+        return false;
+      }
     }
+
   },
 
   getReferences: function(ast, spyData, context){
@@ -239,9 +265,13 @@ Jsonify.prototype = {
 
     if (context === undefined) {
       context = local.context;
-      if (this.isMethodCall(ast)) {
+      var isMethod = this.isMethodCall(ast);
+      if (isMethod === true) {
         isMethod = true;
-        context = this.jsonify.methods;
+        context = this.context.methods;
+      } else if (isMethod === false) {
+        // 如果形如$foo.bar().bar() $foo.bar().title 不做处理
+        return;
       }
     } 
 
@@ -249,31 +279,49 @@ Jsonify.prototype = {
     spyData = spyData !== undefined ? spyData: Helper.getRefText(_ast);
 
     if (ast.path) {
+
       context[ast.id] = context[ast.id] || {};
       var ret = context[ast.id];
       var len = ast.path.length;
+
       utils.forEach(ast.path, function(property, i){
+
         var isEnd = len === i + 1;
         var spy = isEnd? spyData: {};
 
         if (isMethod && property.type === 'method') {
+
           ret[property.id] = ret[property.id] || [];
           ret = ret[property.id];
           var self = this;
           var foreach = false;
 
-          var args = property.args.map(function(ast){
-            var local = self.getLocal(ast);
-            if (local.isGlobal === false && local.type === 'foreach') {
-              foreach = local.ast;
-            }
-            return Helper.getRefText(ast);
-          });
+          var args;
+
+          if (utils.isArray(property.args)) {
+
+            args = property.args.map(function(ast){
+
+              if (ast.type === 'references') {
+                var local = self.getLocal(ast);
+                if (local.isGlobal === false && local.type === 'foreach') {
+                  foreach = local.ast;
+                }
+                return Helper.getRefText(ast);
+              } else {
+                return ast.id;
+              }
+
+            });
+
+          } else {
+            args = [property.args];
+          }
 
           if (foreach) {
             ret.push(this._getObject(foreach, args, spy));
           } else {
-            ret.push([args, spy]);
+            ret.push(args.concat(spy));
           }
 
         } else {
@@ -292,10 +340,33 @@ Jsonify.prototype = {
   },
 
   _getObject: function(ast, args, ret){
+
     var from = ast.from;
-    var value = '[#foreach($' + ast.to + ' in ' + Helper.getRefText(from) + ")";
-    value += JSON.stringify(args) + ',"' + ret + '"#end]';
-    return value;
+    var last, value;
+
+    if (from.path && from.path.length) {
+      last = from.path[from.path.length - 1];
+    }
+
+    if (last.type === 'method') {
+
+      if (last.id === 'keySet') {
+
+        var o = {};
+        o[args] = ret;
+        value = '[#foreach($' + ast.to + ' in ' + Helper.getRefText(from) + ") ";
+        value += JSON.stringify(o) + '#if($foreach.hasNext), #end #end]';
+        return value;
+
+      } else {
+
+        var itemText = args === null ? ret : [].concat(args, ret);
+        value = '[#foreach($' + ast.to + ' in ' + Helper.getRefText(from) + ") ";
+        value +=  JSON.stringify(itemText) + ' #if($foreach.hasNext), #end #end]';
+        return value;
+
+      }
+    }
   },
 
   _setAttributes: function(property, baseRef, spy){

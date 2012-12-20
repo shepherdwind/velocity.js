@@ -858,7 +858,7 @@ KISSY.add(function(S){
           ret = baseRef[_id];
         }
 
-      } else if (id.indexOf('is') === 0) {
+      } else if (!(id in baseRef) && id.indexOf('is') === 0) {
 
         _id = id.slice(2);
         ret = baseRef[_id];

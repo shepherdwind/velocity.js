@@ -153,6 +153,17 @@ describe('Compile', function(){
       assert.equal('Go South' , render(vm, {foo: 9}));
     });
 
+    it('#if with arguments', function(){
+      var vm = '#if($foo.isTrue(true))true#end';
+      var foo = {
+        isTrue: function(str) {
+          return !!str;
+        }
+      }
+
+      assert.equal('true', render(vm, {foo: foo}));
+    });
+
   });
 
   describe('Loops', function(){
@@ -177,16 +188,16 @@ describe('Compile', function(){
 
     it('#foreach with map entrySet', function(){
       var vm = '' +
-      '#set($js_file = {\n' +
-      '  "js_arale":"build/js/arale.js?t=20110608",\n'+
-      '  "js_ma_template":"build/js/ma/template.js?t=20110608",\n'+
-      '  "js_pa_pa":"build/js/pa/pa.js?t=20110608",\n'+
-      '  "js_swiff":"build/js/app/swiff.js?t=20110608",\n' +
-      '  "js_alieditControl":"build/js/pa/alieditcontrol-update.js?t=20110608"\n' +
-      '})\n' +
-      '#foreach($_item in $js_file.entrySet())\n'+
-      '$_item.key = $staticServer.getURI("/${_item.value}")'+
-      '#end\n';
+               '#set($js_file = {\n' +
+               '  "js_arale":"build/js/arale.js?t=20110608",\n'+
+               '  "js_ma_template":"build/js/ma/template.js?t=20110608",\n'+
+               '  "js_pa_pa":"build/js/pa/pa.js?t=20110608",\n'+
+               '  "js_swiff":"build/js/app/swiff.js?t=20110608",\n' +
+               '  "js_alieditControl":"build/js/pa/alieditcontrol-update.js?t=20110608"\n' +
+               '})\n' +
+               '#foreach($_item in $js_file.entrySet())\n'+
+               '$_item.key = $staticServer.getURI("/${_item.value}")'+
+               '#end\n';
 
       var ret = 'js_arale = /path/build/js/arale.js?t=20110608' +
                 'js_ma_template = /path/build/js/ma/template.js?t=20110608' +
