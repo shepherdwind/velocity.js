@@ -88,7 +88,7 @@ describe('Compile', function(){
       assert.equal(10 , getContext('#set($foo = 2 * 5)').foo);
       assert.equal(2  , getContext('#set($foo = 4 / 2)').foo);
       assert.equal(-3 , getContext('#set($foo = 2 - 5)').foo);
-      assert.equal(1 , getContext('#set($foo = 2 % 5)').foo);
+      assert.equal(1  , getContext('#set($foo = 5 % 2)').foo);
       assert.equal(7  , getContext('#set($foo = 7)').foo);
     });
 
