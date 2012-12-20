@@ -299,6 +299,11 @@ describe('Compile', function(){
       assert.equal('$bar.foo()...', render(vm));
     });
 
+    it('# meet with css property', function(){
+      var vm = '#margin-top:2px;';
+      assert.equal(vm, render(vm));
+    });
+
   });
 
 });
