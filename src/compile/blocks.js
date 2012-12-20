@@ -134,6 +134,7 @@ module.exports = function(Velocity, utils){
         local['foreach']['count'] = i + 1;
         local['foreach']['index'] = i;
         local['foreach']['hasNext'] = i + 1 < len;
+        local['velocityCount'] = i + 1;
         this.local[contextId] = local;
         ret += this._render(_block, contextId);
 

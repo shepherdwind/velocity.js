@@ -1,7 +1,7 @@
 %left '||' '&&'
 %left '>' '==' '<' '!='
 %left '+' '-'
-%left '*' '/' 
+%left '*' '/' '%'
 %left '!'
 
 %start root
@@ -198,6 +198,8 @@ math
   | math '*' math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '/' math
+      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+  | math '%' math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '>' math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
