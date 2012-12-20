@@ -495,6 +495,14 @@ KISSY.add(function(S){
           ret = this.getExpression(exp[0]) == this.getExpression(exp[1]);
           break;
 
+          case '>=':
+          ret = this.getExpression(exp[0]) >= this.getExpression(exp[1]);
+          break;
+
+          case '<=':
+          ret = this.getExpression(exp[0]) <= this.getExpression(exp[1]);
+          break;
+
           case '!=':
           ret = this.getExpression(exp[0]) != this.getExpression(exp[1]);
           break;

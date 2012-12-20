@@ -34,7 +34,7 @@ describe('Compile', function(){
 
   });
 
-  describe('Set', function(){
+  describe('Set && Expression', function(){
 
     var getContext = function(str, context){
       var compile = new Compile(Parser.parse(str));
@@ -102,6 +102,10 @@ describe('Compile', function(){
       assert.equal(false , getContext('#set($foo = 10 > 11)').foo);
       assert.equal(true  , getContext('#set($foo = 10 < 11)').foo);
       assert.equal(true  , getContext('#set($foo = 10 != 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 10 <= 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 11 <= 11)').foo);
+      assert.equal(false , getContext('#set($foo = 12 <= 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 12 >= 11)').foo);
       assert.equal(false , getContext('#set($foo = 10 == 11)').foo);
     });
 

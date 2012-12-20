@@ -53,6 +53,8 @@
 <h>"macro"[ ]*                    { return 'MACRO'; }
 <c,i>"in"                         { return 'IN'; }
 <c,i>[%\+\-\*/]                   { return yytext; }
+<c,i>"<="                         { return yytext; }
+<c,i>">="                         { return yytext; }
 <c,i>[><]                         { return yytext; }
 <c,i>"=="                         { return yytext; }
 <c,i>"||"                         { return yytext; }
