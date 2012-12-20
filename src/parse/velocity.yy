@@ -357,10 +357,21 @@ literals
 array
   : BRACKET params CLOSE_BRACKET 
       { $$ = {type: 'array', value: $2 }; }
-  | BRACKET integer RANGE integer CLOSE_BRACKET 
-      { $$ = {type: 'array', isRange: true, value: [$2, $4] }; }
+  | range
+      { $$ = $1; }
   | BRACKET CLOSE_BRACKET 
       { $$ = {type: 'array', value: [] }; }
+  ;
+
+range
+  : BRACKET integer RANGE integer CLOSE_BRACKET
+      { $$ = {type: 'array', isRange: true, value: [$2, $4]}; }
+  | BRACKET references RANGE integer CLOSE_BRACKET
+      { $$ = {type: 'array', isRange: true, value: [$2, $4]}; }
+  | BRACKET integer RANGE references CLOSE_BRACKET
+      { $$ = {type: 'array', isRange: true, value: [$2, $4]}; }
+  | BRACKET references RANGE references CLOSE_BRACKET
+      { $$ = {type: 'array', isRange: true, value: [$2, $4]}; }
   ;
 
 map
