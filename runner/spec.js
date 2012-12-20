@@ -5,6 +5,12 @@ describe('Compile', function(){
     return compile.render(context);
   }
 
+  function getContext(str, context){
+    var compile = new Compile(Parser.parse(str));
+    compile.render(context);
+    return compile.context;
+  }
+
   describe('References', function(){
 
     it('get/is method', function(){
@@ -34,13 +40,7 @@ describe('Compile', function(){
 
   });
 
-  describe('Set', function(){
-
-    var getContext = function(str, context){
-      var compile = new Compile(Parser.parse(str));
-      compile.render(context);
-      return compile.context;
-    };
+  describe('Set && Expression', function(){
 
     it('set equal to reference', function(){
       var vm = '#set( $monkey = $bill ) ## variable reference';
@@ -102,6 +102,10 @@ describe('Compile', function(){
       assert.equal(false , getContext('#set($foo = 10 > 11)').foo);
       assert.equal(true  , getContext('#set($foo = 10 < 11)').foo);
       assert.equal(true  , getContext('#set($foo = 10 != 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 10 <= 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 11 <= 11)').foo);
+      assert.equal(false , getContext('#set($foo = 12 <= 11)').foo);
+      assert.equal(true  , getContext('#set($foo = 12 >= 11)').foo);
       assert.equal(false , getContext('#set($foo = 10 == 11)').foo);
     });
 
@@ -114,6 +118,7 @@ describe('Compile', function(){
       assert.equal(false , getContext('#set($foo = $a && $b)', {a: 1, b: 0}).foo);
       assert.equal(true  , getContext('#set($foo = $a || $b)', {a: 1, b: 0}).foo);
     });
+
 
   });
 
@@ -136,6 +141,16 @@ describe('Compile', function(){
     it('not parse #[[ ]]#', function(){
       var vm = '#foreach ($woogie in $boogie) nothing to $woogie #end';
       assert.equal(vm, render('#[[' + vm + ']]#'));
+    });
+
+    it('Range Operator', function(){
+      var vm1 = '#set($foo = [-1..2])';
+      var vm2 = '#set($foo = [-1..$bar])';
+      var vm3 = '#set($foo = [$bar..2])';
+      assert.deepEqual([-1, 0, 1, 2], getContext(vm1).foo);
+      assert.deepEqual([-1, 0, 1, 2], getContext(vm2, {bar: 2}).foo);
+      assert.deepEqual([-1, 0, 1, 2], getContext(vm3, {bar: -1}).foo);
+      assert.deepEqual([], getContext('#set($foo = [$bar..1])').foo);
     });
 
   });
@@ -277,6 +292,11 @@ describe('Compile', function(){
     it('issue #7: $ meet with #', function(){
       var vm = '$bar.foo()#if(1>0)...#end';
       assert.equal('$bar.foo()...', render(vm));
+    });
+
+    it('# meet with css property', function(){
+      var vm = '#margin-top:2px;';
+      assert.equal(vm, render(vm));
     });
 
   });

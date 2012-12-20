@@ -495,6 +495,14 @@ KISSY.add(function(S){
           ret = this.getExpression(exp[0]) == this.getExpression(exp[1]);
           break;
 
+          case '>=':
+          ret = this.getExpression(exp[0]) >= this.getExpression(exp[1]);
+          break;
+
+          case '<=':
+          ret = this.getExpression(exp[0]) <= this.getExpression(exp[1]);
+          break;
+
           case '!=':
           ret = this.getExpression(exp[0]) != this.getExpression(exp[1]);
           break;
@@ -606,14 +614,29 @@ KISSY.add(function(S){
       var ret = [];
 
       if (literal.isRange) {
-        var begin = parseInt(literal.value[0], 10);
-        var end   = parseInt(literal.value[1], 10);
+
+        var begin = literal.value[0];
+        if (begin.type === 'references') {
+          begin = this.getReferences(begin);
+        }
+
+        var end = literal.value[1];
+        if (end.type === 'references') {
+          end = this.getReferences(end);
+        }
+
+        end   = parseInt(end, 10);
+        begin = parseInt(begin, 10);
+
         var i;
 
-        if (begin < end) {
-          for (i = begin; i <= end; i++) ret.push(i);
-        } else {
-          for (i = begin; i >= end; i--) ret.push(i);
+        if (!isNaN(begin) && !isNaN(end)) {
+
+          if (begin < end) {
+            for (i = begin; i <= end; i++) ret.push(i);
+          } else {
+            for (i = begin; i >= end; i--) ret.push(i);
+          }
         }
 
       } else {
