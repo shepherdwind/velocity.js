@@ -1,6 +1,4 @@
-##Velocity - Template Engine
-
-[![Build Status](https://secure.travis-ci.org/shepherdwind/velocity.js.png)](https://travis-ci.org/shepherdwind/velocity.js)
+##Velocity - Template Engine [![Build Status](https://secure.travis-ci.org/shepherdwind/velocity.js.png)](https://travis-ci.org/shepherdwind/velocity.js)
 
 velocity.js是velocity模板语法的javascript实现。
 [Velocity](http://velocity.apache.org/) 是基于Java的模板引擎，广泛应用在阿里集

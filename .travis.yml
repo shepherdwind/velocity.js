@@ -7,8 +7,5 @@ notifications:
 node_js:
   - 0.8
 
-install:
-  - npm install mocha
-
 script:
-  - mocha tests -R spec
+  - mocha tests
