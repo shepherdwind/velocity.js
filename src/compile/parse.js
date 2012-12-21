@@ -16,9 +16,12 @@ module.exports = function(Velocity, utils){
           Velocity.Helper.getRefText(ast.id) : ('"' + ast.id + '"') ) + ')';
       } else {
         var str = getString(param);
-        var asts = Parser.parse(str);
-
-        return this._render(asts);
+        if (str) {
+          var asts = Parser.parse(str);
+          return this._render(asts);
+        } else {
+          return '';
+        }
       }
 
     }
