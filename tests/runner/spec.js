@@ -248,13 +248,19 @@ describe('Compile', function(){
 
     it('compex #macro', function(){
       var vm = '#macro( d $name)<tr><td>$!name</td></tr>#end #d($foo)';
-      var vm1 = '#macro( d $a $b)#if($b)$a#end#end #d($foo $bar)';
+      var vm1 = '#macro( d $a $b)#if($b)$a#end#end #d ( $foo $bar )';
 
       assert.equal(' <tr><td>hanwen</td></tr>', render(vm, {foo: 'hanwen'}));
       assert.equal(' <tr><td></td></tr>'      , render(vm));
       assert.equal(' '          , render(vm1, {foo: "haha"}));
       assert.equal(' '          , render(vm1, {foo: "haha", bar: false}));
       assert.equal(' haha'      , render(vm1, {foo: "haha", bar: true}));
+    });
+
+    it('#macro call arguments', function(){
+      var vm = '#macro( d $a $b $d)$a$b$!d#end #d ( $foo , $bar, $dd )';
+      assert.equal(' ab', render(vm, {foo: 'a', bar: 'b'}));
+      assert.equal(' abd', render(vm, {foo: 'a', bar: 'b', dd: 'd'}));
     });
 
     it('#noescape', function(){

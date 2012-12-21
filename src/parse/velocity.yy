@@ -141,35 +141,36 @@ macro_args
   ;
 
 macro_call
-  : HASH ID PARENTHESIS macro_call_args CLOSE_PARENTHESIS
-      { $$ = {type:"macro_call", id: $2, args: $4 }; }
+  : HASH ID PARENTHESIS macro_call_args_all CLOSE_PARENTHESIS
+      { $$ = { type:"macro_call", id: $2.replace(/^\s+|\s+$/g, ''), args: $4 }; }
   | HASH ID PARENTHESIS CLOSE_PARENTHESIS
-      { $$ = {type:"macro_call", id: $2 }; }
+      { $$ = { type:"macro_call", id: $2.replace(/^\s+|\s+$/g, '') }; }
   ;
 
-/**
- * 空格被忽略了，references array 无法和references自身区分开，比如$name[1],
- * $name [1]两者是一样的，可以是references array，也可以是references 此处处理，
- * 让macro_call_args和velocity解释有差异 
- */
 macro_call_args
-  : literal
-      { $$ = [$1]; }
-  | array
+  : literals
       { $$ = [$1]; }
   | references
       { $$ = [$1]; }
-  | macro_call_args literal
-      { $$ = [].concat($1, $2); }
-  | macro_call_args references
-      { $$ = [].concat($1, $2); }
+  | macro_call_args SPACE literals
+      { $$ = [].concat($1, $3); }
+  | macro_call_args COMMA literals
+      { $$ = [].concat($1, $3); }
+  | macro_call_args COMMA references
+      { $$ = [].concat($1, $3); }
+  | macro_call_args SPACE references
+      { $$ = [].concat($1, $3); }
   ;
 
-arguments
-  : DOLLAR ID
+macro_call_args_all
+  : macro_call_args
+      { $$ = $1; }
+  | SPACE macro_call_args
       { $$ = $2; }
-  | arguments DOLLAR ID
-      { $$ = [].concat($1, $3); }
+  | SPACE macro_call_args SPACE
+      { $$ = $2; }
+  | macro_call_args SPACE
+      { $$ = $1; }
   ;
 
 equal
