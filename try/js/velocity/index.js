@@ -203,7 +203,21 @@ KISSY.add(function(S){
       var ret = '';
 
       if (!macro) {
-        ret = '';
+
+        var jsmacros = this.jsmacros;
+        macro = jsmacros[ast.id];
+        var jsArgs = [];
+
+        if (macro && macro.apply) {
+
+          utils.forEach(ast.args, function(a){
+            jsArgs.push(this.getLiteral(a));
+          }, this);
+
+          ret = macro.apply(null, jsArgs);
+
+        }
+
       } else {
         var asts = macro.asts;
         var args = macro.args;
@@ -346,9 +360,15 @@ KISSY.add(function(S){
       }
     },
 
-    render: function(context){
+    /**
+     * @param context {object} 上下文环境，数据对象
+     * @param macro   {object} self defined #macro
+     * @return str
+     */
+    render: function(context, macros){
 
       this.context = context || {};
+      this.jsmacros = macros || {};
       var t1 = utils.now();
       var str = this._render();
       var t2 = utils.now();
@@ -722,9 +742,12 @@ KISSY.add(function(S){
           Velocity.Helper.getRefText(ast.id) : ('"' + ast.id + '"') ) + ')';
       } else {
         var str = getString(param);
-        var asts = Parser.parse(str);
-
-        return this._render(asts);
+        if (str) {
+          var asts = Parser.parse(str);
+          return this._render(asts);
+        } else {
+          return '';
+        }
       }
 
     }
