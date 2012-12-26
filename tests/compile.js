@@ -5,9 +5,9 @@ var Compile = Velocity.Compile;
 
 describe('Compile', function(){
 
-  function render(str, context){
+  function render(str, context, macros){
     var compile = new Compile(Parser.parse(str));
-    return compile.render(context);
+    return compile.render(context, macros);
   }
 
   function getContext(str, context){
@@ -308,6 +308,24 @@ describe('Compile', function(){
     it('# meet with css property', function(){
       var vm = '#margin-top:2px;';
       assert.equal(vm, render(vm));
+    });
+
+  });
+
+  describe('self defined macro', function(){
+
+    it('basic', function(){
+      var macros = {
+        haha: function(a, b){
+          a = a || '';
+          b = b || '';
+          return a + " hello to " + b;
+        }
+      };
+
+      var vm = '#haha($a, $b)';
+      assert.equal(' hello to ', render(vm, {}, macros));
+      assert.equal('Lily hello to ', render(vm, {a: "Lily"}, macros));
     });
 
   });

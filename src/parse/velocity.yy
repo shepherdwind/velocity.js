@@ -9,13 +9,8 @@
 %%
 
 root
-  : program EOF 
+  : statements EOF 
       { return $1; }
-  ;
-
-program
-  : statements 
-      { $$ = $1; }
   ;
 
 statements

@@ -1,8 +1,11 @@
+
 $customer.getAddress()
 ${purchase.getTotal()}
 $page.setTitle( "My Home Page" )
 $person.setAttributes( ["Strange", "Weird", "Excited"] )
 
-$foo.bar[$i].junk
-$foo.callMethod('sdf')[1]
+$foo.callMethod('haha')[1]
 $foo["apple"]["name"]
+
+$foo[$bar[$user.getUserName("hanwen")]]
+$foo($bar.total()[$user.name])[0]

@@ -31,9 +31,15 @@ module.exports = function(Velocity, utils){
       }
     },
 
-    render: function(context){
+    /**
+     * @param context {object} 上下文环境，数据对象
+     * @param macro   {object} self defined #macro
+     * @return str
+     */
+    render: function(context, macros){
 
       this.context = context || {};
+      this.jsmacros = macros || {};
       var t1 = utils.now();
       var str = this._render();
       var t2 = utils.now();

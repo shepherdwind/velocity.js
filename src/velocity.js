@@ -15,7 +15,7 @@ var Velocity = {
   Helper  : Helper
 };
 
-Velocity.render = function(template, context){
+Velocity.render = function(template, context, macros){
 
   var t1   = Date.now();
   var asts = Parser.parse(template);
@@ -23,7 +23,7 @@ Velocity.render = function(template, context){
   //var str  = 'parse syntax tree finished, cost time: ' + (t2 - t1)+ 'ms.';
 
   var compile = new Compile(asts);
-  return compile.render(context);
+  return compile.render(context, macros);
 };
 
 

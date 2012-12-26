@@ -73,7 +73,21 @@ module.exports = function(Velocity, utils){
       var ret = '';
 
       if (!macro) {
-        ret = '';
+
+        var jsmacros = this.jsmacros;
+        macro = jsmacros[ast.id];
+        var jsArgs = [];
+
+        if (macro && macro.apply) {
+
+          utils.forEach(ast.args, function(a){
+            jsArgs.push(this.getLiteral(a));
+          }, this);
+
+          ret = macro.apply(null, jsArgs);
+
+        }
+
       } else {
         var asts = macro.asts;
         var args = macro.args;
