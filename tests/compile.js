@@ -10,9 +10,9 @@ describe('Compile', function(){
     return compile.render(context, macros);
   }
 
-  function getContext(str, context){
+  function getContext(str, context, macros){
     var compile = new Compile(Parser.parse(str));
-    compile.render(context);
+    compile.render(context, macros);
     return compile.context;
   }
 
@@ -326,6 +326,45 @@ describe('Compile', function(){
       var vm = '#haha($a, $b)';
       assert.equal(' hello to ', render(vm, {}, macros));
       assert.equal('Lily hello to ', render(vm, {a: "Lily"}, macros));
+    });
+
+    it('use eval', function(){
+      var macros = {
+        cmsparse: function(str){
+          return this.eval(str);
+        },
+        d: function(){
+          return 'I am d!';
+        }
+      };
+
+      var vm = '#cmsparse($str)';
+      var o = {
+        str: 'hello $foo.bar, #d()',
+        foo: {bar: 'world'}
+      };
+
+      assert.equal('hello world, I am d!', render(vm, o, macros));
+    });
+
+    it('use eavl with local variable', function(){
+      var macros = {
+        cmsparse: function(str){
+          return this.eval(str, {name: "hanwen"});
+        },
+        d: function($name){
+          return this.eval('I am $name!');
+        }
+      };
+
+      var vm = '#cmsparse($str)';
+      var o = {
+        str: 'hello $foo.bar, #d()',
+        foo: {bar: 'world'}
+      };
+
+      assert.equal('hello world, I am hanwen!', render(vm, o, macros));
+      assert.equal(undefined, getContext(vm, o, macros).name);
     });
 
   });

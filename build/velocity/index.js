@@ -214,7 +214,7 @@ KISSY.add(function(S){
             jsArgs.push(this.getLiteral(a));
           }, this);
 
-          ret = macro.apply(null, jsArgs);
+          ret = macro.apply(this, jsArgs);
 
         }
 
@@ -235,14 +235,58 @@ KISSY.add(function(S){
           }
         }, this);
 
-        this.local[contextId] = local;
-        ret = this._render(asts, contextId);
-        this.local[contextId] = {};
-        this.conditions.pop();
-        this.condition = '';
+        ret = this.eval(asts, local, contextId);
       }
 
       return ret;
+    },
+
+    /**
+     * eval
+     * @param str {array|string} 需要解析的字符串
+     * @param local {object} 局部变量
+     * @param contextId {string} 
+     * @return {string}
+     */
+    eval: function(str, local, contextId){
+
+      if (!local) {
+
+        if (utils.isArray(str)) {
+          return this._render(str);
+        } else {
+          return this.evalStr(str);
+        }
+
+      } else {
+
+        var asts = [];
+        var Parser = Velocity.Parser;
+        contextId = contextId || ('eval:' + utils.guid());
+
+        if (utils.isArray(str)) {
+
+          asts = str;
+
+        } else if (Parser) {
+
+          asts = Parser.parse(str);
+
+        }
+
+        if (asts.length) {
+
+          this.local[contextId] = local;
+          var ret = this._render(asts, contextId);
+          this.local[contextId] = {};
+          this.conditions.pop();
+          this.condition = '';
+
+          return ret;
+        }
+
+      }
+
     },
 
     /**
