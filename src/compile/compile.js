@@ -1,5 +1,5 @@
 module.exports = function(Velocity, utils){
-  var BLOCK_TYPES = ['if', 'foreach', 'macro', 'noescape'];
+  var BLOCK_TYPES = ['if', 'foreach', 'macro', 'noescape', 'define'];
   /**
    * compile
    */
@@ -101,10 +101,6 @@ module.exports = function(Velocity, utils){
 
           case 'macro_call':
           str += this.getMacro(ast);
-          break;
-
-          case 'parse':
-          str += this.getParse(ast);
           break;
 
           case 'end':

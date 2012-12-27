@@ -45,10 +45,7 @@
 <h>"end"                          { this.popState(); return 'END'; }
 <h>"break"                        { this.popState(); return 'BREAK'; }
 <h>"foreach"[ ]*                  { return 'FOREACH'; }
-<h>"include"[ ]*                  { return 'INCLUDE'; }
-<h>"parse"[ ]*                    { return 'PARSE'; }
 <h>"noescape"                     { return 'NOESCAPE'; }
-<h>"evaluate"                     { return 'EVAL'; }
 <h>"define"[ ]*                   { return 'DEFINE'; }
 <h>"macro"[ ]*                    { return 'MACRO'; }
 <c,i>"in"                         { return 'IN'; }

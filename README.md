@@ -134,6 +134,12 @@ Directives支持`set`, `foreach`, `if|else|elseif`, `macro`, `parse`, `break`。
 支持有，`stop`, `evaluate`, `define`，感觉这些语法比较偏，用处不大，暂时没有实现。
 其中`parse`，在web端，使用kissy的模块加载器加载，需要首先线下编译打包，[例子](http://git.shepherdwind.com/velocity.js/web/index.html)。
 
+###macro
+
+宏分为系统的宏，比如`parse, include`，和用户自定义宏，通过`#macro`在vm中定义，此
+外可以使用自定义的js函数替代在vm中定义。对于系统宏和自定义宏，不做区分，对于
+`#parse`和`#include`的调用，可以使用自定义函数来执行。具体见[issue #3](https://github.com/shepherdwind/velocity.js/issues/3)。
+
 ###foreach
 
 foreach在velocity中对对象的遍历，和js有区别，java中对象是一个map，需要通过方法

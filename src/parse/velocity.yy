@@ -46,12 +46,6 @@ directives
       { $$ = $1; }
   | break
       { $$ = $1; }
-  | include
-      { $$ = $1; }
-  | parse
-      { $$ = $1; }
-  | evaluate
-      { $$ = $1; }
   | define
       { $$ = $1; }
   | HASH NOESCAPE PARENTHESIS CLOSE_PARENTHESIS
@@ -97,23 +91,6 @@ foreach
 break
   : HASH BREAK
       { $$ = {type: $2 }; }
-  ;
-
-include
-  : HASH INCLUDE PARENTHESIS params CLOSE_PARENTHESIS
-      { $$ = {type: 'include', args: $4 }; }
-  ;
-
-parse
-  : HASH PARSE PARENTHESIS string CLOSE_PARENTHESIS
-      { $$ = {type: 'parse', id: $4 }; }
-  | HASH PARSE PARENTHESIS references CLOSE_PARENTHESIS
-      { $$ = {type: 'parse', id: $4 }; }
-  ;
-
-evaluate
-  : HASH EAVL PARENTHESIS DOLLAR ID CLOSE_PARENTHESIS
-      { $$ = {type: 'evaluate', id: $5 }; }
   ;
 
 define

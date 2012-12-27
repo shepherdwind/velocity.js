@@ -12,7 +12,7 @@ module.exports = function(Velocity, utils){
       var _block = [ast];
       var _inBlock = [];
       var index = 0;
-      var blockTypes = ['if', 'foreach', 'macro', 'noescape'];
+      var blockTypes = ['if', 'foreach', 'macro', 'noescape', 'define'];
 
       /**
        * 处理block嵌套，重新构造_block，把block中有嵌套的放入数组_inBlock,

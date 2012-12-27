@@ -353,16 +353,28 @@ describe('Compile', function(){
     it('use eavl with local variable', function(){
       //这一句非常重要，在node端无需处理，web端必须如此声明
       Compile.Parser = Parser;
+
       var macros = {
+
         cmsparse: function(str){
+          return macros.include.apply(this, arguments);
+        },
+
+        include: function(str){
           return this.eval(str, {name: "hanwen"});
         },
+
+        parse: function(file){
+          return file;
+        },
+
         d: function($name){
           return this.eval('I am $name!');
         }
       };
 
       var vm = '#cmsparse($str)';
+      var vm1 = '#parse("a.vm")';
       var o = {
         str: 'hello $foo.bar, #d()',
         foo: {bar: 'world'}
@@ -370,6 +382,7 @@ describe('Compile', function(){
 
       assert.equal('hello world, I am hanwen!', render(vm, o, macros));
       assert.equal(undefined, getContext(vm, o, macros).name);
+      assert.equal('a.vm', render(vm1, o, macros));
     });
 
   });
