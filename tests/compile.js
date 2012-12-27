@@ -329,6 +329,9 @@ describe('Compile', function(){
     });
 
     it('use eval', function(){
+      //这一句非常重要，在node端无需处理，web端必须如此声明
+      Compile.Parser = Parser;
+
       var macros = {
         cmsparse: function(str){
           return this.eval(str);
@@ -348,6 +351,8 @@ describe('Compile', function(){
     });
 
     it('use eavl with local variable', function(){
+      //这一句非常重要，在node端无需处理，web端必须如此声明
+      Compile.Parser = Parser;
       var macros = {
         cmsparse: function(str){
           return this.eval(str, {name: "hanwen"});
