@@ -10,10 +10,12 @@ buildCompile = (tplfile)->
       text = (fs.readFileSync "./src/compile/#{file}").toString()
       text = text.replace 'module.exports = ', "/** file: ./src/compile/#{file}*/\n!"
       text = text.replace /;\s*$/ , "(Velocity, utils);\n\n"
+      text = text.replace /\n/g , "\n  "
       velocity += text
 
   helper = (fs.readFileSync "./src/helper/text.js").toString()
   helper = helper.replace 'module.exports = ', '!'
+  helper = helper.replace /\n/g , "\n  "
   helper = helper.replace /;\s*$/, "(Velocity.Helper, utils);"
 
   tpl = (fs.readFileSync tplfile).toString()

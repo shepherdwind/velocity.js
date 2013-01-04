@@ -431,7 +431,10 @@ Jsonify.prototype = {
   },
 
   getMacro: function(ast){
+
     var macro = this.macros[ast.id];
+    if (macro === undefined) return;
+
     var guid = utils.guid();
     var contextId = 'macro:' + guid;
     var local = {
