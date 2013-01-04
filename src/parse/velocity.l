@@ -72,8 +72,8 @@
 <i,run,c>"{"                      { return 'MAP_BEGIN'; }
 <i,run,c>"}"                      { return 'MAP_END'; }
 <h,run,c>":"                      { return 'MAP_SPLIT'; }
-<mu>"{"                           { return 'VAR_BEGIN'; }
-<mu>"}"                           { this.popState(); return 'VAR_END'; }
+<mu>"{"                           { yy.begin = true; return 'VAR_BEGIN'; }
+<mu>"}"                           { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
 <mu,h,run,c,i>"("                 { this.begin("c"); return 'PARENTHESIS'; }
 <mu,h,run,c,i>")"                 { 
                                     if (this.popState() === "c") {

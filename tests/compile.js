@@ -310,6 +310,11 @@ describe('Compile', function(){
       assert.equal(vm, render(vm));
     });
 
+    it('var end must in condiction var begin', function(){
+      var vm = 'stepFareNo:{$!result.getStepFareNo()}';
+      assert.equal('stepFareNo:{}', render(vm));
+    });
+
   });
 
   describe('self defined macro', function(){

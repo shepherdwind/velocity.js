@@ -646,9 +646,9 @@ case 34: return 72;
 break;
 case 35: return 91; 
 break;
-case 36: return 69; 
+case 36: yy.begin = true; return 69; 
 break;
-case 37: this.popState(); return 71; 
+case 37: this.popState(); if (yy.begin === true) { yy.begin = false; return 71;} else { return 'CONTENT'; } 
 break;
 case 38: this.begin("c"); return 21; 
 break;
