@@ -180,7 +180,7 @@ Jsonify.prototype = {
     var contextId = 'foreach:' + guid;
     var local = {
       type: 'foreach',
-      variable: [ast.to],
+      variable: [ast.to, 'velocityCount'],
       ast : ast,
       context: {}
     };
