@@ -147,7 +147,7 @@ case 68: this.$ = {type: "references", id: $$[$0-1], path: $$[$0], leader: $$[$0
 break;
 case 69: this.$ = {type: "references", id: $$[$0-2].id, path: $$[$0-1], isWraped: true, leader: $$[$0-4], args: $$[$0-2].args }; 
 break;
-case 70: this.$ = {type: "references", id: $$[$0-1].id, path: $$[$0], leader: $$[$0-2], args: $$[$0].args }; 
+case 70: this.$ = {type: "references", id: $$[$0-1].id, path: $$[$0], leader: $$[$0-2], args: $$[$0-1].args }; 
 break;
 case 71: this.$ = {type: "references", id: $$[$0], leader: $$[$0-1] }; 
 break;

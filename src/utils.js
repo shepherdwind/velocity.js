@@ -6,7 +6,7 @@ var utils = {
   }
 };
 
-['forEach', 'some', 'every'].forEach(function(fnName){
+['forEach', 'some', 'every', 'filter'].forEach(function(fnName){
   utils[fnName] = function(arr, fn, context){
     if (!arr || typeof arr == 'string') return arr;
     context = context || this;

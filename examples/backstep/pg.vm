@@ -1,21 +1,31 @@
-  #if($pg.getPage() > 1)
-    <a class="prev" style="border-right:0px " href="$tmpUrl&page=1">首页</a>
+  ###if($pg.getPage() > 1)
+    ##<a class="prev" style="border-right:0px " href="$tmpUrl&page=1">首页</a>
+  ###end
+
+  ###foreach($p in $pg.slides())
+    ###if($pg.isDisabledPage($p))
+      ##<span class="page-cur">$p</span>
+    ###else
+      ##<a href="$tmpUrl&page=$p">$p</a>
+    ###end
+  ###end
+
+  #foreach($metaTag in $page.metaTags.entrySet())
+    $metaTag.key => $do($metaTag.value)
   #end
 
-  #foreach($p in $pg.slides())
-    #if($pg.isDisabledPage($p))
-      <span class="page-cur">$p</span>
-    #else
-      <a href="$tmpUrl&page=$p">$p</a>
-    #end
-  #end
+  ###macro(a $a $b)
+    ##$a $b
+  ###end
 
-  #foreach($metaTag in $page.metaTags.keySet())
-    <meta name="$metaTag" content="$page.metaTags.get($metaTag)">
-  #end
+  ###macro(b $aa $bb)
+    ###a($aa, $bb)
+  ###end
 
-  $foo.bar("title")
+  ###b($aaa $bbb())
 
-  $foo.fo($title, $page.name)
+  ##$foo.bar("title")
 
-  $dateUtil.ymdFormat($certi.startDate)
+  ##$foo.fo($title, $page.name)
+
+  ##$dateUtil.ymdFormat($certi.startDate)

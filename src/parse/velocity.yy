@@ -211,7 +211,7 @@ references
   | DOLLAR brace_begin methodbd attributes brace_end
       { $$ = {type: "references", id: $3.id, path: $4, isWraped: true, leader: $1, args: $3.args }; }
   | DOLLAR methodbd attributes 
-      { $$ = {type: "references", id: $2.id, path: $3, leader: $1, args: $3.args }; }
+      { $$ = {type: "references", id: $2.id, path: $3, leader: $1, args: $2.args }; }
   | DOLLAR ID 
       { $$ = {type: "references", id: $2, leader: $1 }; }
   | DOLLAR brace_begin ID brace_end
