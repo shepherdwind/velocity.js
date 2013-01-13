@@ -14,11 +14,8 @@ Jsonify.prototype = {
 
   init: function(asts){
 
-    this.context = {
-      objects : {},
-      methods : {},
-      strings : {}
-    };
+    this.context = {};
+    this.leafs   = [];
 
     this.asts       = asts;
     this.local      = {};
@@ -30,9 +27,6 @@ Jsonify.prototype = {
   },
 
   getRefText: Helper.getRefText,
-
-  toVTL: function(){
-  },
 
   _render: function(asts){
 
@@ -85,6 +79,7 @@ Jsonify.prototype = {
 };
 
 require('./references')(Jsonify, utils);
+require('./jsonify')(Jsonify, utils);
 require('./block')(Jsonify, utils, BLOCK_TYPES);
 require('../../compile/expression')(Jsonify, utils);
 require('../../compile/literal')(Jsonify, utils);

@@ -76,11 +76,13 @@ module.exports = function(Velocity, utils){
         var methods = utils.filter(path, function(a){
           return a.type === 'method';
         });
+        var _len = methods.length;
 
-        //连缀方式$foo().bar()或者函数在中间的情况$foo().bar，跳过
-        if ((+ret + methods.length) !== 1 || path[len - 1].type !== 'method') {
+        //连缀方式$f.foo().bar()或者函数在中间的情况$foo().bar，跳过
+        if (ret || _len > 1 || 
+          (_len === 1 && path[len - 1].type !== 'method')) {
           ret = 'ignore';
-        } else if (ret === false) {
+        } else if (ret === false && _len === 1) {
           ret = true;
         }
       }
@@ -89,21 +91,17 @@ module.exports = function(Velocity, utils){
 
     },
 
-    getReferences: function(ast, spyData, context){
+    getReferences: function(ast){
 
       var astType = this.getRefType(ast);
 
       var real = astType.real;
-      var text = this.getRefText(real);
+      var text = real.from ? this.getRefType(real.from): this.getRefText(real);
 
       //执行过一遍，不再执行
       if (this.cache[text]) return;
 
-      console.log(astType);
-
-      utils.forEach(ast.path, function(property, i){
-
-      }, this);
+      this.toBasicType(astType);
 
       this.cache[text] = true;
 
@@ -111,7 +109,7 @@ module.exports = function(Velocity, utils){
 
     getLocal: function(ref){
 
-      var ret = { context: this.context.strings, isGlobal: true };
+      var ret = { context: this.context, isGlobal: true };
 
       utils.some(this.conditions, function(content){
 

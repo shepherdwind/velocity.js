@@ -2,13 +2,13 @@
     ##<a class="prev" style="border-right:0px " href="$tmpUrl&page=1">首页</a>
   ###end
 
-  ###foreach($p in $pg.slides())
+  #foreach($p in $pg.slides())
     ###if($pg.isDisabledPage($p))
       ##<span class="page-cur">$p</span>
     ###else
-      ##<a href="$tmpUrl&page=$p">$p</a>
+      <a href="$tmpUrl.a.b&page=$p">$p</a>
     ###end
-  ###end
+  #end
 
   #foreach($metaTag in $page.metaTags.entrySet())
     $metaTag.key => $do($metaTag.value)
