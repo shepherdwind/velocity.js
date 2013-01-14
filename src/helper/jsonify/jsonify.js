@@ -65,7 +65,7 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
         context = context.replace(tpl, str);
       }, this);
 
-      console.log(context);
+      return context;
     },
 
     getLeaf: function(leaf){

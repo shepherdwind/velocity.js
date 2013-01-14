@@ -5,5 +5,5 @@ var Jsonify = require('../src/helper/jsonify');
 var vm = fs.readFileSync('./backstep/pg.vm').toString();
 var asts = Parser.parse(vm);
 var jsonify = new Jsonify(asts);
-jsonify.toVTL();
+console.log(jsonify.toVTL());
 //console.log(JSON.stringify(jsonify.context, false, 2));
