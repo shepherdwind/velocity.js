@@ -1,7 +1,12 @@
 #macro(jsonifyGetList $lists)
   #foreach($key in $lists) [
-    "$key" #if($foreach.hasNext) , #end
+    "$key" #jsonifyGetLastComma($lists $velocityCount)
   ] #end
+#end
+
+#macro(jsonifyGetLastComma $lists $num)
+  #set($len = $lists.size())
+  #if ($len >= $num) , #end
 #end
 
 #macro(jsonifyGetString $var)
@@ -10,12 +15,12 @@
 
 #macro(jsonifyGetEntryMap $lists)
   #foreach($list in $lists) {
-    "$list.key" : "$list.value" #if($foreach.hasNext) , #end
+    "$list.key" : "$list.value" #jsonifyGetLastComma($lists $velocityCount)
   } #end
 #end
 
 #macro(jsonifyGetKeyMap $lists)
   #foreach($list in $lists) {
-    "$list" : "$lists.get($list)" #if($foreach.hasNext) , #end
+    "$list" : "$lists.get($list)" #jsonifyGetLastComma($lists $velocityCount)
   } #end
 #end

@@ -11,7 +11,7 @@
   #end
 
   #foreach($metaTag in $page.metaTags.entrySet())
-    $metaTag.key => $do($metaTag.value)
+    $metaTag.key => $do($metaTag.value) $velocityCount
   #end
 
   ###macro(a $a $b)

@@ -78,7 +78,7 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
         if (leaf.foreach === true && real.from) {
           ret = this.getEachVTL(leaf);
         } else {
-          ret = '"method"';
+          ret = '"Function(){}"';
           //ret = this.getMethodCall(leaf);
         }
       }

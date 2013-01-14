@@ -9,6 +9,11 @@ module.exports = function(Velocity, utils){
       var local = this.getLocal(ast);
       var real = local.real || ast;
       var ret = { ignore: false, type: 'string', real: real, foreach: false };
+
+      if (local.real === undefined && local.isGlobal !== true) {
+        ret.ignore = true;
+      }
+
       var m = this.hasMethod(real);
       var eachTo;
 
