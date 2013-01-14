@@ -4,3 +4,18 @@
   ] #end
 #end
 
+#macro(jsonifyGetString $var)
+  "$var"
+#end
+
+#macro(jsonifyGetEntryMap $lists)
+  #foreach($list in $lists) {
+    "$list.key" : "$list.value" #if($foreach.hasNext) , #end
+  } #end
+#end
+
+#macro(jsonifyGetKeyMap $lists)
+  #foreach($list in $lists) {
+    "$list" : "$lists.get($list)" #if($foreach.hasNext) , #end
+  } #end
+#end

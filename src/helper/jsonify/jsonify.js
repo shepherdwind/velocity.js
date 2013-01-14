@@ -40,6 +40,10 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
       var leafs = this.leafs;
       var len   = leafs.length;
 
+      if (astType.foreach === true && astType.type === 'method') {
+        if (last === 'entrySet' || last === 'keySet') last = paths.pop();
+      }
+
       utils.forEach(paths, function(path){
         if (!context[path]) {
           context[path] = {};
@@ -60,6 +64,7 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
         var str = this.getLeaf(leaf);
         context = context.replace(tpl, str);
       }, this);
+
       console.log(context);
     },
 
@@ -68,31 +73,73 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
       var real = leaf.real;
 
       if (!leaf.foreach) {
-        ret = this.getRefText(real);
+        ret = this._callMacro('jsonifyGetString', this.getRefText(real));
       } else {
         if (leaf.foreach === true && real.from) {
           ret = this.getEachVTL(leaf);
         } else {
-          var paths = getPath(leaf);
+          ret = '"method"';
+          //ret = this.getMethodCall(leaf);
         }
       }
 
       return ret;
     },
 
+    getMethodCall: function(leaf){
+
+      var args, returnVal;
+      var ret = {
+        __isMethod: true
+      };
+
+      returnVal = this._callMacro('jsonifyGetString', this.getRefText(leaf.real));
+
+      if (leaf.foreach) {
+        var real = leaf.real;
+        var len = real.path && real.path.length;
+        var last = len ? real.path[len - 1] : real;
+        args = utils.map(last.args, function(ast){
+          return this._callMacro('jsonifyGetString', this.getRefText(ast));
+        }, this);
+        returnVal = this._creatEach(leaf.foreach, args, returnVal);
+      }
+
+      ret.args = args;
+      ret.returnVal = returnVal;
+      return JSON.stringify(ret, false, 2);
+    },
+
+    _creatEach: function(foreach, args, value){
+      var tpl = '#foreach(${list} in {$lists}) {' +
+                '  "{$args}" : "{$value}" #if($foreach.hasNext) , #end '+
+                '} #end';
+      var getText = this.getRefText;
+      tpl = tpl.replace('{$lists}', getText(foreach.from));
+      tpl = tpl.replace('{list}', foreach.to);
+      tpl = tpl.replace('{$args}', args);
+      tpl = tpl.replace('{$value}', value);
+      return tpl;
+    },
+
+    _callMacro: function(macro, args){
+      args = utils.isArray(args) ? args.join(' ') : args;
+      return '#' + macro + '(' + args + ')';
+    },
+
     getEachVTL: function(leaf){
       var real = leaf.real;
-      var paths = getPath(real);
+      var paths = getPath(real.from);
       var last  = paths.pop();
       var macro = 'jsonifyGetList';
+
       if (leaf.type === 'method' && last === 'entrySet') {
         macro = 'jsonifyGetEntryMap';
       } else if (leaf.type === 'method' && last === 'keySet') {
         macro = 'jsonifyGetKeyMap';
       }
-      var ret = '#' + macro + '(' + this.getRefText(real.from) + ')';
 
-      return ret;
+      return this._callMacro(macro, this.getRefText(real.from));
     }
 
   });

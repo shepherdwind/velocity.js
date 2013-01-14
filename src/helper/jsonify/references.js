@@ -8,7 +8,7 @@ module.exports = function(Velocity, utils){
 
       var local = this.getLocal(ast);
       var real = local.real || ast;
-      var ret = { ignore: false, type: null, real: real, foreach: false };
+      var ret = { ignore: false, type: 'string', real: real, foreach: false };
       var m = this.hasMethod(real);
       var eachTo;
 
@@ -25,10 +25,8 @@ module.exports = function(Velocity, utils){
       if (m === 'ignore') {
         ret.ignore = true;
       } else if (m) {
-        ret.foreach = this.hasParamInForeach(real);
+        ret.foreach = ret.foreach || this.hasParamInForeach(real);
         ret.type = 'method';
-      } else {
-        ret.type = 'strings';
       }
 
       return ret;

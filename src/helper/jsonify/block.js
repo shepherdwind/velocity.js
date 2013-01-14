@@ -81,6 +81,7 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
       var local = {
         type: 'foreach',
         variable: [ast.to, 'velocityCount'],
+        maps : [ast.from],
         ast : ast,
         context: {}
       };
@@ -93,25 +94,6 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
       this._render(asts);
 
       this.conditions.pop();
-    },
-
-    _setEachVTL: function(ast, local){
-
-      var from = this.getLocal(ast.from)['real'];
-
-      if (from === undefined) from = ast.from;
-
-      var endPart = " #end ]";
-      var value = '[#foreach($' + ast.to + ' in ' + this.getRefText(from) + ")";
-      //ast.to取值
-      var vm = local.context[ast.to];
-      if (typeof vm === 'string') {
-        value += vm + ' #if( $foreach.hasNext ), #end';
-      } else {
-        value += JSON.stringify(vm) + '#if( $foreach.hasNext ), #end';
-      }
-      value += endPart;
-      return value;
     },
 
     getMacro: function(ast){

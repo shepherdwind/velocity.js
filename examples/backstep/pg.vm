@@ -3,11 +3,11 @@
   ###end
 
   #foreach($p in $pg.slides())
-    ###if($pg.isDisabledPage($p))
-      ##<span class="page-cur">$p</span>
-    ###else
+    #if($pg.isDisabledPage($p))
+      <span class="page-cur">$p</span>
+    #else
       <a href="$tmpUrl.a.b&page=$p">$p</a>
-    ###end
+    #end
   #end
 
   #foreach($metaTag in $page.metaTags.entrySet())
