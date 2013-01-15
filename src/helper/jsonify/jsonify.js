@@ -13,11 +13,17 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
 
     utils.forEach(ast.path, function(a){
 
+      var isIgnore = a.type === 'method' && a.id === 'size'; 
+      var isGet = a.type === 'method' && a.id.indexOf('get') === 0 && a.args === false;
+      if (isIgnore) {
+        return;
+      }
+
       if (a.type === 'index') {
         if (a.id && (a.id.type === 'integer' || a.id.type === 'string')) 
           ret.push(a.id.value);
       } else {
-        ret.push(a.id);
+        ret.push(isGet ? a.id.slice(3) : a.id);
       }
 
     });
