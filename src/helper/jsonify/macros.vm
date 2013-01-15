@@ -6,11 +6,11 @@
 
 #macro(jsonifyGetLastComma $lists $num)
   #set($len = $lists.size())
-  #if ($len >= $num) , #end
+  #if ($len > $num) , #end
 #end
 
 #macro(jsonifyGetString $var)
-  "$var"
+  "$!var"
 #end
 
 #macro(jsonifyGetEntryMap $lists)
