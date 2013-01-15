@@ -103,8 +103,7 @@ function jsonify(file){
 
   var asts = Parser.parse(fs.readFileSync(file).toString());
   var makeup = new Jsonify(asts);
-  console.log(makeup.context);
-  //console.log(JSON.stringify(makeup.context, true, 2));
+  console.log(makeup.toVTL());
 }
 
 function showMakeup(file){

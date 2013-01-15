@@ -45,10 +45,8 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
       }
 
       utils.forEach(paths, function(path){
-        if (!context[path]) {
-          context[path] = {};
-          context = context[path];
-        }
+        if (!context[path]) context[path] = {};
+        context = context[path];
       }, this);
 
       leafs.push(astType);

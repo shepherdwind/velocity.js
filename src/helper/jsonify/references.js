@@ -77,7 +77,8 @@ module.exports = function(Velocity, utils){
       if (path) {
         var len = path.length;
         var methods = utils.filter(path, function(a){
-          return a.type === 'method';
+          var isGet = a.id.indexOf('get') === 0 && a.args === false;
+          return a.type === 'method' && !isGet;
         });
         var _len = methods.length;
 
