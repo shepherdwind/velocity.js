@@ -11,7 +11,8 @@ if (argType === undefined) {
 
     //离线编译vm文件
     if (argType === '--build' || argType === '-b') {
-      cli.buildAst(argv.slice(1));
+      var prefix = argv[2] && argv[2];
+      cli.buildAst(argv.slice(1), prefix);
     } else if (argType === '--help' || argType === '-h') {
       cli.showHelp();
     } else if (argType === '--version' || argType === '-v') {

@@ -307,7 +307,8 @@ KISSY.add(function(S){
         var guid = utils.guid();
         var contextId = 'foreach:' + guid;
   
-        if (!_from) return;
+        var type = ({}).toString.call(_from);
+        if (!_from || (type !== '[object Array]' && type !== '[object Object]')) return;
   
         var len = utils.isArray(_from)? _from.length: utils.keys(_from).length;
   

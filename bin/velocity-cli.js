@@ -8,7 +8,23 @@ var Parser = Velocity.Parser;
 var Structure = Velocity.Helper.Structure;
 var Jsonify = Velocity.Helper.Jsonify;
 
-function buildAst(files){
+function escapeIt(buf){
+  var str =  Buffer.isBuffer(buf) ? buf.toString(): buf;
+  var len = str.length;
+  var ret = '';
+  for (var i = 0; i < len; i++) {
+    var bit = str.charCodeAt(i);
+    if (bit < 0 || bit > 255){
+      ret += '\\u' + bit.toString(16);
+    } else {
+      ret += str[i];
+    }
+  }
+
+  return ret;
+}
+
+function buildAst(files, prefix){
   var _template = fs.readFileSync(__dirname + '/build-tpl.js').toString();
   files.forEach(function(file){
 
@@ -25,6 +41,12 @@ function buildAst(files){
       template = template.replace('{requires}', requires.join(','));
       template = template.replace('"{del}', '');
       template = template.replace('{del}"', '');
+      var name = '';
+      if (prefix) {
+        var name =  '"' + prefix + '/' + path.basename(file, '.vm') + '", ';
+      }
+      template = template.replace('{name}', name);
+      template = escapeIt(template);
 
       console.log('read js ' + file);
       fs.writeFileSync(currentPath + '/' + file.replace('.vm', '.js'), template);

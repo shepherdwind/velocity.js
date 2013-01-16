@@ -9,9 +9,7 @@
   #if ($len > $num) , #end
 #end
 
-#macro(jsonifyGetString $var)
-  "$!var"
-#end
+#macro(jsonifyGetString $var) "$!var" #end
 
 #macro(jsonifyGetEntryMap $lists)
   #foreach($list in $lists) {
