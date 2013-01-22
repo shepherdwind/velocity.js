@@ -383,6 +383,7 @@ KISSY.add(function(S){
         this.macros = {};
         this.conditions = [];
         this.local = {};
+        this.silence = false;
   
         utils.forEach(this.asts, this._init, this);
       },
@@ -408,10 +409,12 @@ KISSY.add(function(S){
       /**
        * @param context {object} 上下文环境，数据对象
        * @param macro   {object} self defined #macro
+       * @param silent {bool} 如果是true，$foo变量将原样输出
        * @return str
        */
-      render: function(context, macros){
+      render: function(context, macros, silence){
   
+        this.silence = !!silence;
         this.context = context || {};
         this.jsmacros = macros || {};
         var t1 = utils.now();
@@ -767,6 +770,17 @@ KISSY.add(function(S){
   /** file: ./src/compile/references.js*/
   !function(Velocity, utils){
   
+    function getSize(obj){
+  
+      if (utils.isArray(obj)) {
+        return obj.length;
+      } else if (typeof obj === 'string') {
+        return utils.keys(obj).length;
+      }
+  
+      return undefined;
+    }
+  
     utils.mixin(Velocity.prototype, {
       /**
        * 引用求值
@@ -776,7 +790,7 @@ KISSY.add(function(S){
        */
       getReferences: function(ast, isVal) {
   
-        var isSilent = ast.leader === "$!";
+        var isSilent = this.silence || ast.leader === "$!";
         var isfn     = ast.args !== undefined;
         var context  = this.context;
         var ret      = context[ast.id];
@@ -893,10 +907,7 @@ KISSY.add(function(S){
           key = ast.value;
         }
   
-        var ret;
-        ret = baseRef[key];
-  
-        return ret;
+        return baseRef[key];
       },
   
       /**
@@ -908,7 +919,7 @@ KISSY.add(function(S){
         var ret        = '';
         var _id        = id.slice(3);
   
-        if (!(id in baseRef) && id.indexOf('get') === 0) {
+        if (id.indexOf('get') === 0 && !(id in baseRef)) {
   
           if (_id) {
             ret = baseRef[_id];
@@ -918,18 +929,31 @@ KISSY.add(function(S){
             ret = baseRef[_id];
           }
   
-        } else if (!(id in baseRef) && id.indexOf('is') === 0) {
+          return ret;
+  
+        } else if (id.indexOf('is') === 0 && !(id in baseRef)) {
   
           _id = id.slice(2);
           ret = baseRef[_id];
+          return ret;
   
         } else if (id === 'keySet') {
-          ret = utils.keys(baseRef);
+  
+          return utils.keys(baseRef);
+  
         } else if (id === 'entrySet') {
+  
           ret = [];
           utils.forEach(baseRef, function(value, key){
             ret.push({key: key, value: value});
           });
+  
+          return ret;
+  
+        } else if (id === 'size') {
+  
+          return getSize(baseRef);
+  
         } else {
   
           ret = baseRef[id];
