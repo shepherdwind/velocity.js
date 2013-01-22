@@ -544,14 +544,11 @@ describe('Parser', function(){
       var asts = Parser.parse('$foo.124');
       var ast2 = Parser.parse('$foo.-24')[0];
 
-      assert.equal(2         , asts.length);
+      assert.equal(3         , asts.length);
       assert.equal('foo'     , asts[0].id);
-      assert.equal('.1'      , asts[0].path[0].value);
-      assert.equal('content' , asts[0].path[0].type);
-      assert.equal('24'      , asts[1]);
+      assert.equal(undefined , asts[0].path);
 
-      assert.equal('.-'      , ast2.path[0].value);
-      assert.equal('content' , ast2.path[0].type);
+      assert.equal(undefined , ast2.path);
 
     });
 
