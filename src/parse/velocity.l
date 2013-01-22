@@ -109,7 +109,7 @@
                                   }
 
 <i>".."                              { return 'RANGE'; }
-<mu,h,run,c,i>"."                    { return 'DOT'; }
+<mu,h,run,c,i>"."/[a-zA-Z_]          { return 'DOT'; }
 <run,c,i>","[ ]*                     { return 'COMMA'; }
 <run,c,i>'"'(\\\"|[^\"])*'"'         { yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'EVAL_STRING'; }
 <run,c,i>"'"(\\\'|[^\'])*"'"         { yytext = yytext.substr(1, yyleng-2).replace(/\\'/g,"'"); return 'STRING'; }

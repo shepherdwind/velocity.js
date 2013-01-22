@@ -1,5 +1,16 @@
 module.exports = function(Velocity, utils){
 
+  function getSize(obj){
+
+    if (utils.isArray(obj)) {
+      return obj.length;
+    } else if (typeof obj === 'string') {
+      return utils.keys(obj).length;
+    }
+
+    return undefined;
+  }
+
   utils.mixin(Velocity.prototype, {
     /**
      * 引用求值
@@ -9,7 +20,7 @@ module.exports = function(Velocity, utils){
      */
     getReferences: function(ast, isVal) {
 
-      var isSilent = ast.leader === "$!";
+      var isSilent = this.silence || ast.leader === "$!";
       var isfn     = ast.args !== undefined;
       var context  = this.context;
       var ret      = context[ast.id];
@@ -126,10 +137,7 @@ module.exports = function(Velocity, utils){
         key = ast.value;
       }
 
-      var ret;
-      ret = baseRef[key];
-
-      return ret;
+      return baseRef[key];
     },
 
     /**
@@ -141,7 +149,7 @@ module.exports = function(Velocity, utils){
       var ret        = '';
       var _id        = id.slice(3);
 
-      if (!(id in baseRef) && id.indexOf('get') === 0) {
+      if (id.indexOf('get') === 0 && !(id in baseRef)) {
 
         if (_id) {
           ret = baseRef[_id];
@@ -151,18 +159,31 @@ module.exports = function(Velocity, utils){
           ret = baseRef[_id];
         }
 
-      } else if (!(id in baseRef) && id.indexOf('is') === 0) {
+        return ret;
+
+      } else if (id.indexOf('is') === 0 && !(id in baseRef)) {
 
         _id = id.slice(2);
         ret = baseRef[_id];
+        return ret;
 
       } else if (id === 'keySet') {
-        ret = utils.keys(baseRef);
+
+        return utils.keys(baseRef);
+
       } else if (id === 'entrySet') {
+
         ret = [];
         utils.forEach(baseRef, function(value, key){
           ret.push({key: key, value: value});
         });
+
+        return ret;
+
+      } else if (id === 'size') {
+
+        return getSize(baseRef);
+
       } else {
 
         ret = baseRef[id];

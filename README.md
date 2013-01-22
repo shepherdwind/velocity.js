@@ -26,9 +26,9 @@ $ npm install velocity.js
 
 ##Broswer Support
 
-兼容ie6+，chrome等其他浏览器，[test case](http://git.shepherdwind.com/velocity.js/runner/tests.html)
+兼容ie6+，chrome等其他浏览器，[test case](http://shepherdwind.com/velocity/runner/tests.html)
 
-点击[此处](http://git.shepherdwind.com/velocity.js/try/index.html)可以体验web
+点击[此处](http://shepherdwind.com/velocity/try/index.html)可以体验web
 端velocity语法解析过程，注：使用ACE作为代码编辑器，仅支持高级浏览器访问。
 
 执行`cake`命令进行打包velocity.js浏览器端脚本:
@@ -75,7 +75,7 @@ veloctiy --build *.vm
 veloctiy -b *.vm
 ```
 
-源码中`test/web/`目录的js，一部分就是线下编译后的得到的，此处可[直接访问](http://git.shepherdwind.com/velocity.js/web/index.html)。
+源码中`test/web/`目录的js，一部分就是线下编译后的得到的，此处可[直接访问](http://shepherdwind.com/velocity/web/index.html)。
 
 ##Public API
 
@@ -132,7 +132,7 @@ KISSY.use('velocity/index, velocity/parse', function(S, Velocity, Parser){
 
 Directives支持`set`, `foreach`, `if|else|elseif`, `macro`, `parse`, `break`。不
 支持有，`stop`, `evaluate`, `define`，感觉这些语法比较偏，用处不大，暂时没有实现。
-其中`parse`，在web端，使用kissy的模块加载器加载，需要首先线下编译打包，[例子](http://git.shepherdwind.com/velocity.js/web/index.html)。
+其中`parse`，在web端，使用kissy的模块加载器加载，需要首先线下编译打包，[例子](http://shepherdwind.com/velocity/web/index.html)。
 
 ###macro
 

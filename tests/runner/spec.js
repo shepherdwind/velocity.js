@@ -31,11 +31,26 @@ describe('Compile', function(){
       assert.equal('My Home Page haha', render(vm));
     });
 
+    it('size method', function(){
+      var vm = '$foo.bar.size()';
+      //assert.equal('2', render(vm, {foo: {bar: [1, 2]}}));
+      //assert.equal('2', render(vm, {foo: {bar: {a: 1, b: 3}}}));
+      var vm2 = '#if($foo.bar.size()) ok #{else} nosize #end';
+      assert.equal(' nosize ', render(vm2, {foo: {bar: 123}}));
+    });
+
     it('quiet reference', function(){
       var vm = 'my email is $email';
       var vmquiet = 'my email is $!email';
       assert.equal(vm, render(vm));
       assert.equal('my email is ', render(vmquiet));
+    });
+
+    it('silence all reference', function(){
+      var vm = 'my email is $email';
+
+      var compile = new Compile(Parser.parse(vm));
+      assert.equal('my email is ', compile.render(null, null, true));
     });
 
   });
@@ -544,14 +559,11 @@ describe('Parser', function(){
       var asts = Parser.parse('$foo.124');
       var ast2 = Parser.parse('$foo.-24')[0];
 
-      assert.equal(2         , asts.length);
+      assert.equal(3         , asts.length);
       assert.equal('foo'     , asts[0].id);
-      assert.equal('.1'      , asts[0].path[0].value);
-      assert.equal('content' , asts[0].path[0].type);
-      assert.equal('24'      , asts[1]);
+      assert.equal(undefined , asts[0].path);
 
-      assert.equal('.-'      , ast2.path[0].value);
-      assert.equal('content' , ast2.path[0].type);
+      assert.equal(undefined , ast2.path);
 
     });
 

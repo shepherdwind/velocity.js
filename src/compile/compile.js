@@ -9,6 +9,7 @@ module.exports = function(Velocity, utils){
       this.macros = {};
       this.conditions = [];
       this.local = {};
+      this.silence = false;
 
       utils.forEach(this.asts, this._init, this);
     },
@@ -34,10 +35,12 @@ module.exports = function(Velocity, utils){
     /**
      * @param context {object} 上下文环境，数据对象
      * @param macro   {object} self defined #macro
+     * @param silent {bool} 如果是true，$foo变量将原样输出
      * @return str
      */
-    render: function(context, macros){
+    render: function(context, macros, silence){
 
+      this.silence = !!silence;
       this.context = context || {};
       this.jsmacros = macros || {};
       var t1 = utils.now();
