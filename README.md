@@ -21,7 +21,7 @@ velocity.js是velocity模板语法的javascript实现。
 via npm:
 
 ```bash
-$ npm install velocity.js
+$ npm install velocityjs
 ```
 
 ##Broswer Support
