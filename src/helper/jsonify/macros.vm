@@ -1,24 +1,52 @@
-#macro(jsonifyGetList $lists)
-  #foreach($key in $lists) [
-    "$key" #jsonifyGetLastComma($lists $velocityCount)
-  ] #end
+## [{a:1, b:2}, {a:2, b:3}] 形式
+#macro(objects $bar $keys)
+  [
+    \#foreach($foo in $bar)
+      {
+      #foreach($key in $keys) "$key" : "\$foo.$key" #if($velocityCount < $keys.size()) ,
+      #end #end
+
+      } \#if($velocityCount < ${bar}.size()) , 
+      \#end
+    \#end
+  ]
 #end
-
-#macro(jsonifyGetLastComma $lists $num)
-  #set($len = $lists.size())
-  #if ($len > $num) , #end
+#macro(lists $lists)
+  [
+  \#foreach($key in $lists)
+    "$key" \#if($velocityCount < ${lists}.size()) ,
+    \#end
+  \#end
+  ]
 #end
-
-#macro(jsonifyGetString $var) "$!var" #end
-
-#macro(jsonifyGetEntryMap $lists)
-  #foreach($list in $lists) {
-    "$list.key" : "$list.value" #jsonifyGetLastComma($lists $velocityCount)
-  } #end
+#macro(maps $maps)
+  {
+    \#foreach($list in ${maps}.entrySet())
+      "$list.key" : "$list.value" \#if($velocityCount < ${maps}.size()) ,
+      \#end
+    \#end
+  }
 #end
-
-#macro(jsonifyGetKeyMap $lists)
-  #foreach($list in $lists) {
-    "$list" : "$lists.get($list)" #jsonifyGetLastComma($lists $velocityCount)
-  } #end
+##method
+#macro(method $args $ret)
+  {
+    "__isMethod": true,
+    "callMap": [
+      {
+        "arguments": [$args],
+        "return"   : "$ret"
+      }
+    ]
+  }
+#end
+#if($macro == 'maps')
+#maps($vmText)
+#elseif($macro == 'method')
+#method($vmText $third)
+#elseif($macro == 'lists')
+#lists($vmText)
+#elseif($macro == 'objects')
+#objects($vmText $third)
+#elseif($macro == 'string')
+"$vmText"
 #end

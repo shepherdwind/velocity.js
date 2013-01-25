@@ -1,5 +1,12 @@
 module.exports = function(Velocity, utils, BLOCK_TYPES){
 
+  function getUnique(arrs){
+    var objs = {};
+    utils.forEach(arrs, function(arr){
+      objs[arr] = 1;
+    });
+    return utils.keys(objs);
+  }
   utils.mixin(Velocity.prototype, {
     getBlock: function(block) {
       var ast = block[0];
@@ -83,7 +90,8 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
         variable: [ast.to, 'velocityCount'],
         maps : [ast.from],
         ast : ast,
-        context: {}
+        context: {},
+        objectKeys: []
       };
 
       this.local[contextId] = local;
@@ -92,6 +100,11 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
       var asts = block.slice(1);
 
       this._render(asts);
+      if (local.objectKeys.length) {
+        var vmText = this.getRefText(local.real);
+        var vm = this._callMacro('objects', vmText, getUnique(local.objectKeys));
+        this.setRef(local.real, vm);
+      }
 
       this.conditions.pop();
     },

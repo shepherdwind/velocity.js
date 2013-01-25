@@ -8,26 +8,25 @@ var Jsonify = require('../../src/velocity').Helper.Jsonify;
 describe('Jsonify', function(){
   function getContext(vm){
     var jsonify = new Jsonify(Parser.parse(vm));
-    return jsonify.context;
+    return jsonify.toVTL();
   }
 
+  function getJson(obj){
+    return JSON.stringify(obj, false, 2);
+  }
   it('simple references', function(){
     var vm = '$foo.bar';
-    var context = getContext(vm).strings;
-    assert.deepEqual(context, { foo: {bar: '$foo.bar'} });
+    assert.equal(getContext(vm), getJson({foo: {bar: '#jsonifyGetString($foo.bar)'} }));
   });
 
   it('method call', function(){
     var vm = '$foo.bar($user.name)';
-    var context = getContext(vm).methods;
-    assert.equal(context.foo.bar[0][0], "$user.name");
-    assert.equal(context.foo.bar[0][1], "$foo.bar($user.name)");
+    assert.equal(getContext(vm), getJson({foo: {bar: 'Function(){}'} }));
   });
 
   it('method call, return map', function(){
     var vm = '$foo.bar($user.name).bar';
-    var context = getContext(vm).methods;
-    assert.equal(context.foo.bar, undefined);
+    //console.log(getContext(vm));
   });
 
 });

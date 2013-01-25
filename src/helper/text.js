@@ -60,25 +60,49 @@ module.exports = function(Helper, utils){
     var ret = '';
 
     utils.forEach(ref.args, function(arg){
-
-      if (arg.type === 'string') {
-
-        var sign = arg.isEval? '"': "'";
-        var text = sign + arg.value + sign;
-        args.push(text);
-
-      } else {
-
-        args.push(getRefText(arg));
-
-      }
-
+      args.push(getLiteral(arg));
     });
 
     ret += ref.id + '(' + args.join(',') + ')';
 
     return ret;
 
+  }
+
+  function getLiteral(ast){
+
+    var ret = '';
+
+    switch(ast.type) {
+
+      case 'string': {
+        var sign = ast.isEval? '"': "'";
+        ret = sign + ast.value + sign;
+        break;
+      }
+
+      case 'integer':
+      case 'bool'   : {
+        ret = ast.value;
+        break;
+      }
+
+      case 'array': {
+        ret = '[';
+        var len = ast.value.length - 1;
+        utils.forEach(ast.value, function(arg, i){
+          ret += getLiteral(arg);
+          if (i !== len) ret += ', ';
+        });
+        ret += ']';
+        break;
+      }
+
+      default:
+        ret = getRefText(ast)
+    }
+
+    return ret;
   }
 
   Helper.getRefText = getRefText;

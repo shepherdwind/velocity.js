@@ -20,8 +20,14 @@ module.exports = function(Velocity, utils){
       if (local.type == 'foreach') {
 
         if (ast.id == local.ast.to) {
-          ret.real = local.ast;
-          ret.foreach = true;
+
+          if (ast.path) {
+            local.objectKeys.push(ast.path[0].id);
+            ret.ignore = true;
+          } else {
+            ret.real = local.ast;
+            ret.foreach = true;
+          }
         }
 
         eachTo = ast.id;

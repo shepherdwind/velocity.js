@@ -34,7 +34,7 @@ $ npm install velocityjs
 执行`cake`命令进行打包velocity.js浏览器端脚本:
 
 ```bash
-$ cake --build
+$ make parse
 ```
 
 需要cli下安装coffeejs，暂时打包是为kissy所使用的，velocity.js需要的一些常用的
@@ -147,7 +147,7 @@ foreach在velocity中对对象的遍历，和js有区别，java中对象是一�
 一个foreach，有一个`$foreach`的对象可以使用，此变量作用域为当前循环范围。
 
 ```
-#foreach($num as [1..5])
+#foreach($num in [1..5])
   index => $foreach.index 
   count => $foreach.count
   #if (!$foreach.hasNext) end #end
