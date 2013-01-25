@@ -1,5 +1,16 @@
 ##Velocity - Template Engine [![Build Status](https://secure.travis-ci.org/shepherdwind/velocity.js.png)](https://travis-ci.org/shepherdwind/velocity.js)
 
+*注意*
+
+velocityjs在npm中包名从原来的`velocity.js`改为`velocityjs`，感觉`require("velocity.js")`
+比较不好看，所以改名，从`0.3.0`之后的版本都在`velocityjs`下更新。
+
+查看最新版本
+
+```bash
+$ npm info velocityjs version
+```
+
 velocity.js是velocity模板语法的javascript实现。
 [Velocity](http://velocity.apache.org/) 是基于Java的模板引擎，广泛应用在阿里集
 体各个子公司。Velocity模板适用于大量模板使用的场景，支持复杂的逻辑运算，包含
