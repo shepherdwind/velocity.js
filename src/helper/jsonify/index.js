@@ -12,7 +12,12 @@ Jsonify.prototype = {
 
   constructor: Jsonify,
 
-  init: function(asts){
+  init: function(asts, context, macros){
+
+    this.fns = {
+      context: context || {},
+      macros: macros || {}
+    };
 
     this.context = {};
     this.leafs   = [];

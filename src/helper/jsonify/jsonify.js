@@ -151,6 +151,17 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
       }
 
       return this._callMacro(macro, vmText);
+    },
+
+    eval: function(str){
+      if (str) {
+        var asts = Parser.parse(str);
+        if (this instanceof Velocity){
+          this._render(asts);
+        } else {
+          throw new Error('不能改变this指向');
+        }
+      }
     }
 
   });

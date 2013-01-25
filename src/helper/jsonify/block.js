@@ -112,22 +112,32 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
     getMacro: function(ast){
 
       var macro = this.macros[ast.id];
-      if (macro === undefined) return;
+      if (macro === undefined){
+        macro = this.fns.macros[ast.id];
+        if (macro && macro.apply) {
+          var _arg = [];
+          utils.forEach(ast.args, function(arg){
+            _arg.push(arg.value);
+          });
+          macro.apply(this, _arg);
+        }
+      } else {
 
-      var guid = utils.guid();
-      var contextId = 'macro:' + guid;
-      var local = {
-        type: 'macro',
-        variable: this._getArgus(macro.args),
-        maps: ast.args,
-        context: {}
-      };
+        var guid = utils.guid();
+        var contextId = 'macro:' + guid;
+        var local = {
+          type: 'macro',
+          variable: this._getArgus(macro.args),
+          maps: ast.args,
+          context: {}
+        };
 
-      this.local[contextId] = local;
-      this.conditions.push(contextId);
-      this._render(macro.asts);
+        this.local[contextId] = local;
+        this.conditions.push(contextId);
+        this._render(macro.asts);
 
-      this.conditions.pop();
+        this.conditions.pop();
+      }
     },
 
     _getArgus: function(args){

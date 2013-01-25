@@ -12,7 +12,8 @@ Helper.BackStep  = require('./helper/backstep');
 var Velocity = {
   Parser  : Parser,
   Compile : Compile,
-  Helper  : Helper
+  Helper  : Helper,
+  Jsonify : Helper.Jsonify
 };
 
 Velocity.render = function(template, context, macros){

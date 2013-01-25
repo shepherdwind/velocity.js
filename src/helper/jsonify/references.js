@@ -101,19 +101,48 @@ module.exports = function(Velocity, utils){
 
     },
 
+    isFn: function(ast){
+      var fn = this.fns.context;
+      var isNoPass = true;
+      fn = fn[ast.id];
+
+      if (fn) {
+        var args = null;
+        isNoPass = utils.some(ast.path, function(a){
+          fn = fn[a.id];
+          args = a.args;
+          return !fn;
+        });
+
+        var _arg = [];
+        utils.forEach(args, function(arg){
+          _arg.push(arg.value);
+        });
+
+        fn.apply(this, _arg);
+      }
+
+      return !isNoPass;
+    },
+
     getReferences: function(ast){
 
-      var astType = this.getRefType(ast);
+      if (this.isFn(ast)) {
 
-      var real = astType.real;
-      var text = real.from ? this.getRefType(real.from): this.getRefText(real);
+      } else {
 
-      //执行过一遍，不再执行
-      if (this.cache[text]) return;
+        var astType = this.getRefType(ast);
 
-      this.toBasicType(astType);
+        var real = astType.real;
+        var text = real.from ? this.getRefType(real.from): this.getRefText(real);
 
-      this.cache[text] = true;
+        //执行过一遍，不再执行
+        if (this.cache[text]) return;
+
+        this.toBasicType(astType);
+
+        this.cache[text] = true;
+      }
 
     },
 
