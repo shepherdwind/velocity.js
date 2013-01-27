@@ -212,12 +212,13 @@ Example:
 
 ##Helper
 
-Helper提供一些额外的功能，都在`src/helper/`目录下，使用方式参考`test/`下对应文件，
-Helper功能还在开发中，可能不太完善。
+Helper提供一些额外的功能，主要用于解决vm数据模拟问题。
 
 - `structure` 获取vm中所有变量的结构: `$foo.bar` => `foo: {bar: 'string'}`
 - `backstep` vm逆推，根据velocity文件和解析后的结果，计算数据结构和内容
 - `jsonify` 把vm转换为json结构，去除其中的html标签，比如：
+
+jsonify文档[issue #11](https://github.com/shepherdwind/velocity.js/issues/11)
 
 ```
 hello world $foo.name.

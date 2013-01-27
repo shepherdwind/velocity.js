@@ -1,6 +1,0 @@
-#set( $foo = 5 )
-#set( $value = - $foo + 18 / (4 - 2) )
-$value
-#if( $foo > 8 + 4)
-hello $foo
-#end
