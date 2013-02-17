@@ -48,7 +48,7 @@ module.exports = function(Velocity, utils){
         ret = this._render(_block.slice(1));
       }
 
-      return ret;
+      return ret || '';
     },
 
     /**

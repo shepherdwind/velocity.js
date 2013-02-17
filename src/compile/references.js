@@ -57,8 +57,9 @@ module.exports = function(Velocity, utils){
      * 对于set连缀的情况$page.setTitle('sd').setName('haha')
      */
     hasSetMethod: function(ast, context){
+      var tools = { 'control': true };
       var len = ast.path && ast.path.length;
-      if (!len) return false;
+      if (!len || tools[ast.id]) return false;
 
       var lastId = '' + ast.path[len - 1].id;
 
@@ -69,6 +70,8 @@ module.exports = function(Velocity, utils){
         context = context || {};
         utils.forEach(ast.path, function(ast){
           if (ast.type === 'method' && ast.id.indexOf('set') === 0) {
+            if (context[ast.id]) {
+            }
             context[ast.id.slice(3)] = this.getLiteral(ast.args[0]);
           } else {
             context[ast.id] = context[ast.id] || {};
@@ -194,7 +197,7 @@ module.exports = function(Velocity, utils){
         }, this);
 
         if (ret && ret.call) {
-          ret = ret.apply(baseRef, args); 
+          ret = ret.apply(this, args); 
         } else {
           ret = undefined;
         }
