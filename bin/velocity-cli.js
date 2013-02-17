@@ -117,15 +117,28 @@ function showVersion() {
 function jsonify(file){
 
   file = process.cwd() + '/' + file;
+  var pwd = process.cwd() + '/';
 
   if (!fs.existsSync(file)) {
-    console.log('$ velocity --makeup xx.vm');
+    console.log('$ velocity --makeup xx.vm | xx.js');
     return;
   }
 
+  var extname = path.extname(file);
+
+  if (extname === '.vm') {
+    console.log(getVTL(file));
+  } else {
+    var compoment = require(file);
+    var files = compoment.files;
+    console.log(getVTL(files, compoment.context, compoment.macros));
+  }
+}
+
+function getVTL(file, context, macros){
   var asts = Parser.parse(fs.readFileSync(file).toString());
-  var makeup = new Jsonify(asts);
-  console.log(makeup.toVTL());
+  var makeup = new Jsonify(asts, context, macros);
+  return makeup.toVTL();
 }
 
 function showMakeup(file){
