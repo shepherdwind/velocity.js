@@ -108,10 +108,24 @@ module.exports = function(Velocity, utils){
 
       if (fns) {
         var args = null;
-        isNoPass = utils.some(ast.path, function(a){
-          fn = fn[a.id];
-          args = a.args;
-          return !fn;
+        var fn;
+        utils.forEach(ast.path, function(a){
+
+          if (typeof fn !== 'function') {
+            fn = fns[a.id];
+          } else {
+            return;
+          }
+
+          if (a.type === 'method') {
+            if (typeof fn === 'function') {
+              args = a.args;
+              isNoPass = false;
+            }
+          } else {
+            fns = fns[a.id];
+          }
+
         });
 
         var _arg = [];
@@ -119,7 +133,7 @@ module.exports = function(Velocity, utils){
           _arg.push(arg.value);
         });
 
-        fn.apply(this, _arg);
+        fn && fn.apply && fn.apply(this, _arg);
       }
 
       return !isNoPass;
