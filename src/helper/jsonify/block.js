@@ -123,6 +123,8 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
         }
       } else {
 
+        utils.forEach(ast.args, this.getReferences, this);
+
         var guid = utils.guid();
         var contextId = 'macro:' + guid;
         var local = {

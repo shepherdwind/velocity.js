@@ -164,8 +164,10 @@ module.exports = function(Velocity, utils){
 
       }, this);
 
-      if (ret.type === 'macro' && ret.real) {
-        //递归查找上层
+      if (ret.type === 'macro' && ret.real && !this.context[ref.id]) {
+        // see: https://github.com/shepherdwind/velocity.js/issues/13
+        // 最后一个判断，防止死循环
+        // 递归查找上层
         var _local  = this.getLocal(ret.real);
         if (_local.isGlobal === false && _local.real) {
           ret.real = _local.real;
