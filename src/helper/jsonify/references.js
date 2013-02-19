@@ -103,22 +103,21 @@ module.exports = function(Velocity, utils){
 
     isFn: function(ast){
       var fns = this.fns.context;
+      var isNoPass = true;
       fns = fns[ast.id];
-      var fn = null;
 
       if (fns) {
-        utils.each(ast.path, function(a){
-          if (typeof fns[a.id] === 'function') {
-            fn = fns[a.id];
-          }
-          fn = fns[a.id];
-          var _arg = [];
-          utils.forEach(args, function(arg){
-            _arg.push(arg.value);
-          });
+        var args = null;
+        isNoPass = utils.some(ast.path, function(a){
+          fn = fn[a.id];
+          args = a.args;
           return !fn;
-        }, this);
+        });
 
+        var _arg = [];
+        utils.forEach(args, function(arg){
+          _arg.push(arg.value);
+        });
 
         fn.apply(this, _arg);
       }
