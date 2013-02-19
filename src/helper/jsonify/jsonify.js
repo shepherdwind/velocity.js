@@ -56,6 +56,7 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
     },
 
     setRef: function(ast, text, isMaps){
+
       var paths = getPath(ast);
       var last  = paths.pop();
       var context = this.context;

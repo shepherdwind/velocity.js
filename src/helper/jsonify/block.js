@@ -130,7 +130,7 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
         var local = {
           type: 'macro',
           variable: this._getArgus(macro.args),
-          maps: ast.args,
+          maps: ast.args || [],
           context: {}
         };
 

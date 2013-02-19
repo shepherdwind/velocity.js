@@ -127,6 +127,8 @@ module.exports = function(Velocity, utils){
 
     getReferences: function(ast){
 
+      if (ast.type !== 'references') return;
+
       if (this.isFn(ast)) {
 
       } else {
@@ -159,6 +161,9 @@ module.exports = function(Velocity, utils){
           ret = local;
           ret['isGlobal'] = false;
           ret['real'] = ret.maps? ret.maps[index]: ref;
+          if (ret['real'] && ret['real'].type !== 'references') {
+            ret['real'] = undefined;
+          }
           return true;
         }
 
