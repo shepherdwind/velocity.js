@@ -150,7 +150,7 @@ module.exports = function(Velocity, utils){
         var astType = this.getRefType(ast);
 
         var real = astType.real;
-        var text = real.from ? this.getRefType(real.from): this.getRefText(real);
+        var text = real.from ? this.getRefText(real.from): this.getRefText(real);
 
         //执行过一遍，不再执行
         if (this.cache[text]) return;
