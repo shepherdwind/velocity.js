@@ -104,25 +104,49 @@ KISSY.add(function(S){
       var ret = '';
   
       utils.forEach(ref.args, function(arg){
-  
-        if (arg.type === 'string') {
-  
-          var sign = arg.isEval? '"': "'";
-          var text = sign + arg.value + sign;
-          args.push(text);
-  
-        } else {
-  
-          args.push(getRefText(arg));
-  
-        }
-  
+        args.push(getLiteral(arg));
       });
   
       ret += ref.id + '(' + args.join(',') + ')';
   
       return ret;
   
+    }
+  
+    function getLiteral(ast){
+  
+      var ret = '';
+  
+      switch(ast.type) {
+  
+        case 'string': {
+          var sign = ast.isEval? '"': "'";
+          ret = sign + ast.value + sign;
+          break;
+        }
+  
+        case 'integer':
+        case 'bool'   : {
+          ret = ast.value;
+          break;
+        }
+  
+        case 'array': {
+          ret = '[';
+          var len = ast.value.length - 1;
+          utils.forEach(ast.value, function(arg, i){
+            ret += getLiteral(arg);
+            if (i !== len) ret += ', ';
+          });
+          ret += ']';
+          break;
+        }
+  
+        default:
+          ret = getRefText(ast)
+      }
+  
+      return ret;
     }
   
     Helper.getRefText = getRefText;
@@ -178,7 +202,7 @@ KISSY.add(function(S){
           ret = this._render(_block.slice(1));
         }
   
-        return ret;
+        return ret || '';
       },
   
       /**
@@ -440,9 +464,16 @@ KISSY.add(function(S){
         var block = [];
         var index = 0;
         asts = asts || this.asts;
+  
         if (contextId) {
-          if (contextId !== this.condition) this.conditions.push(contextId);
+  
+          if (contextId !== this.condition && 
+              utils.indexOf(contextId, this.conditions) === -1) {
+            this.conditions.unshift(contextId);
+          }
+  
           this.condition = contextId;
+  
         } else {
           this.condition = null;
         }
@@ -827,8 +858,9 @@ KISSY.add(function(S){
        * 对于set连缀的情况$page.setTitle('sd').setName('haha')
        */
       hasSetMethod: function(ast, context){
+        var tools = { 'control': true };
         var len = ast.path && ast.path.length;
-        if (!len) return false;
+        if (!len || tools[ast.id]) return false;
   
         var lastId = '' + ast.path[len - 1].id;
   
@@ -839,6 +871,8 @@ KISSY.add(function(S){
           context = context || {};
           utils.forEach(ast.path, function(ast){
             if (ast.type === 'method' && ast.id.indexOf('set') === 0) {
+              if (context[ast.id]) {
+              }
               context[ast.id.slice(3)] = this.getLiteral(ast.args[0]);
             } else {
               context[ast.id] = context[ast.id] || {};
@@ -964,7 +998,7 @@ KISSY.add(function(S){
           }, this);
   
           if (ret && ret.call) {
-            ret = ret.apply(baseRef, args); 
+            ret = ret.apply(this, args); 
           } else {
             ret = undefined;
           }

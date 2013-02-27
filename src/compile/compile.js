@@ -66,9 +66,16 @@ module.exports = function(Velocity, utils){
       var block = [];
       var index = 0;
       asts = asts || this.asts;
+
       if (contextId) {
-        if (contextId !== this.condition) this.conditions.push(contextId);
+
+        if (contextId !== this.condition && 
+            utils.indexOf(contextId, this.conditions) === -1) {
+          this.conditions.unshift(contextId);
+        }
+
         this.condition = contextId;
+
       } else {
         this.condition = null;
       }

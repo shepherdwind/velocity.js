@@ -222,6 +222,11 @@ describe('Compile', function(){
       assert.equal(' name => hanwen ', render(vm, data));
     });
 
+    it('#foreach with nest foreach', function(){
+      var vm = '#foreach($i in [1..2])${velocityCount}#foreach($j in [2..3])${velocityCount}#end#end';
+      assert.equal('112212', render(vm));
+    });
+
     it('#foreach with map entrySet', function(){
       var vm = '' +
                '#set($js_file = {\n' +
@@ -240,6 +245,7 @@ describe('Compile', function(){
                 'js_pa_pa = /path/build/js/pa/pa.js?t=20110608' +
                 'js_swiff = /path/build/js/app/swiff.js?t=20110608' +
                 'js_alieditControl = /path/build/js/pa/alieditcontrol-update.js?t=20110608';
+
       var data = {
         staticServer: {
           getURI: function(url){
