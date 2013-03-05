@@ -101,9 +101,13 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
 
       this._render(asts);
       if (local.objectKeys.length) {
-        var vmText = this.getRefText(local.real);
-        var vm = this._callMacro('objects', vmText, getUnique(local.objectKeys));
-        this.setRef(local.real, vm);
+
+        if (local.real) {
+          var vmText = this.getRefText(local.real);
+          var vm = this._callMacro('objects', vmText, getUnique(local.objectKeys));
+          this.setRef(local.real, vm);
+        }
+
       }
 
       this.conditions.pop();
