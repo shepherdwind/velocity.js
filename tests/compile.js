@@ -326,6 +326,11 @@ describe('Compile', function(){
       assert.equal('$bar.foo()...', render(vm));
     });
 
+    it('issue #15', function(){
+      var vm = '#macro(a $b $list)#foreach($a in $list)${a}#end $b #end #a("hello", [1, 2])';
+      assert.equal(' 12 hello ', render(vm));
+    });
+
     it('# meet with css property', function(){
       var vm = '#margin-top:2px;';
       assert.equal(vm, render(vm));

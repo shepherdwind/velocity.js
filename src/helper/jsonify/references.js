@@ -21,7 +21,8 @@ module.exports = function(Velocity, utils){
 
         if (ast.id == local.ast.to) {
 
-          if (ast.path) {
+          // 排除get key value size等通用方法
+          if (ast.path && !(~['get', 'key', 'value', 'size'].indexOf(ast.path[0].id))) {
             local.objectKeys.push(ast.path[0].id);
             ret.ignore = true;
           } else {

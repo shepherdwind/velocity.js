@@ -202,8 +202,8 @@ module.exports = function(Velocity, utils){
       this.setBreak = false;
       //删除临时变量
       this.local[contextId] = {};
-      this.conditions.pop();
-      this.condition = '';
+      this.conditions.shift();
+      this.condition = this.conditions[0] || '';
 
       return ret;
 

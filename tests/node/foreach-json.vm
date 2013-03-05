@@ -1,0 +1,25 @@
+{
+  "foo": [
+    #foreach($key in $foo) "$key" #if($velocityCount < $foo.size()) , #end #end
+  ],
+  "bar": {
+    "foo": {
+      #foreach($list in $bar.foo.entrySet()) 
+      "$list.key" : "$list.value" #if($velocityCount < $bar.foo.size()) , #end
+      #end
+    },
+    "foo1": {
+      #foreach($list in $bar.foo1.entrySet()) 
+      "$list.key" : "$list.value" #if($velocityCount < $bar.foo1.size()) , #end
+      #end
+    },
+    "foo2": [
+      #foreach($foo in $bar.foo2) {
+         "a" : "$foo.a",
+         "c" : "$foo.c",
+         "d" : "$foo.d" 
+      } #if($velocityCount < $bar.foo2.size()) , #end
+      #end
+    ]
+  }
+}

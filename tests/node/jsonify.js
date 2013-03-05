@@ -4,29 +4,45 @@
 var assert = require("assert");
 var Parser = require('../../src/velocity').Parser;
 var Jsonify = require('../../src/velocity').Helper.Jsonify;
+var fs = require('fs');
+var path = require('path');
 
 describe('Jsonify', function(){
-  function getContext(vm){
-    var jsonify = new Jsonify(Parser.parse(vm));
+
+  function getContext(vm, context, macros){
+    var jsonify = new Jsonify(Parser.parse(vm), context, macros);
     return jsonify.toVTL();
   }
 
-  function getJson(obj){
-    return JSON.stringify(obj, false, 2);
+  function getVmFile(name){
+    name = path.join(__dirname, name + '.vm');
+    var jsonFile = name.replace(/\.vm$/, '-json.vm');
+    var readFile = fs.readFileSync;
+    return [(readFile(name)).toString(), (readFile(jsonFile)).toString()];
   }
+
+  function trimStr(str){
+    return str.replace(/\s+/g, '');
+  }
+
   it('simple references', function(){
-    var vm = '$foo.bar';
-    assert.equal(getContext(vm), getJson({foo: {bar: '#jsonifyGetString($foo.bar)'} }));
+    var strs = getVmFile('simple'); 
+    var str1 = trimStr(getContext(strs[0]));
+    var str2 = trimStr(strs[1]);
+    assert.equal(str1, str2);
   });
 
-  it('method call', function(){
-    var vm = '$foo.bar($user.name)';
-    assert.equal(getContext(vm), getJson({foo: {bar: 'Function(){}'} }));
+  it('simple macros', function(){
+    var strs = getVmFile('simple-macros'); 
+    var str1 = trimStr(getContext(strs[0]));
+    var str2 = trimStr(strs[1]);
+    assert.equal(str1, str2);
   });
 
-  it('method call, return map', function(){
-    var vm = '$foo.bar($user.name).bar';
-    //console.log(getContext(vm));
+  it('simple foreach', function(){
+    var strs = getVmFile('foreach'); 
+    var str1 = trimStr(getContext(strs[0]));
+    var str2 = trimStr(strs[1]);
+    assert.equal(str1, str2);
   });
-
 });

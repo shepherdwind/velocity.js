@@ -1,0 +1,9 @@
+{
+  "foo": {
+    "bar": "$foo.bar",
+    "bar1": {
+      "foo": "$foo.bar1.foo",
+      "fff": "$foo.bar1.fff"
+    }
+  }
+}
