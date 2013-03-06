@@ -1,0 +1,2 @@
+#parse("inc/a.vm")
+$ctrl.load("inc/b.vm")

@@ -45,4 +45,18 @@ describe('Jsonify', function(){
     var str2 = trimStr(strs[1]);
     assert.equal(str1, str2);
   });
+
+  it('rewrite macros and inner api', function(){
+    function loadVFile(txt){
+      var file = __dirname + '/'+ txt;
+      if (fs.existsSync(file)) {
+        this.eval(fs.readFileSync(file).toString());
+      }
+    }
+    
+    var strs = getVmFile('macros'); 
+    var str1 = trimStr(getContext(strs[0], {ctrl: {load: loadVFile}}, {parse: loadVFile}));
+    var str2 = trimStr(strs[1]);
+    assert.equal(str1, str2);
+  });
 });
