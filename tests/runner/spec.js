@@ -53,6 +53,20 @@ describe('Compile', function(){
       assert.equal('my email is ', compile.render(null, null, true));
     });
 
+    it('this context keep correct, see #16', function(){
+      var data = 'a = $a.get()';
+      Compile.Parser = Parser;
+      function b(c) {
+        this.c = c;
+      }
+      b.prototype.get = function() {
+        var t = this.eval("; hello $name", {name: 'hanwen'});
+        return this.c + t;
+      };
+
+      assert.equal('a = 1; hello hanwen', render(data, {a: new b(1)}));
+    });
+
   });
 
   describe('Set && Expression', function(){

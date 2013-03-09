@@ -60,6 +60,7 @@ describe('Compile', function(){
 
     it('this context keep correct, see #16', function(){
       var data = 'a = $a.get()';
+      Compile.Parser = Parser;
       function b(c) {
         this.c = c;
       }
