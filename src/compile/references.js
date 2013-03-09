@@ -197,7 +197,13 @@ module.exports = function(Velocity, utils){
         }, this);
 
         if (ret && ret.call) {
-          ret = ret.apply(this, args); 
+
+          var that = this;
+          baseRef.eval = function() {
+            return that.eval.apply(that, arguments);
+          }
+          ret = ret.apply(baseRef, args);
+
         } else {
           ret = undefined;
         }
