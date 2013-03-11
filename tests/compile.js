@@ -38,10 +38,12 @@ describe('Compile', function(){
 
     it('size method', function(){
       var vm = '$foo.bar.size()';
-      //assert.equal('2', render(vm, {foo: {bar: [1, 2]}}));
-      //assert.equal('2', render(vm, {foo: {bar: {a: 1, b: 3}}}));
+      assert.equal('2', render(vm, {foo: {bar: [1, 2]}}));
+      assert.equal('2', render(vm, {foo: {bar: {a: 1, b: 3}}}));
+
       var vm2 = '#if($foo.bar.size()) ok #{else} nosize #end';
       assert.equal(' nosize ', render(vm2, {foo: {bar: 123}}));
+      assert.equal(' nosize ', render(vm2, {foo: {}}));
     });
 
     it('quiet reference', function(){

@@ -26,33 +26,10 @@ utils.guid = function(){
   return num++;
 };
 
-utils.walks = function walks(arr, fn, callback){
-  var rets = [];
-  var num = 0;
-  var len = arr.length;
-
-  this.forEach(arr, function(val, i){
-
-    fn(val, cb);
-    function cb(err, ret){
-      if (num === len) return;
-      if (err){
-        callback(err, rets);
-        num = len;
-      } else {
-        num++;
-        rets[i] = ret;
-        if (num === len) callback(null, rets);
-      }
-    }
-
-  });
-};
-
 utils.mixin = function (to, from){
   utils.forEach(from, function(val, key){
     var toString = {}.toString.call(val);
-    if (toString == '[object Array]' || toString == '[object Object]') {
+    if (utils.isArray(val) || utils.isOject(val)) {
       to[key] = utils.mixin(val, to[key] || {});
     } else {
       to[key] = val;
@@ -63,6 +40,10 @@ utils.mixin = function (to, from){
 
 utils.isArray = function(obj){
   return {}.toString.call(obj) === '[object Array]';
+};
+
+utils.isOject = function(obj){
+  return {}.toString.call(obj) === '[object Object]';
 };
 
 utils.indexOf = function(elem, arr){
