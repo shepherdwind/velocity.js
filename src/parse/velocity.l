@@ -99,7 +99,7 @@
                                       return 'CONTENT'; 
                                     }
                                   }
-<mu,h,run,c,i>"["                 { this.begin("i"); return 'BRACKET'; }
+<mu,h,run,c,i>"["/[\-$"'0-9]+     { this.begin("i"); return 'BRACKET'; }
 <mu,h,run,c,i>"]"                 { 
                                     if (this.popState() === "i") {
                                       return 'CLOSE_BRACKET'; 

@@ -340,6 +340,12 @@ describe('Compile', function(){
       assert.equal(' 12 hello ', render(vm));
     });
 
+    it('issue #18', function(){
+      var vm = '$!tradeDetailModel.goodsInfoModel.goodsTitle[<a href="$!personalModule.setTarget(\'/p.htm\').addQueryData("id",$!stringUtil.substringAfter($!tradeDetailModel.goodsInfoModel.goodsId,"guarantee."))" target="_blank">商品页面</a>]';
+      var ret = '[<a href="" target="_blank">商品页面</a>]';
+      assert.equal(ret, render(vm));
+    });
+
     it('# meet with css property', function(){
       var vm = '#margin-top:2px;';
       assert.equal(vm, render(vm));
