@@ -353,13 +353,15 @@ map
   ;
 
 map_item
-  : string MAP_SPLIT literal
+  : string MAP_SPLIT literals
       { $$ = {}; $$[$1.value] = $3; }
   | string MAP_SPLIT references
       { $$ = {}; $$[$1.value] = $3; }
+  | string MAP_SPLIT 
+      { $$ = {}; $$[$1.value] = $3; }
   | map_item COMMA string MAP_SPLIT references
       { $$ = $1; $$[$3.value] = $5; }
-  | map_item COMMA string MAP_SPLIT literal
+  | map_item COMMA string MAP_SPLIT literals
       { $$ = $1; $$[$3.value] = $5; }
   ;
     

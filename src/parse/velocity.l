@@ -69,12 +69,12 @@
                                     }
                                   }
 <c,run,i>\s+                      { /*ignore whitespace*/ }
-<i,run,c>"{"                         { return 'MAP_BEGIN'; }
-<i,run,c>"}"                         { return 'MAP_END'; }
-<h,run,c>":"                         { return 'MAP_SPLIT'; }
+<i,run,c,i>"{"                         { return 'MAP_BEGIN'; }
+<i,run,c,i>"}"                         { return 'MAP_END'; }
+<h,run,c,i>":"                         { return 'MAP_SPLIT'; }
 <mu>"{"                              { yy.begin = true; return 'VAR_BEGIN'; }
 <mu>"}"                              { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
-<mu,h,run,c,i>"("[ ]*/[$'"\[\{\-0-9\w)] { this.begin("c"); return 'PARENTHESIS'; }
+<mu,h,run,c,i>"("[\s]*/[$'"\[\{\-0-9\w()!] { this.begin("c"); return 'PARENTHESIS'; }
 <mu,h,run,c,i>")"                 { 
                                     if (this.popState() === "c") {
                                       var conditionStack = this.conditionStack;
@@ -99,7 +99,7 @@
                                       return 'CONTENT'; 
                                     }
                                   }
-<mu,h,run,c,i>"["/[\-$"'0-9]+     { this.begin("i"); return 'BRACKET'; }
+<mu,h,run,c,i>"["[\s]*/[\-$"'0-9{\[\]]+     { this.begin("i"); return 'BRACKET'; }
 <mu,h,run,c,i>"]"                 { 
                                     if (this.popState() === "i") {
                                       return 'CLOSE_BRACKET'; 

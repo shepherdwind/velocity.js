@@ -11,7 +11,7 @@
 ## maps
 #foreach($b in $bar.foo1.keySet())
   $b
-  $bar.foo1.get($b)
+  ##$bar.foo1.get($b)
 #end
 
 ## object

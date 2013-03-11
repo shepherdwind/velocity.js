@@ -187,6 +187,25 @@ describe('Compile', function(){
       assert.deepEqual([], getContext('#set($foo = [$bar..1])').foo);
     });
 
+    it('Range Operator', function(){
+      var vm1 = '' +
+        '#set($a = [\n' +
+        '  {"name": 1},\n' +
+        '  {"name": 2}\n' +
+        '])\n' +
+        ' ';
+
+      var vm2 = '' +
+        '#set($a = {\n' +
+        '  "a": [1, 2, ["1", "a"], {"a": 1}],\n' +
+        '  "b": "12",\n' +
+        '  "c": false\n' +
+        '})\n' +
+        '' ;
+
+      assert.deepEqual([{name: 1}, { name: 2 }], getContext(vm1).a);
+      assert.deepEqual({a: [1, 2, ["1", "a"], {a: 1}], b: "12", c: false}, getContext(vm2).a);
+    });
   });
 
   describe('Conditionals', function(){

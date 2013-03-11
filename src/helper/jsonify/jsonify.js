@@ -67,8 +67,13 @@ module.exports = function(Velocity, utils, BLOCK_TYPES){
         last = paths.pop();
 
       utils.forEach(paths, function(path){
-        if (!context[path]) context[path] = {};
+
+        if (!context[path] || typeof context[path] === "string") {
+          context[path] = {};
+        }
+
         context = context[path];
+
       }, this);
 
       leafs.push(text);
