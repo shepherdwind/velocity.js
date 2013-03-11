@@ -346,6 +346,12 @@ describe('Compile', function(){
       assert.equal(ret, render(vm));
     });
 
+    it('issue #18, condiction 2', function(){
+      var vm = '$!a(**** **** **** $stringUtil.right($!b,4))';
+      var ret = '(**** **** **** $stringUtil.right($!b,4))';
+      assert.equal(ret, render(vm));
+    });
+
     it('# meet with css property', function(){
       var vm = '#margin-top:2px;';
       assert.equal(vm, render(vm));
