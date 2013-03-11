@@ -69,12 +69,12 @@
                                     }
                                   }
 <c,run,i>\s+                      { /*ignore whitespace*/ }
-<i,run,c>"{"                      { return 'MAP_BEGIN'; }
-<i,run,c>"}"                      { return 'MAP_END'; }
-<h,run,c>":"                      { return 'MAP_SPLIT'; }
-<mu>"{"                           { yy.begin = true; return 'VAR_BEGIN'; }
-<mu>"}"                           { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
-<mu,h,run,c,i>"("                 { this.begin("c"); return 'PARENTHESIS'; }
+<i,run,c>"{"                         { return 'MAP_BEGIN'; }
+<i,run,c>"}"                         { return 'MAP_END'; }
+<h,run,c>":"                         { return 'MAP_SPLIT'; }
+<mu>"{"                              { yy.begin = true; return 'VAR_BEGIN'; }
+<mu>"}"                              { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
+<mu,h,run,c,i>"("[ ]*/[$'"\[\{\-0-9\w)] { this.begin("c"); return 'PARENTHESIS'; }
 <mu,h,run,c,i>")"                 { 
                                     if (this.popState() === "c") {
                                       var conditionStack = this.conditionStack;
