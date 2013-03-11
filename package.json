@@ -1,7 +1,7 @@
 {
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "0.3.10",
+  "version": "0.3.12",
   "keywords": [
     "velocity template"
   ],

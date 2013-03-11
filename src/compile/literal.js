@@ -23,6 +23,10 @@ module.exports = function(Velocity, utils){
 
         ret = parseInt(literal.value, 10);
 
+      } else if (type == 'decimal') {
+
+        ret = parseFloat(literal.value, 10);
+
       } else if (type == 'array') {
 
         ret = this.getArray(literal);

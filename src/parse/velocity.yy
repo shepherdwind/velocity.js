@@ -298,10 +298,19 @@ index
 literal
   : string 
       { $$ = $1; }
-  | integer
-      { $$ = {type: 'integer', value: $1 }; }
+  | number
+      { $$ = $1; }
   | BOOL
       { $$ = {type: 'bool', value: $1 }; }
+  ;
+
+number
+  : integer
+      { $$ = {type: "integer", value: $1}; }
+  | INTEGER DECIMAL_POINT INTEGER
+      { $$ = {type: "decimal", value: + ($1 + '.' + $3) }; }
+  | '-' INTEGER DECIMAL_POINT INTEGER
+      { $$ = {type: "decimal", value: - ($2 + '.' + $4) }; }
   ;
 
 integer

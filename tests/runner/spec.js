@@ -121,6 +121,12 @@ describe('Compile', function(){
       assert.equal(7  , getContext('#set($foo = 7)').foo);
     });
 
+    it('math with decimal', function(){
+      assert.equal(10.5 , getContext('#set($foo = 2.1 * 5)').foo);
+      assert.equal(2.1  , getContext('#set($foo = 4.2 / 2)').foo);
+      assert.equal(-7.5 , getContext('#set($foo = - 2.5 - 5)').foo);
+    });
+
     it('expression complex math', function(){
       assert.equal(20  , getContext('#set($foo = (7 + 3) * (10 - 8))').foo);
       assert.equal(-20 , getContext('#set($foo = -(7 + 3) * (10 - 8))').foo);
@@ -147,7 +153,6 @@ describe('Compile', function(){
       assert.equal(false , getContext('#set($foo = $a && $b)', {a: 1, b: 0}).foo);
       assert.equal(true  , getContext('#set($foo = $a || $b)', {a: 1, b: 0}).foo);
     });
-
 
   });
 
@@ -182,6 +187,25 @@ describe('Compile', function(){
       assert.deepEqual([], getContext('#set($foo = [$bar..1])').foo);
     });
 
+    it('map and array nest', function(){
+      var vm1 = '' +
+        '#set($a = [\n' +
+        '  {"name": 1},\n' +
+        '  {"name": 2}\n' +
+        '])\n' +
+        ' ';
+
+      var vm2 = '' +
+        '#set($a = {\n' +
+        '  "a": [1, 2, ["1", "a"], {"a": 1}],\n' +
+        '  "b": "12",\n' +
+        '  "c": false\n' +
+        '})\n' +
+        '' ;
+
+      assert.deepEqual([{name: 1}, { name: 2 }], getContext(vm1).a);
+      assert.deepEqual({a: [1, 2, ["1", "a"], {a: 1}], b: "12", c: false}, getContext(vm2).a);
+    });
   });
 
   describe('Conditionals', function(){
