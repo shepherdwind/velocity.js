@@ -809,7 +809,7 @@ KISSY.add(function(S){
   
       if (utils.isArray(obj)) {
         return obj.length;
-      } else if (typeof obj === 'string') {
+      } else if (utils.isOject(obj)) {
         return utils.keys(obj).length;
       }
   
@@ -875,8 +875,7 @@ KISSY.add(function(S){
           context = context || {};
           utils.forEach(ast.path, function(ast){
             if (ast.type === 'method' && ast.id.indexOf('set') === 0) {
-              if (context[ast.id]) {
-              }
+              //if (context[ast.id]) { }
               context[ast.id.slice(3)] = this.getLiteral(ast.args[0]);
             } else {
               context[ast.id] = context[ast.id] || {};
@@ -1006,7 +1005,7 @@ KISSY.add(function(S){
             var that = this;
             baseRef.eval = function() {
               return that.eval.apply(that, arguments);
-            }
+            };
             ret = ret.apply(baseRef, args);
   
           } else {
