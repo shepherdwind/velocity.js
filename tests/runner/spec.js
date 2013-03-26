@@ -33,10 +33,12 @@ describe('Compile', function(){
 
     it('size method', function(){
       var vm = '$foo.bar.size()';
-      //assert.equal('2', render(vm, {foo: {bar: [1, 2]}}));
-      //assert.equal('2', render(vm, {foo: {bar: {a: 1, b: 3}}}));
+      assert.equal('2', render(vm, {foo: {bar: [1, 2]}}));
+      assert.equal('2', render(vm, {foo: {bar: {a: 1, b: 3}}}));
+
       var vm2 = '#if($foo.bar.size()) ok #{else} nosize #end';
       assert.equal(' nosize ', render(vm2, {foo: {bar: 123}}));
+      assert.equal(' nosize ', render(vm2, {foo: {}}));
     });
 
     it('quiet reference', function(){
@@ -74,6 +76,11 @@ describe('Compile', function(){
     it('set equal to reference', function(){
       var vm = '#set( $monkey = $bill ) ## variable reference';
       assert.equal("hello", getContext(vm, {bill: 'hello'}).monkey);
+    });
+
+    it('empty map', function(){
+      var vm = '#set($foo = {})'
+      assert.deepEqual({}, getContext(vm).foo);
     });
 
     it('set equal to literal', function(){

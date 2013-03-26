@@ -359,6 +359,8 @@ range
 map
   : MAP_BEGIN map_item MAP_END
       { $$ = {type: 'map', value: $2 }; }
+  | MAP_BEGIN MAP_END
+      { $$ = {type: 'map'}; }
   ;
 
 map_item

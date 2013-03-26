@@ -83,6 +83,11 @@ describe('Compile', function(){
       assert.equal("hello", getContext(vm, {bill: 'hello'}).monkey);
     });
 
+    it('empty map', function(){
+      var vm = '#set($foo = {})'
+      assert.deepEqual({}, getContext(vm).foo);
+    });
+
     it('set equal to literal', function(){
       var vm = "#set( $monkey.Friend = 'monica' ) ## string literal\n" +
                '#set( $monkey.Number = 123 ) ##number literal';
