@@ -1,4 +1,5 @@
 module.exports = function(Velocity, utils){
+
   /**
    * blocks语法处理
    */
@@ -7,45 +8,18 @@ module.exports = function(Velocity, utils){
      * 处理代码库: if foreach macro
      */
     getBlock: function(block) {
+
       var ast = block[0];
       var ret = '';
-      var _block = [ast];
-      var _inBlock = [];
-      var index = 0;
-      var blockTypes = ['if', 'foreach', 'macro', 'noescape', 'define'];
-
-      /**
-       * 处理block嵌套，重新构造_block，把block中有嵌套的放入数组_inBlock,
-       * _inBlock 最后成为_block的一个元素，_inBlock数组作为一个block数组，求值
-       * 过程中，可以通过递归求值，进入下一层嵌套
-       */
-      utils.forEach(block, function(ast, i){
-        if (i) {
-          if (utils.indexOf(ast.type, blockTypes) !== -1) {
-            index ++;
-            _inBlock.push(ast);
-          } else if (ast.type === 'end') {
-            index --;
-            if (index) {
-              _inBlock.push(ast);
-            } else {
-              _block.push(_inBlock.slice());
-              _inBlock = [];
-            }
-          } else {
-            index ? _inBlock.push(ast) : _block.push(ast);
-          }
-        }
-      });
 
       if (ast.type === 'if') {
-        ret = this.getBlockIf(_block);
+        ret = this.getBlockIf(block);
       } else if (ast.type === 'foreach') {
-        ret = this.getBlockEach(_block);
+        ret = this.getBlockEach(block);
       } else if (ast.type === 'macro') {
-        this.setBlockMacro(_block);
+        this.setBlockMacro(block);
       } else if (ast.type === 'noescape') {
-        ret = this._render(_block.slice(1));
+        ret = this._render(block.slice(1));
       }
 
       return ret || '';

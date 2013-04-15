@@ -178,7 +178,8 @@ describe('Parser', function(){
     it('#macro', function(){
       var vm = '#macro( d $a $b)#if($b)$a#end#end #d($foo $bar)';
       var asts = Parser.parse(vm);
-      assert.equal(asts.length, 7);
+      assert.equal(asts.length, 3);
+      assert.equal(asts[0][1].length, 2);
     });
 
   });

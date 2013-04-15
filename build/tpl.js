@@ -39,6 +39,7 @@ KISSY.add(function(S){
     indexOf : S.indexOf,
     // 1.2没有keys方法，考虑独立utils
     keys    : keys,
+    isObject: S.isObject,
     now     : S.now
   };
 

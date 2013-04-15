@@ -281,15 +281,15 @@ describe('Compile', function(){
                '  "js_swiff":"build/js/app/swiff.js?t=20110608",\n' +
                '  "js_alieditControl":"build/js/pa/alieditcontrol-update.js?t=20110608"\n' +
                '})\n' +
-               '#foreach($_item in $js_file.entrySet())\n'+
-               '$_item.key = $staticServer.getURI("/${_item.value}")'+
-               '#end\n';
+               '#foreach($_item in $js_file.entrySet())'+
+               '$_item.key = $staticServer.getURI("/${_item.value}")\n'+
+               '#end';
 
-      var ret = 'js_arale = /path/build/js/arale.js?t=20110608' +
-                'js_ma_template = /path/build/js/ma/template.js?t=20110608' +
-                'js_pa_pa = /path/build/js/pa/pa.js?t=20110608' +
-                'js_swiff = /path/build/js/app/swiff.js?t=20110608' +
-                'js_alieditControl = /path/build/js/pa/alieditcontrol-update.js?t=20110608';
+      var ret = 'js_arale = /path/build/js/arale.js?t=20110608\n' +
+                'js_ma_template = /path/build/js/ma/template.js?t=20110608\n' +
+                'js_pa_pa = /path/build/js/pa/pa.js?t=20110608\n' +
+                'js_swiff = /path/build/js/app/swiff.js?t=20110608\n' +
+                'js_alieditControl = /path/build/js/pa/alieditcontrol-update.js?t=20110608\n';
 
       var data = {
         staticServer: {

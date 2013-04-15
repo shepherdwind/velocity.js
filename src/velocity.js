@@ -4,6 +4,12 @@ var Compile = require('./compile/');
 var Helper  = {};
 
 Compile.Parser = Parser;
+var _parse = Parser.parse;
+
+Parser.parse = function (str) {
+  var asts = _parse(str);
+  return utils.makeLevel(asts);
+};
 
 Helper.Structure = require('./helper/structure');
 Helper.Jsonify   = require('./helper/jsonify');

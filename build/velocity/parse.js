@@ -760,4 +760,46 @@ exports.main = function commonjsMain(args) {
 if (typeof module !== 'undefined' && require.main === module) {
   exports.main(typeof process !== 'undefined' ? process.argv.slice(1) : require("system").args);
 }
-}    return velocity;  });  
+}
+    function makeLevel(block, index){
+
+  var blockTypes = {'if': 1, 'foreach': 1, 'macro': 1, 'noescape': 1, 'define': 1};
+  var len = block.length;
+  index = index || 0;
+  var ret = [];
+  var ignore = index - 1;
+
+  for (var i = index; i < len; i++) {
+
+    if (i <= ignore) continue;
+
+    var ast = block[i];
+    var type = ast.type;
+
+    if (!blockTypes[type] && type !== 'end') {
+
+      ret.push(ast);
+
+    } else if (type === 'end') {
+
+      return {arr: ret, step: i};
+
+    } else {
+
+      var _ret = makeLevel(block, i + 1);
+      ignore = _ret.step;
+      _ret.arr.unshift(block[i]);
+      ret.push(_ret.arr);
+
+    }
+
+  }
+
+  return ret;
+}
+    velocity._parse = velocity.parse;
+    velocity.parse = function(str){
+      var asts = velocity._parse(str);
+      return makeLevel(asts);
+    };
+    return velocity;  });  

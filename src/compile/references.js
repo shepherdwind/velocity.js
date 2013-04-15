@@ -4,7 +4,7 @@ module.exports = function(Velocity, utils){
 
     if (utils.isArray(obj)) {
       return obj.length;
-    } else if (utils.isOject(obj)) {
+    } else if (utils.isObject(obj)) {
       return utils.keys(obj).length;
     }
 

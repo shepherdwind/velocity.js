@@ -1,6 +1,7 @@
 fs = require 'fs'
 exec  = (require 'child_process').exec
 path = require 'path'
+{makeLevel} = require('./src/utils')
 
 buildCompile = (tplfile)->
   files = fs.readdirSync 'src/compile'
@@ -42,7 +43,13 @@ task 'build', 'build velocity for kissy', (options) ->
   parseStr = (fs.readFileSync './src/parse/index.js').toString()
   fs.writeFileSync './build/velocity/parse.js', "
   KISSY.add(function(S){
-    #{parseStr}
+    #{parseStr}\n
+    #{makeLevel.toString()}\n
+    velocity._parse = velocity.parse;\n
+    velocity.parse = function(str){\n
+      var asts = velocity._parse(str);\n
+      return makeLevel(asts);\n
+    };\n
     return velocity;
   });
   "
