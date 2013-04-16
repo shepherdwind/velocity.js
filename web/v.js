@@ -15,3 +15,12 @@ KISSY.use('velocity/index, web/directives', function(S, Velocity, asts){
   var compile = new Velocity(asts);
   S.all('.content').html(compile.render());
 });
+
+KISSY.use('velocity/index, web/bench/obj, web/bench/items-vm', function(S, Velocity, data, templ){
+  var compile = new Velocity(templ);
+  S.one('body').on('click', function(){
+    var html = compile.render(data);
+    //console.log(html);
+    console.log(compile.cost);
+  });
+});

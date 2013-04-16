@@ -175,6 +175,8 @@ KISSY.add(function(S){
           this.setBlockMacro(block);
         } else if (ast.type === 'noescape') {
           ret = this._render(block.slice(1));
+        } else {
+          ret = this._render(block);
         }
   
         return ret || '';
@@ -372,7 +374,7 @@ KISSY.add(function(S){
   
   /** file: ./src/compile/compile.js*/
   !function(Velocity, utils){
-    var BLOCK_TYPES = ['if', 'foreach', 'macro', 'noescape', 'define'];
+  
     /**
      * compile
      */
@@ -436,8 +438,6 @@ KISSY.add(function(S){
       _render: function(asts, contextId){
   
         var str = '';
-        var block = [];
-        var index = 0;
         asts = asts || this.asts;
   
         if (contextId) {
@@ -454,50 +454,29 @@ KISSY.add(function(S){
         }
   
         utils.forEach(asts, function(ast){
-          var type = ast.type;
   
-          //foreach if macro时，index加一
-          if (utils.indexOf(type, BLOCK_TYPES) > -1) index ++;
-  
-          if (type === 'comment') return;
-  
-          if (index) {
-            type === 'end' && index--;
-            if (index) {
-              block.push(ast);
-              return;
-            }
-          }
-  
-          switch(type) {
+          switch(ast.type) {
             case 'references':
-            str += this.getReferences(ast, true);
+              str += this.getReferences(ast, true);
             break;
   
             case 'set':
-            this.setValue(ast);
+              this.setValue(ast);
             break;
   
             case 'break':
-            this.setBreak = true;
+              this.setBreak = true;
             break;
   
             case 'macro_call':
-            str += this.getMacro(ast);
+              str += this.getMacro(ast);
             break;
   
-            case 'end':
-            //使用slide获取block的拷贝
-            str += this.getBlock(block.slice());
-            block = [];
-            break;
+            case 'comment':
+              break;
   
             default:
-            if (utils.isArray(ast)) {
-              str += this.getBlock(ast);
-            } else {
-              str += ast;
-            }
+              str += typeof ast == 'string' ? ast : this.getBlock(ast);
             break;
           }
         }, this);

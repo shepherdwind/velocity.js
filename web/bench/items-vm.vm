@@ -1,0 +1,235 @@
+<div class="m-items">
+  #if ($isSameItemOn)
+  <div class="same-item-on">
+  #else
+  </div>
+  #end
+
+  #if ($itemsCnt > 0)
+    #if ($isGridStyle)
+    <ul class="items grid clearfix">
+      #foreach ($item in $items)
+        #if ($foreach.count % 4 == 3)
+          <li class="item last">
+        #else
+          <li class="item">
+        #end
+        <div class="img">
+          <table class="center">
+            <tr><td>
+              <a href="$item.href" target="_blank"><img src="$item.image" /></a>
+            </td></tr>
+          </table>
+          #if ($item.sameItemInfo)
+          <a class="same-item" href="$item.sameItemInfo.url" target="_blank"><span class="num">$item.sameItemInfo.count</span>件同款</a>
+          #end
+        </div>
+        <div class="info">
+          <ul class="clearfix">
+            <li class="price">
+              <span class="g_price">
+                <span>&yen;</span><strong>$item.currentPrice</strong>
+              </span>
+              <span class="g_price g_price-original">
+                <span>&yen;</span><strong>$item.price</strong>
+              </span>
+            </li>
+            <li class="quantity">
+              #if ($item.tradeNum != '0')
+                #if ($item.formatedNum)
+                  <span title="销量: $item.tradeNum">
+                #else
+                  <span>
+                #end
+                    <span>销量：</span>
+                    #if ($item.formatedNum)
+                    <span class="num">$item.formatedNum</span>
+                    #else
+                    <span class="num">$item.tradeNum</span>
+                    #end
+                </span>
+              #end
+            </li>
+            <li class="title">
+              <a href="$item.href" title="$item.tip" target="_blank">$item.title<b class="mask"></b></a>
+            </li>
+            <li class="wangwang">
+              <a class="nick" data-sellerId="$item.sellerId" href="$item.storeLink" target="_blank">$item.nick<b class="mask"></b></a>
+              <span class="J_WangWang" data-icon="small" data-nick="$item.ncik" data-tnick="$item.nick" data-encode="true" data-display="inline" data-item="$item.sellerId"></span>
+            </li>
+            <li class="post">
+              <span class="icon">邮</span>
+              <span class="g_price">
+                <span>&yen;</span><strong>$item.ship</strong>
+              </span>
+              <span class="bar">|</span>
+              <span class="from">$item.loc</span>
+            </li>
+          </ul>
+          <div class="m-icons clearfix">
+            <a class="icon icon-tmall" href="#" target="_blank"></a>
+            <b class="icon icon-bar"></b>
+            <a class="icon icon-photograph" href="#" target="_blank"></a>
+            <a class="icon icon-lp" href="#" target="_blank"></a>
+            <a class="icon icon-xinpin" href="#" target="_blank"></a>
+            <a class="icon icon-ppsq" href="#" target="_blank"></a>
+            <a class="icon icon-hitao" href="#" target="_blank"></a>
+            <a class="icon icon-zifa" href="#" target="_blank"></a>
+            <a class="icon icon-shopping" href="#" target="_blank"></a>
+            <a class="icon icon-global" href="#" target="_blank"></a>
+            <a class="icon icon-credit" href="#" target="_blank"></a>
+            <a class="icon icon-discount" href="#" target="_blank"></a>
+            <a class="icon icon-cod" href="#" target="_blank"></a>
+            <a class="icon icon-welfare" href="#" target="_blank"></a>
+            <a class="icon icon-love" href="#" target="_blank"></a>
+            <a class="icon icon-tao1site" href="#" target="_blank"></a>
+            <a class="icon icon-koubei" href="#" target="_blank"></a>
+            <a class="icon icon-quality" href="#" target="_blank"></a>
+            <a class="icon icon-as-fact" href="#" target="_blank"></a>
+            <a class="icon icon-thirdqc" href="#" target="_blank"></a>
+            <a class="icon icon-sevenday-return " href="#" target="_blank"></a>
+            <a class="icon icon-jia1-pei3" href="#" target="_blank"></a>
+            <a class="icon icon-thunder-delivery" href="#" target="_blank"></a>
+            <a class="icon icon-thirtyday-repair" href="#" target="_blank"></a>
+            <a class="icon icon-you" href="#" target="_blank"></a>
+            <a class="icon icon-detail" href="#" target="_blank"></a>
+          </div>
+        </div>
+      </li>
+      #end
+    </ul>
+    #else
+    <ul class="items list">
+      #foreach ($item in $items)
+      <li class="item clearfix">
+        <div class="col col-1">
+          <table class="center" data-itemId="$item.itemId" data-sellerId="$item.sellerId">
+            <tr><td>
+              <a href="$item.href" target="_blank"><img src="$item.image" alt="$item.tip" /></a>
+            </td></tr>
+          </table>
+        </div>
+        <div class="col col-2">
+          <div class="title">
+            <a href="$item.href" title="$item.tip" target="_blank">$item.title<b class="mask"></b></a>
+          </div>
+          <div class="wangwang clearfix">
+            <a class="nick" data-sellerId="$item.sellerId" href="$item.storeLink" target="_blank">$item.nick<b class="mask"></b></a>
+            <span class="J_WangWang" data-icon="small" data-nick="$item.nick" data-tnick="$item.nick" data-encode="true" data-display="inline" data-item="$item.sellerId"></span>
+            #if ($item.sameItemInfo)
+            <a class="same-item" href="$item.sameItemInfo.url " target="_blank"><span class="num">$item.sameItemInfo.count </span>件同款</a>
+            #end
+          </div>
+          <div class="m-icons clearfix">
+            <a class="icon icon-tmall" href="#" target="_blank"></a>
+            <b class="icon icon-bar"></b>
+            <a class="icon icon-photograph" href="#" target="_blank"></a>
+            <a class="icon icon-lp" href="#" target="_blank"></a>
+            <a class="icon icon-xinpin" href="#" target="_blank"></a>
+            <a class="icon icon-ppsq" href="#" target="_blank"></a>
+            <a class="icon icon-hitao" href="#" target="_blank"></a>
+            <a class="icon icon-zifa" href="#" target="_blank"></a>
+            <a class="icon icon-shopping" href="#" target="_blank"></a>
+            <a class="icon icon-global" href="#" target="_blank"></a>
+            <a class="icon icon-credit" href="#" target="_blank"></a>
+            <a class="icon icon-discount" href="#" target="_blank"></a>
+            <a class="icon icon-cod" href="#" target="_blank"></a>
+            <a class="icon icon-welfare" href="#" target="_blank"></a>
+            <a class="icon icon-love" href="#" target="_blank"></a>
+            <a class="icon icon-tao1site" href="#" target="_blank"></a>
+            <a class="icon icon-koubei" href="#" target="_blank"></a>
+            <a class="icon icon-quality" href="#" target="_blank"></a>
+            <a class="icon icon-as-fact" href="#" target="_blank"></a>
+            <a class="icon icon-thirdqc" href="#" target="_blank"></a>
+            <a class="icon icon-sevenday-return " href="#" target="_blank"></a>
+            <a class="icon icon-jia1-pei3" href="#" target="_blank"></a>
+            <a class="icon icon-thunder-delivery" href="#" target="_blank"></a>
+            <a class="icon icon-thirtyday-repair" href="#" target="_blank"></a>
+            <a class="icon icon-you" href="#" target="_blank"></a>
+            <a class="icon icon-detail" href="#" target="_blank"></a>
+          </div>
+        </div>
+        <div class="col col-3">
+          <p class="price">
+            <span class="g_price">
+              <span>&yen;</span><strong>$item.currentPrice</strong>
+            </span>
+          </p>
+          <p class="orig-price">
+            <span class="g_price g_price-original">
+              <span>&yen;</span><strong>$item.price</strong>
+            </span>
+          </p>
+          <p class="from">
+            <span class="from">$item.loc</span>
+          </p>
+          <p class="post">
+            <span class="icon">邮</span>
+            <span class="g_price">
+              <span>&yen;</span><strong>$item.ship</strong>
+            </span>
+          </p>
+        </div>
+        <div class="col col-4">
+          <p class="quantity">
+              #if ($item.tradeNum != '0')
+                #if ($item.formatedNum)
+                  <span title="销量: $item.tradeNum">
+                #else
+                  <span>
+                #end
+                    <span>销量：</span>
+                    #if ($item.formatedNum)
+                    <span class="num">$item.formatedNum</span>
+                    #else
+                    <span class="num">$item.tradeNum</span>
+                    #end
+                </span>
+              #end
+          </p>
+          <p class="comments">
+            #if ($item.commend != '0')
+              <a class="text" href="$item.commendHref" target="_blank">$item.commend条点评</a>
+            #end
+          </p>
+        </div>
+        <div class="col col-5">
+          #if ($item.ratesum && $item.ratesum != '-1' && $item.ratesumImg)
+          <p class="seller-rank"><img src="http://pics.taobaocdn.com/newrank/$item.ratesumImg"></p>
+          #end
+          #if ($item.goodRate)
+            #if ($item.goodRate == '0.00%')
+              <p class="good-rate">好评率：暂无评价</p>
+            #else
+              <p class="good-rate">好评率：$item.goodRate</p>
+            #end
+          #end
+          #if ($item.dsrScore)
+          <div class="services-box" data-sellerId="$item.sellerId">
+            <ul class="services">
+              <li class="service">如实描述：$item.dsrScore </li>
+            </ul>
+            <i class="triangle"></i>
+          </div>
+          #end
+        </div>
+      </li>
+      #end
+    </ul>
+    #end
+    <!-- 消费者保障服务 tip -->
+    <p class="m-items-tip">带<a class="icon" href="#" target="_blank" title="消费者保障服务"></a>标识的宝贝支持<a class="link" href="#" target="_blank">消费者保障服务</a>，卖家已交纳保证金，出现问题先行赔付。</p>
+  #else
+  <!-- 无结果 -->
+  <div class="items-null">
+    <h3 class="head">很抱歉，没有找到符合条件的宝贝</h3>
+    <p><em>建议您：</em><span class="text">1、适当减少筛选条件，可以获得更多结果</span><span class="text">2、变更宝贝所在地时间</span><span class="text">3、调整价格区间</span><span class="text">4、尝试其他关键字</span></p>
+  </div>
+  #end
+  <!-- 相关热门宝贝 -->
+  <!-- itemlist.related-items.tmpl -->
+  </div>
+</div>
+
+<!-- vim: set ft=html:-->
+
