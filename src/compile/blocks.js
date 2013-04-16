@@ -20,6 +20,8 @@ module.exports = function(Velocity, utils){
         this.setBlockMacro(block);
       } else if (ast.type === 'noescape') {
         ret = this._render(block.slice(1));
+      } else {
+        ret = this._render(block);
       }
 
       return ret || '';

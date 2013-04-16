@@ -1,5 +1,5 @@
 module.exports = function(Velocity, utils){
-  var BLOCK_TYPES = ['if', 'foreach', 'macro', 'noescape', 'define'];
+
   /**
    * compile
    */
@@ -63,8 +63,6 @@ module.exports = function(Velocity, utils){
     _render: function(asts, contextId){
 
       var str = '';
-      var block = [];
-      var index = 0;
       asts = asts || this.asts;
 
       if (contextId) {
@@ -81,50 +79,29 @@ module.exports = function(Velocity, utils){
       }
 
       utils.forEach(asts, function(ast){
-        var type = ast.type;
 
-        //foreach if macro时，index加一
-        if (utils.indexOf(type, BLOCK_TYPES) > -1) index ++;
-
-        if (type === 'comment') return;
-
-        if (index) {
-          type === 'end' && index--;
-          if (index) {
-            block.push(ast);
-            return;
-          }
-        }
-
-        switch(type) {
+        switch(ast.type) {
           case 'references':
-          str += this.getReferences(ast, true);
+            str += this.getReferences(ast, true);
           break;
 
           case 'set':
-          this.setValue(ast);
+            this.setValue(ast);
           break;
 
           case 'break':
-          this.setBreak = true;
+            this.setBreak = true;
           break;
 
           case 'macro_call':
-          str += this.getMacro(ast);
+            str += this.getMacro(ast);
           break;
 
-          case 'end':
-          //使用slide获取block的拷贝
-          str += this.getBlock(block.slice());
-          block = [];
-          break;
+          case 'comment':
+            break;
 
           default:
-          if (utils.isArray(ast)) {
-            str += this.getBlock(ast);
-          } else {
-            str += ast;
-          }
+            str += typeof ast == 'string' ? ast : this.getBlock(ast);
           break;
         }
       }, this);

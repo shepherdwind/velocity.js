@@ -4,10 +4,10 @@ var Compile = require('./compile/');
 var Helper  = {};
 
 Compile.Parser = Parser;
-var _parse = Parser.parse;
+Parser._parse = Parser.parse;
 
 Parser.parse = function (str) {
-  var asts = _parse(str);
+  var asts = Parser._parse(str);
   return utils.makeLevel(asts);
 };
 

@@ -4,6 +4,7 @@ var exists = fs.existsSync || path.existsSync;
 var currentPath = process.cwd();
 
 var Velocity = require('../src/velocity');
+var utils = require('../src/utils');
 var Parser = Velocity.Parser;
 var Structure = Velocity.Helper.Structure;
 var Jsonify = Velocity.Helper.Jsonify;
@@ -34,8 +35,9 @@ function buildAst(files, prefix){
       var template = _template;
 
       var str = fs.readFileSync(currentPath + '/' + file).toString();
-      var asts = Parser.parse(str);
+      var asts = Parser._parse(str);
       var requires = getAllLoad(asts);
+      asts = utils.makeLevel(asts);
 
       template = template.replace('{content}', JSON.stringify(asts, null, 2));
       template = template.replace('{requires}', requires.join(','));
@@ -62,9 +64,9 @@ function getAllLoad(asts){
 
   asts.forEach(function(ast, i){
 
-    if (ast.type === 'parse') {
+    if (ast.type === 'macro_call' && ast.id === 'parse') {
 
-      var id = ast.id;
+      var id = ast.args[0];
       if (id.type !== 'string') {
         throw Error('#parse arguments must be string');
       }
