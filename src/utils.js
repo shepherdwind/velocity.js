@@ -21,9 +21,9 @@ var utils = {
   };
 });
 
-var num = 0;
+var number = 0;
 utils.guid = function(){
-  return num++;
+  return number++;
 };
 
 utils.mixin = function (to, from){

@@ -9,7 +9,9 @@
 %%
 
 root
-  : statements EOF 
+  : EOF
+    { return []; }
+  | statements EOF 
       { return $1; }
   ;
 

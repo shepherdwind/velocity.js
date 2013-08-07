@@ -393,6 +393,10 @@ describe('Compile', function(){
       assert.equal('stepFareNo:{}', render(vm));
     });
 
+    it('empty string condiction', function(){
+      assert.equal('', render(''));
+    });
+
   });
 
   describe('self defined macro', function(){
@@ -433,7 +437,7 @@ describe('Compile', function(){
       assert.equal('hello world, I am d!', render(vm, o, macros));
     });
 
-    it('use eavl with local variable', function(){
+    it('use eval with local variable', function(){
       //这一句非常重要，在node端无需处理，web端必须如此声明
       Compile.Parser = Parser;
 
@@ -466,6 +470,49 @@ describe('Compile', function(){
       assert.equal('hello world, I am hanwen!', render(vm, o, macros));
       assert.equal(undefined, getContext(vm, o, macros).name);
       assert.equal('a.vm', render(vm1, o, macros));
+    });
+
+  });
+
+  describe('self defined function', function() {
+
+    it('$stop test', function(){
+
+      var control = {
+
+        setTemplate: function(str){
+
+          var $sys = this.$sys;
+
+          if ($sys.others.length) {
+
+            this.__temp = {};
+
+            var ast = $sys.total;
+            ast.path = $sys.others;
+            $sys.vm.getReferences(ast);
+
+          }
+
+          return {
+            $return: this.eval(str, this.__temp),
+            $stop: true
+          };
+
+        },
+
+        setParameter: function(key, value){
+          this.__temp[key] = value;
+          return this;
+        }
+
+      };
+
+      var str = 'hello $who, welcome to $where';
+
+      var vm = '$control.setTemplate($str).setParameter("who", "Blob").setParameter("where", "China")';
+      assert.equal(render(vm, {str: str, control: control}), 'hello Blob, welcome to China');
+
     });
 
   });

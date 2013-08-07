@@ -398,6 +398,10 @@ describe('Compile', function(){
       assert.equal('stepFareNo:{}', render(vm));
     });
 
+    it('empty string condiction', function(){
+      assert.equal('', render(''));
+    });
+
   });
 
   describe('self defined macro', function(){

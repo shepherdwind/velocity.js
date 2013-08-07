@@ -801,9 +801,21 @@ KISSY.add(function(S){
         }
   
         if (ast.path && ret !== undefined) {
+  
           utils.some(ast.path, function(property, i){
-            ret = this.getAttributes(property, ret);
-            return ret === undefined;
+  
+            //第三个参数，返回后面的参数ast
+            ret = this.getAttributes(property, ret, ast.path.slice(i + 1), ast);
+  
+            //提前结束计算，某些情况下，连缀运行，后面的运算影响前面的结果，这种
+            //情况需要特殊处理，比如$control.setTempalte('a.vm').setParameter('a', 'b')
+            //第一个函数就返回结果，这时候，函数返回对象为
+            //{$stop: true, $return: 'string'}
+            //$stop表示停滞，$return：返回结果
+            if (ret === undefined || ret.$stop === true) {
+              ret = ret && ret.$stop ? ret.$return : ret;
+              return true;
+            }
           }, this);
         }
   
@@ -813,7 +825,6 @@ KISSY.add(function(S){
   
       /**
        * set方法需要单独处理，假设set只在references最后$page.setTitle('')
-       * 对于set连缀的情况$page.setTitle('sd').setName('haha')
        */
       hasSetMethod: function(ast, context){
         var tools = { 'control': true };
@@ -865,9 +876,16 @@ KISSY.add(function(S){
         };
       },
       /**
-       * $foo.bar 属性求值
+       * $foo.bar 属性求值，最后面两个参数在用户传递的函数中用到
+       * @param {object} property 属性描述，一个对象，主要包括id，type等定义
+       * @param {object} baseRef 当前执行链结果，比如$a.b.c，第一次baseRef是$a,
+       * 第二次是$a.b返回值
+       * @param {array} others 后面的属性，比如$a.b.c，求$a.b时，其余的是[c]所对
+       * 应的描述
+       * @param {object} total 整个ast描述
+       * @private
        */
-      getAttributes: function(property, baseRef){
+      getAttributes: function(property, baseRef, others, total){
         /**
          * type对应着velocity.yy中的attribute，三种类型: method, index, property
          */
@@ -875,7 +893,7 @@ KISSY.add(function(S){
         var ret;
         var id = property.id;
         if (type === 'method'){
-          ret = this.getPropMethod(property, baseRef);
+          ret = this.getPropMethod(property, baseRef, others, total);
         } else if (type === 'property') {
           ret = baseRef[id];
         } else {
@@ -886,6 +904,7 @@ KISSY.add(function(S){
   
       /**
        * $foo.bar[1] index求值
+       * @private
        */
       getPropIndex: function(property, baseRef){
         var ast = property.id;
@@ -904,7 +923,7 @@ KISSY.add(function(S){
       /**
        * $foo.bar()求值
        */
-      getPropMethod: function(property, baseRef){
+      getPropMethod: function(property, baseRef, others, total){
   
         var id         = property.id;
         var ret        = '';
@@ -957,10 +976,19 @@ KISSY.add(function(S){
           if (ret && ret.call) {
   
             var that = this;
+  
+            baseRef.$sys = {
+              others: others,
+              vm: this,
+              total: total
+            };
+  
             baseRef.eval = function() {
               return that.eval.apply(that, arguments);
             };
             ret = ret.apply(baseRef, args);
+  
+            delete baseRef.$sys;
   
           } else {
             ret = undefined;

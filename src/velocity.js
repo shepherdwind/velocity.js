@@ -22,7 +22,7 @@ var Velocity = {
   Jsonify : Helper.Jsonify
 };
 
-Velocity.render = function(template, context, macros){
+Velocity.render = function (template, context, macros) {
 
   var t1   = Date.now();
   var asts = Parser.parse(template);
@@ -32,6 +32,5 @@ Velocity.render = function(template, context, macros){
   var compile = new Compile(asts);
   return compile.render(context, macros);
 };
-
 
 module.exports = Velocity;
