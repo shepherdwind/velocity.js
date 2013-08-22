@@ -26,6 +26,11 @@ module.exports = function(Velocity, utils){
       var ret      = context[ast.id];
       var local    = this.getLocal(ast);
 
+      var text = Velocity.Helper.getRefText(ast)
+      if (text in context) {
+        return context[text];
+      }
+
 
       if (ret !== undefined && isfn) {
         ret = this.getPropMethod(ast, context);
