@@ -81,6 +81,18 @@ describe('Compile', function(){
       assert.equal('hello world', render(vm, data))
     })
 
+    it('escape default', function(){
+      var vm = '$name $name2 $cn $cn1'
+      var data = {
+        name: 'hello world',
+        name2: '<i>a',
+        cn: '中文',
+        cn1: '<i>中文'
+      }
+
+      var ret  = 'hello world &lt;i&gt;a 中文 &lt;i&gt;&#20013;&#25991;'
+      assert.equal(ret, render(vm, data))
+    })
   })
 
   describe('Set && Expression', function(){

@@ -90,7 +90,7 @@ case 3: this.$ = [$$[$0]];
 break;
 case 4: this.$ = [].concat($$[$0-1], $$[$0]); 
 break;
-case 5: this.$ = $$[$0]; 
+case 5: $$[$0]['prue'] = true;  this.$ = $$[$0]; 
 break;
 case 6: this.$ = $$[$0]; 
 break;

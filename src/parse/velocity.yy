@@ -24,7 +24,7 @@ statements
 
 statement
   : references 
-      { $$ = $1; }
+      { $1['prue'] = true;  $$ = $1; }
   | directives 
       { $$ = $1; }
   | content 

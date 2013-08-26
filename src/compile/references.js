@@ -11,6 +11,43 @@ module.exports = function(Velocity, utils){
     return undefined;
   }
 
+  /**
+   * unicode转码
+   */
+  function convert(str){
+
+    if (typeof str !== 'string') return str;
+
+    var result = ""
+    var escape = false
+
+    for(i = 0 ; i < str.length ; i++) {
+      c = str.charAt(i);
+      if((' ' <= c && c <= '~') || (c == '\r') || (c == '\n')) {
+        if(c == '&') {
+          cstr = "&amp;"
+          escape = true
+        } else if(c == '<') {
+          cstr = "&lt;"
+          escape = true
+        } else if(c == '>') {
+          cstr = "&gt;"
+          escape = true
+        } else {
+          cstr = c.toString()
+        }
+      } else {
+        cstr = "&#" + c.charCodeAt().toString() + ";"
+      }
+
+      result = result + cstr
+    }
+
+    return escape ? result : str
+
+  }
+  
+
   utils.mixin(Velocity.prototype, {
     /**
      * 引用求值
@@ -27,8 +64,9 @@ module.exports = function(Velocity, utils){
       var local    = this.getLocal(ast);
 
       var text = Velocity.Helper.getRefText(ast)
+
       if (text in context) {
-        return context[text];
+        return ast.prue ? convert(context[text]) : context[text];
       }
 
 
@@ -65,7 +103,12 @@ module.exports = function(Velocity, utils){
         }, this);
       }
 
-      if (isVal && ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
+      if (isVal && ret === undefined) {
+        ret = isSilent? '' : Velocity.Helper.getRefText(ast);
+      }
+
+      ret = ast.prue ? convert(ret) : ret
+
       return ret;
     },
 
