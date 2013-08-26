@@ -18,6 +18,8 @@ KISSY.use('velocity/index, web/directives', function(S, Velocity, asts){
 
 KISSY.use('velocity/index, web/bench/obj, web/bench/items-vm', function(S, Velocity, data, templ){
   var compile = new Velocity(templ);
+  compile.render(data);
+  console.log(compile.cost);
   S.one('body').on('click', function(){
     var html = compile.render(data);
     //console.log(html);
