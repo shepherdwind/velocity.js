@@ -10,6 +10,7 @@ module.exports = function(Velocity, utils){
       this.conditions = [];
       this.local = {};
       this.silence = false;
+      this.unescape = {};
 
       utils.forEach(this.asts, this._init, this);
     },

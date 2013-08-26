@@ -49,6 +49,18 @@ module.exports = function(Velocity, utils){
   
 
   utils.mixin(Velocity.prototype, {
+    
+    //增加某些函数，不需要执行html转义
+    addIgnoreEscpape: function(key){
+
+      if (!utils.isArray(key)) key = [key]
+
+      utils.forEach(key, function(key){
+        this.unescape[key] = true
+      }, this)
+
+    },
+
     /**
      * 引用求值
      * @param {object} ast 结构来自velocity.yy
@@ -56,6 +68,10 @@ module.exports = function(Velocity, utils){
      * 字符串，如果没有返回变量自身，比如$foo
      */
     getReferences: function(ast, isVal) {
+
+      if (ast.prue) {
+        if (ast.id in this.unescape) ast.prue = false
+      }
 
       var isSilent = this.silence || ast.leader === "$!";
       var isfn     = ast.args !== undefined;
