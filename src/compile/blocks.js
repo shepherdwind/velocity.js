@@ -125,8 +125,8 @@ module.exports = function(Velocity, utils){
           this.local[contextId] = local;
           var ret = this._render(asts, contextId);
           this.local[contextId] = {};
-          this.conditions.pop();
-          this.condition = '';
+          this.conditions.shift();
+          this.condition = this.conditions[0] || '';
 
           return ret;
         }
