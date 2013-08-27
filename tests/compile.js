@@ -496,7 +496,25 @@ describe('Compile', function(){
       assert.equal('a.vm', render(vm1, o, macros))
     })
 
+    it('eval work with #set', function(){
+      //这一句非常重要，在node端无需处理，web端必须如此声明
+      Compile.Parser = Parser
+
+      var macros = {
+        cmsparse: function(str){
+          return this.eval(str)
+        }
+      }
+
+      var vm = '#cmsparse($str)'
+      var o = {
+        str: '#set($foo = ["hello"," ", "world"])#foreach($word in $foo)$word#end'
+      }
+
+      assert.equal('hello world', render(vm, o, macros))
+    })
   })
+
 
   describe('self defined function', function() {
 
