@@ -226,7 +226,7 @@ KISSY.add(function(S){
           var local = {};
           var localKey = [];
           var guid = utils.guid();
-          var contextId = ast.id + ':' + guid;
+          var contextId = 'macro:' + ast.id + ':' + guid;
   
           utils.forEach(args, function(ref, i){
             if (_call_args[i]) {
@@ -280,8 +280,8 @@ KISSY.add(function(S){
             this.local[contextId] = local;
             var ret = this._render(asts, contextId);
             this.local[contextId] = {};
-            this.conditions.pop();
-            this.condition = '';
+            this.conditions.shift();
+            this.condition = this.conditions[0] || '';
   
             return ret;
           }
@@ -385,6 +385,7 @@ KISSY.add(function(S){
         this.conditions = [];
         this.local = {};
         this.silence = false;
+        this.unescape = {};
   
         utils.forEach(this.asts, this._init, this);
       },
@@ -770,7 +771,56 @@ KISSY.add(function(S){
       return undefined;
     }
   
+    /**
+     * unicode转码
+     */
+    function convert(str){
+  
+      if (typeof str !== 'string') return str;
+  
+      var result = ""
+      var escape = false
+  
+      for(i = 0 ; i < str.length ; i++) {
+        c = str.charAt(i);
+        if((' ' <= c && c <= '~') || (c == '\r') || (c == '\n')) {
+          if(c == '&') {
+            cstr = "&amp;"
+            escape = true
+          } else if(c == '<') {
+            cstr = "&lt;"
+            escape = true
+          } else if(c == '>') {
+            cstr = "&gt;"
+            escape = true
+          } else {
+            cstr = c.toString()
+          }
+        } else {
+          cstr = "&#" + c.charCodeAt().toString() + ";"
+        }
+  
+        result = result + cstr
+      }
+  
+      return escape ? result : str
+  
+    }
+    
+  
     utils.mixin(Velocity.prototype, {
+      
+      //增加某些函数，不需要执行html转义
+      addIgnoreEscpape: function(key){
+  
+        if (!utils.isArray(key)) key = [key]
+  
+        utils.forEach(key, function(key){
+          this.unescape[key] = true
+        }, this)
+  
+      },
+  
       /**
        * 引用求值
        * @param {object} ast 结构来自velocity.yy
@@ -779,6 +829,10 @@ KISSY.add(function(S){
        */
       getReferences: function(ast, isVal) {
   
+        if (ast.prue) {
+          if (ast.id in this.unescape) ast.prue = false
+        }
+  
         var isSilent = this.silence || ast.leader === "$!";
         var isfn     = ast.args !== undefined;
         var context  = this.context;
@@ -786,8 +840,9 @@ KISSY.add(function(S){
         var local    = this.getLocal(ast);
   
         var text = Velocity.Helper.getRefText(ast)
+  
         if (text in context) {
-          return context[text];
+          return ast.prue ? convert(context[text]) : context[text];
         }
   
   
@@ -824,7 +879,12 @@ KISSY.add(function(S){
           }, this);
         }
   
-        if (isVal && ret === undefined) ret = isSilent? '' : Velocity.Helper.getRefText(ast);
+        if (isVal && ret === undefined) {
+          ret = isSilent? '' : Velocity.Helper.getRefText(ast);
+        }
+  
+        ret = ast.prue ? convert(ret) : ret
+  
         return ret;
       },
   
@@ -1029,6 +1089,12 @@ KISSY.add(function(S){
       setValue: function(ast){
         var ref = ast.equal[0];
         var context  = this.getContext();
+  
+        //see https://github.com/shepherdwind/velocity.js/issues/25
+        if (this.condition && this.condition.indexOf('macro:') === 0) {
+          context = this.context;
+        }
+  
         var valAst = ast.equal[1];
         var val;
   
