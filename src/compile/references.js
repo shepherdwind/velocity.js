@@ -1,4 +1,5 @@
 module.exports = function(Velocity, utils){
+  'use strict'
 
   function getSize(obj){
 
@@ -20,6 +21,7 @@ module.exports = function(Velocity, utils){
 
     var result = ""
     var escape = false
+    var i, c, cstr;
 
     for(i = 0 ; i < str.length ; i++) {
       c = str.charAt(i);
