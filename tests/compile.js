@@ -185,6 +185,11 @@ describe('Compile', function(){
       assert.equal(true  , getContext('#set($foo = $a || $b)', {a: 1, b: 0}).foo)
     })
 
+    it('#set context should be global, #25', function(){
+      var vm = '#macro(local) #set($val =1) $val #end #local() $val'
+      var ret = render(vm).replace(/\s+/g, '')
+      assert.equal('11', ret)
+    })
   })
 
   describe('Literals', function(){
@@ -320,6 +325,12 @@ describe('Compile', function(){
 
       assert.equal(ret, render(vm, data))
 
+    })
+
+    it('#foreach with #macro, $velocityCount should work find, #25', function(){
+      var vm = '#macro(local) #end #foreach ($one in [1,2,4]) #local() $velocityCount #end'
+      var ret = render(vm).replace(/\s+/g, '')
+      assert.equal('123', ret)
     })
 
     it('#break', function(){

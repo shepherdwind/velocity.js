@@ -71,7 +71,7 @@ module.exports = function(Velocity, utils){
         var local = {};
         var localKey = [];
         var guid = utils.guid();
-        var contextId = ast.id + ':' + guid;
+        var contextId = 'macro:' + ast.id + ':' + guid;
 
         utils.forEach(args, function(ref, i){
           if (_call_args[i]) {

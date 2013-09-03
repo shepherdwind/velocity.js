@@ -91,7 +91,9 @@ function parseVelocity(argv){
 
   var data = {};
   var ext = path.extname(dataFile);
-  dataFile = path.resolve(process.cwd(), dataFile);
+  if (dataFile) {
+    dataFile = path.resolve(process.cwd(), dataFile);
+  }
 
   if (ext === '.json') {
     if (exists(dataFile)) data = fs.readFileSync(dataFile).toString();

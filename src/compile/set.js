@@ -21,6 +21,12 @@ module.exports = function(Velocity, utils){
     setValue: function(ast){
       var ref = ast.equal[0];
       var context  = this.getContext();
+
+      //see https://github.com/shepherdwind/velocity.js/issues/25
+      if (this.condition && this.condition.indexOf('macro:') === 0) {
+        context = this.context;
+      }
+
       var valAst = ast.equal[1];
       var val;
 
