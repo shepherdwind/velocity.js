@@ -528,33 +528,21 @@ describe('Compile', function(){
 
       var control = {
 
-        setTemplate: function(str){
+        setTemplate: function(vm){
 
-          var $sys = this.$sys
-
-          if ($sys.others.length) {
-
-            this.__temp = {}
-
-            var ast = $sys.total
-            ast.path = $sys.others
-            $sys.vm.getReferences(ast)
-
-          }
-
-          return {
-            $return: this.eval(str, this.__temp),
-            $stop: true
-          }
+          this.vm = vm;
+          return this;
 
         },
-
+        toString: function(){
+          return this.eval(this.vm, this.__temp);
+        },
+        __temp: {},
         setParameter: function(key, value){
-          this.__temp[key] = value
-          return this
+          this.__temp[key] = value;
+          return this;
         }
-
-      }
+      };
 
       var str = 'hello $who, welcome to $where'
 

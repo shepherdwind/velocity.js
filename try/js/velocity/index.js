@@ -869,15 +869,6 @@ KISSY.add(function(S){
             //第三个参数，返回后面的参数ast
             ret = this.getAttributes(property, ret, ast.path.slice(i + 1), ast);
   
-            //提前结束计算，某些情况下，连缀运行，后面的运算影响前面的结果，这种
-            //情况需要特殊处理，比如$control.setTempalte('a.vm').setParameter('a', 'b')
-            //第一个函数就返回结果，这时候，函数返回对象为
-            //{$stop: true, $return: 'string'}
-            //$stop表示停滞，$return：返回结果
-            if (ret === undefined || ret.$stop === true) {
-              ret = ret && ret.$stop ? ret.$return : ret;
-              return true;
-            }
           }, this);
         }
   
@@ -1064,9 +1055,8 @@ KISSY.add(function(S){
   
         return ret;
       }
-    });
-  }(Velocity, utils);
-  
+    })
+  }
   /** file: ./src/compile/set.js*/
   !function(Velocity, utils){
     /**
