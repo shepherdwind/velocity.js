@@ -759,6 +759,7 @@ KISSY.add(function(S){
   
   /** file: ./src/compile/references.js*/
   !function(Velocity, utils){
+  
     'use strict'
   
     function getSize(obj){
@@ -1056,7 +1057,8 @@ KISSY.add(function(S){
         return ret;
       }
     })
-  }
+  
+  }(Velocity, utils);
   /** file: ./src/compile/set.js*/
   !function(Velocity, utils){
     /**

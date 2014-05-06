@@ -77,7 +77,8 @@ yy: {},
 symbols_: {"error":2,"root":3,"EOF":4,"statements":5,"statement":6,"references":7,"directives":8,"content":9,"COMMENT":10,"set":11,"if":12,"elseif":13,"else":14,"end":15,"foreach":16,"break":17,"define":18,"HASH":19,"NOESCAPE":20,"PARENTHESIS":21,"CLOSE_PARENTHESIS":22,"macro":23,"macro_call":24,"SET":25,"equal":26,"IF":27,"expression":28,"ELSEIF":29,"ELSE":30,"END":31,"FOREACH":32,"DOLLAR":33,"ID":34,"IN":35,"array":36,"BREAK":37,"DEFINE":38,"MACRO":39,"macro_args":40,"macro_call_args_all":41,"macro_call_args":42,"literals":43,"SPACE":44,"COMMA":45,"EQUAL":46,"map":47,"math":48,"||":49,"&&":50,"+":51,"-":52,"*":53,"/":54,"%":55,">":56,"<":57,"==":58,">=":59,"<=":60,"!=":61,"parenthesis":62,"!":63,"literal":64,"brace_begin":65,"attributes":66,"brace_end":67,"methodbd":68,"VAR_BEGIN":69,"MAP_BEGIN":70,"VAR_END":71,"MAP_END":72,"attribute":73,"method":74,"index":75,"property":76,"DOT":77,"params":78,"CONTENT":79,"BRACKET":80,"CLOSE_BRACKET":81,"string":82,"number":83,"BOOL":84,"integer":85,"INTEGER":86,"DECIMAL_POINT":87,"STRING":88,"EVAL_STRING":89,"range":90,"RANGE":91,"map_item":92,"MAP_SPLIT":93,"$accept":0,"$end":1},
 terminals_: {2:"error",4:"EOF",10:"COMMENT",19:"HASH",20:"NOESCAPE",21:"PARENTHESIS",22:"CLOSE_PARENTHESIS",25:"SET",27:"IF",29:"ELSEIF",30:"ELSE",31:"END",32:"FOREACH",33:"DOLLAR",34:"ID",35:"IN",37:"BREAK",38:"DEFINE",39:"MACRO",44:"SPACE",45:"COMMA",46:"EQUAL",49:"||",50:"&&",51:"+",52:"-",53:"*",54:"/",55:"%",56:">",57:"<",58:"==",59:">=",60:"<=",61:"!=",63:"!",69:"VAR_BEGIN",70:"MAP_BEGIN",71:"VAR_END",72:"MAP_END",77:"DOT",79:"CONTENT",80:"BRACKET",81:"CLOSE_BRACKET",84:"BOOL",86:"INTEGER",87:"DECIMAL_POINT",88:"STRING",89:"EVAL_STRING",91:"RANGE",93:"MAP_SPLIT"},
 productions_: [0,[3,1],[3,2],[5,1],[5,2],[6,1],[6,1],[6,1],[6,1],[8,1],[8,1],[8,1],[8,1],[8,1],[8,1],[8,1],[8,1],[8,4],[8,1],[8,1],[11,5],[12,5],[13,5],[14,2],[15,2],[16,8],[16,8],[17,2],[18,6],[23,6],[23,5],[40,1],[40,2],[24,5],[24,4],[42,1],[42,1],[42,3],[42,3],[42,3],[42,3],[41,1],[41,2],[41,3],[41,2],[26,3],[28,1],[28,1],[28,1],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,3],[48,1],[48,2],[48,2],[48,1],[48,1],[62,3],[7,5],[7,3],[7,5],[7,3],[7,2],[7,4],[7,2],[7,4],[65,1],[65,1],[67,1],[67,1],[66,1],[66,2],[73,1],[73,1],[73,1],[74,2],[68,4],[68,3],[78,1],[78,1],[78,3],[78,3],[76,2],[76,2],[75,3],[75,3],[75,3],[75,2],[75,2],[64,1],[64,1],[64,1],[83,1],[83,3],[83,4],[85,1],[85,2],[82,1],[82,1],[43,1],[43,1],[43,1],[36,3],[36,1],[36,2],[90,5],[90,5],[90,5],[90,5],[47,3],[47,2],[92,3],[92,3],[92,2],[92,5],[92,5],[9,1],[9,1],[9,2],[9,3],[9,3],[9,2]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
+performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */
+/**/) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
@@ -809,7 +810,8 @@ stateStackSize:function stateStackSize() {
         return this.conditionStack.length;
     },
 options: {},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
+performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START
+/**/) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {

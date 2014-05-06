@@ -3,17 +3,6 @@ Velocity - Template Engine
 [![Build Status](https://secure.travis-ci.org/shepherdwind/velocity.js.png)](https://travis-ci.org/shepherdwind/velocity.js)
 [![NPM version](https://badge.fury.io/js/velocityjs.png)](http://badge.fury.io/js/velocityjs)
 
-*注意*
-
-velocityjs在npm中包名从原来的`velocity.js`改为`velocityjs`，感觉`require("velocity.js")`
-比较不好看，所以改名，从`0.3.0`之后的版本都在`velocityjs`下更新。
-
-查看最新版本
-
-```bash
-$ npm info velocityjs version
-```
-
 velocity.js是velocity模板语法的javascript实现。
 [Velocity](http://velocity.apache.org/) 是基于Java的模板引擎，广泛应用在阿里集
 体各个子公司。Velocity模板适用于大量模板使用的场景，支持复杂的逻辑运算，包含
@@ -40,9 +29,11 @@ $ npm install velocityjs
 
 ##Broswer Support
 
-兼容ie6+，chrome等其他浏览器，[test case](http://shepherdwind.com/velocity/runner/tests.html)
+兼容ie6+，chrome等其他浏览器，[test case](http://git.shepherdwind.com/velocity.js/runner/tests.html)
 
-点击[此处](http://shepherdwind.com/velocity/try/index.html)可以体验web
+不过，velocity模板本身适用于后端，用于前端不是很合适。
+
+点击[此处](http://git.shepherdwind.com/velocity.js/try/index.html)可以体验web
 端velocity语法解析过程，注：使用ACE作为代码编辑器，仅支持高级浏览器访问。
 
 执行`cake`命令进行打包velocity.js浏览器端脚本:
@@ -148,7 +139,7 @@ Directives支持`set`, `foreach`, `if|else|elseif`, `macro`, `parse`, `break`。
 支持有，`stop`, `evaluate`, `define`，感觉这些语法比较偏，用处不大，暂时没有实现。
 其中`parse`，在web端，使用kissy的模块加载器加载，需要首先线下编译打包，[例子](http://shepherdwind.com/velocity/web/index.html)。
 
-###macro
+###macro与parse
 
 宏分为系统的宏，比如`parse, include`，和用户自定义宏，通过`#macro`在vm中定义，此
 外可以使用自定义的js函数替代在vm中定义。对于系统宏和自定义宏，不做区分，对于
