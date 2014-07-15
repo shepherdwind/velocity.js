@@ -36,7 +36,8 @@
 <h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
 <h>"#"\[\[[\s\S]+?\]\]"#"         { this.popState(); yytext = yytext.replace(/^#\[\[|\]\]#$/g, ''); return 'CONTENT'}
 <h,mu>"##"[^\n]+                  { this.popState(); return 'COMMENT'; }
-<h>"#"/[a-zA-Z{]                  { return 'HASH'; }
+<h>"#"/[a-zA-Z{@]                 { return 'HASH'; }
+<h>"@"/[a-zA-Z{]                  { return 'AT'; }
 <h>"set"[ ]*                      { return 'SET'; }
 <h>"if"[ ]*                       { return 'IF'; }
 <h>"elseif"[ ]*                   { return 'ELSEIF'; }
@@ -69,9 +70,9 @@
                                     }
                                   }
 <c,run,i>\s+                      { /*ignore whitespace*/ }
-<i,run,c,i>"{"                         { return 'MAP_BEGIN'; }
-<i,run,c,i>"}"                         { return 'MAP_END'; }
-<h,run,c,i>":"                         { return 'MAP_SPLIT'; }
+<i,run,c,i>"{"                       { return 'MAP_BEGIN'; }
+<i,run,c,i>"}"                       { return 'MAP_END'; }
+<h,run,c,i>":"[ ]*                   { return 'MAP_SPLIT'; }
 <mu>"{"                              { yy.begin = true; return 'VAR_BEGIN'; }
 <mu>"}"                              { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
 <mu,h,run,c,i>"("[\s]*/[$'"\[\{\-0-9\w()!] { this.begin("c"); return 'PARENTHESIS'; }
@@ -121,6 +122,7 @@
 <mu,run,c,i>[_a-zA-Z][a-zA-Z0-9_\-]* { return 'ID'; }
 <h>[_a-zA-Z][a-zA-Z0-9_\-]*[ ]*/"("  { this.begin("run"); return 'ID'; }
 <mu>"#"                              { this.begin('h'); return 'HASH'; }
+<mu>"@"                              { this.begin('h'); return 'AT'; }
 <h,run,mu>.                          { this.popState(); return 'CONTENT'; }
 <h,run,mu>\s+                        { this.popState(); return 'CONTENT'; }
 <esc>[\$#]                           { this.popState(); return 'CONTENT'; }

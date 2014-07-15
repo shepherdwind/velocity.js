@@ -18,6 +18,8 @@ module.exports = function(Velocity, utils){
         ret = this.getBlockEach(block);
       } else if (ast.type === 'macro') {
         this.setBlockMacro(block);
+      } else if (ast.type === 'macro_block_call') {
+        ret = this.getBlockCall(block);
       } else if (ast.type === 'noescape') {
         ret = this._render(block.slice(1));
       } else {
@@ -25,6 +27,13 @@ module.exports = function(Velocity, utils){
       }
 
       return ret || '';
+    },
+
+    getBlockCall: function(block) {
+      var ast = block[0];
+      var _block = block.slice(1);
+
+      return this.getMacro(ast, this._render(_block));
     },
 
     /**
@@ -44,7 +53,7 @@ module.exports = function(Velocity, utils){
     /**
      * parse macro call
      */
-    getMacro: function(ast){
+    getMacro: function(ast, bodyContent){
       var macro = this.macros[ast.id];
       var ret = '';
 
@@ -72,6 +81,10 @@ module.exports = function(Velocity, utils){
         var localKey = [];
         var guid = utils.guid();
         var contextId = 'macro:' + ast.id + ':' + guid;
+
+        if (bodyContent !== null) {
+          local.bodyContent = bodyContent;
+        }
 
         utils.forEach(args, function(ref, i){
           if (_call_args[i]) {

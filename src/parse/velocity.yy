@@ -56,6 +56,8 @@ directives
       { $$ = $1; }
   | macro_call
       { $$ = $1; }
+  | macro_block_call
+    { $$ = $1; }
   ;
 
 set
@@ -119,6 +121,13 @@ macro_call
       { $$ = { type:"macro_call", id: $2.replace(/^\s+|\s+$/g, ''), args: $4 }; }
   | HASH ID PARENTHESIS CLOSE_PARENTHESIS
       { $$ = { type:"macro_call", id: $2.replace(/^\s+|\s+$/g, '') }; }
+  ;
+
+macro_block_call
+  : HASH AT ID PARENTHESIS macro_call_args_all CLOSE_PARENTHESIS
+      { $$ = { type:"macro_block_call", id: $3.replace(/^\s+|\s+$/g, ''), args: $5 }; }
+  | HASH AT ID PARENTHESIS CLOSE_PARENTHESIS
+      { $$ = { type:"macro_block_call", id: $3.replace(/^\s+|\s+$/g, '') }; }
   ;
 
 macro_call_args

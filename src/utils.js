@@ -57,7 +57,7 @@ utils.now  = Date.now;
 
 function makeLevel(block, index){
 
-  var blockTypes = {'if': 1, 'foreach': 1, 'macro': 1, 'noescape': 1, 'define': 1};
+  var blockTypes = {'if': 1, 'foreach': 1, 'macro': 1, 'noescape': 1, 'define': 1, 'macro_block_call': 1};
   var len = block.length;
   index = index || 0;
   var ret = [];
