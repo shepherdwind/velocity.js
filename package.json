@@ -1,14 +1,14 @@
 {
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "keywords": [
     "velocity template"
   ],
-  "homepage": "http://git.shepherdwind.com/velocity.js/",
+  "homepage": "https://github.com/Jobvite/velocity.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/shepherdwind/velocity.js.git"
+    "url": "git://github.com/Jobvite/velocity.js.git"
   },
   "engines": {
     "node": ">=0.8.0"
