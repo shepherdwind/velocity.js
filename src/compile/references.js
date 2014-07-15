@@ -54,7 +54,7 @@ module.exports = function(Velocity, utils){
   utils.mixin(Velocity.prototype, {
     
     //增加某些函数，不需要执行html转义
-    addIgnoreEscpape: function(key){
+    addIgnoreEscape: function(key){
 
       if (!utils.isArray(key)) key = [key]
 
