@@ -64,6 +64,10 @@ module.exports = function(Velocity, utils){
 
     },
 
+    ignoreEscapeAll: function(val) {
+      this.unescapeAll = val;
+    },
+
     /**
      * 引用求值
      * @param {object} ast 结构来自velocity.yy
@@ -73,7 +77,9 @@ module.exports = function(Velocity, utils){
     getReferences: function(ast, isVal) {
 
       if (ast.prue) {
-        if (ast.id in this.unescape) ast.prue = false
+        if (this.unescapeAll || ast.id in this.unescape) {
+          ast.prue = false;
+        }
       }
 
       var isSilent = this.silence || ast.leader === "$!";
