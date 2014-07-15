@@ -23,6 +23,12 @@
     "coffee-script": ">=1.4.0"
   },
   "scripts": {
-    "test" : "make test"
+    "test": "make test"
+  },
+  "peerDependencies": {
+    "brfs": "^1.1.2"
+  },
+  "browserify": {
+    "transform": ["brfs"]
   }
 }
