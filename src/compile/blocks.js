@@ -76,7 +76,7 @@ module.exports = function(Velocity, utils){
       } else {
         var asts = macro.asts;
         var args = macro.args;
-        var _call_args = ast.args;
+        var _call_args = ast.args || {};
         var local = {};
         var localKey = [];
         var guid = utils.guid();
