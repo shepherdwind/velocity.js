@@ -558,4 +558,11 @@ describe('Compile', function(){
 
   })
 
+  describe('issues', function() {
+    it('#29', function() {
+      var vm = '#set($total = 0) #foreach($i in [1,2,3]) #set($total = $total + $i) #end $total'
+      assert.equal(render(vm).trim(), "6")
+    });
+  });
+
 })
