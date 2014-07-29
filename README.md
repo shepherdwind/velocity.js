@@ -8,6 +8,7 @@ velocity.js是velocity模板语法的javascript实现。
 体各个子公司。Velocity模板适用于大量模板使用的场景，支持复杂的逻辑运算，包含
 基本数据类型、变量赋值和函数等功能。
 
+在此，推荐一下沉鱼写的[velocity](https://github.com/fool2fish/velocity)。也是一个velocity模板的语法解释器，比我的写得好，错误处理很给力。
 
 ##Features
 
