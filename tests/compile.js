@@ -563,6 +563,10 @@ describe('Compile', function(){
       var vm = '#set($total = 0) #foreach($i in [1,2,3]) #set($total = $total + $i) #end $total'
       assert.equal(render(vm).trim(), "6")
     });
+    it('#30', function() {
+      var vm = '$foo.setName'
+      assert.equal(render(vm, { foo: { setName: "foo" }}).trim(), "foo")
+    });
   });
 
 })

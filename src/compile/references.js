@@ -130,9 +130,10 @@ module.exports = function(Velocity, utils){
       var len = ast.path && ast.path.length;
       if (!len || tools[ast.id]) return false;
 
-      var lastId = '' + ast.path[len - 1].id;
+      var last = ast.path[len - 1];
+      var lastId = '' + last.id;
 
-      if (lastId.indexOf('set') !== 0) {
+      if (lastId.indexOf('set') !== 0 || last.type != 'method') {
         return false;
       } else {
 
