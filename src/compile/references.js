@@ -95,14 +95,6 @@ module.exports = function(Velocity, utils){
 
       if (local.isLocaled) ret = local['value'];
 
-      // 如果是$page.setTitle('xx')类似的方法，需要设置page为对象
-      var isSet = this.hasSetMethod(ast, ret);
-      if (isSet !== false) {
-        if (!context[ast.id]) context[ast.id] = {};
-        utils.mixin(context[ast.id], isSet);
-        return '';
-      }
-
       if (ast.path && ret !== undefined) {
 
         utils.some(ast.path, function(property, i){
@@ -120,35 +112,6 @@ module.exports = function(Velocity, utils){
       ret = ast.prue ? convert(ret) : ret
 
       return ret;
-    },
-
-    /**
-     * set方法需要单独处理，假设set只在references最后$page.setTitle('')
-     */
-    hasSetMethod: function(ast, context){
-      var tools = { 'control': true };
-      var len = ast.path && ast.path.length;
-      if (!len || tools[ast.id]) return false;
-
-      var last = ast.path[len - 1];
-      var lastId = '' + last.id;
-
-      if (lastId.indexOf('set') !== 0 || last.type != 'method') {
-        return false;
-      } else {
-
-        context = context || {};
-        utils.forEach(ast.path, function(ast){
-          if (ast.type === 'method' && ast.id.indexOf('set') === 0) {
-            //if (context[ast.id]) { }
-            context[ast.id.slice(3)] = this.getLiteral(ast.args[0]);
-          } else {
-            context[ast.id] = context[ast.id] || {};
-          }
-        }, this);
-
-        return context;
-      }
     },
 
     /**
@@ -229,6 +192,7 @@ module.exports = function(Velocity, utils){
       var ret        = '';
       var _id        = id.slice(3);
 
+      // getter 处理
       if (id.indexOf('get') === 0 && !(id in baseRef)) {
 
         if (_id) {
@@ -240,6 +204,14 @@ module.exports = function(Velocity, utils){
         }
 
         return ret;
+
+      // setter 处理
+      } else if (id.indexOf('set') === 0 && !baseRef[id]) {
+
+        baseRef[_id] = this.getLiteral(property.args[0]);
+        // $page.setName(123)
+        baseRef.toString =  function() { return ''; };
+        return baseRef;
 
       } else if (id.indexOf('is') === 0 && !(id in baseRef)) {
 
