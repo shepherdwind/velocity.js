@@ -32,56 +32,10 @@ $ npm install velocityjs
 
 兼容ie6+，chrome等其他浏览器，[test case](http://git.shepherdwind.com/velocity.js/runner/tests.html)
 
-不过，velocity模板本身适用于后端，用于前端不是很合适。
-
 点击[此处](http://git.shepherdwind.com/velocity.js/try/index.html)可以体验web
 端velocity语法解析过程，注：使用ACE作为代码编辑器，仅支持高级浏览器访问。
 
-执行`cake`命令进行打包velocity.js浏览器端脚本:
-
-```bash
-$ make parse
-```
-
-需要cli下安装coffeejs，暂时打包是为kissy所使用的，velocity.js需要的一些常用的
-ecma5功能，比如`foreach, some, isArray`等，在node环境下是自带的功能，而web端的兼
-容是交给已有的类库解决。需要自行提供一组跨浏览器的api，比如kissy打包：
-
-```js
-  //api map
-  var utils = {
-    forEach : S.each,
-    some    : S.some,
-    mixin   : S.mix,
-    guid    : S.guid,
-    isArray : S.isArray,
-    indexOf : S.indexOf,
-    keys    : S.keys,
-    now     : S.now
-  };
-
-```
-
-Velocity语法具有很高的容错能力，类似于html结构的解析，同时语法规则复杂，所以语法
-解释器执行性能可能比较慢，`velocity.js`把语法结构分析运算和语法执行两个过程独立出来，
-第一步，语法结构分析返回一个数组(语法树)，描述velocity语法，语法执行使用数据和语
-法树，计算模板最终结果。
-
-执行build后，得到两个文件，分别是`build/velocity/`下的`index.js`和`parse.js`，两者
-相互独立，`parse.js`语法分析过程可以放在本地完成，执行命令：
-
-把语法分析和模板拼接分开，为了方便在本地编译语法树，减少在web端js运算。本地编译
-模板的思路，源自KISSY的[xtemplate](http://docs.kissyui.com/docs/html/api/component/xtemplate/)。
-
-虽然语法解释器可以在浏览器端执行，但是，不推荐那么使用。
-
-```bash
-#使用velocity命令行工具打包
-veloctiy --build *.vm
-veloctiy -b *.vm
-```
-
-源码中`test/web/`目录的js，一部分就是线下编译后的得到的，此处可[直接访问](http://shepherdwind.com/velocity/web/index.html)。
+虽然语法解释器可以在浏览器端执行，但是，不推荐那么用，后续不再打包浏览器版本。
 
 ##Public API
 
@@ -105,30 +59,8 @@ var asts = Parser.parse('string of velocity');
 `context`是一个对象，可以为空，执行中`$foo.bar`，访问路径是`context.foo.bar`，
 `context`的属性可以是函数，和vm中定义保持一致。
 
-###On Broswer
-
-1 . 使用线下打包方案：
-
-```js
-KISSY.use('velocity/index, web/directives', function(S, Velocity, asts){
-  var compile = new Velocity(asts);
-  S.all('body').html(compile.render());
-});
-```
-
-2 . 使用线上编译：
-
-```js
-KISSY.use('velocity/index, velocity/parse', function(S, Velocity, Parser){
-  var html = (S.all('#tpl').html());
-  var asts = Parser.parse(html);
-  var compile = new Velocity(asts);
-  console.log(compile.render());
-});
-```
-
-两者的区别在于asts的获取，第一种方式，直接取asts，第二种，需要首先执行语法分析过
-程。
+context中得函数，有一个固定的`eval`方法，可以用来运算vm语法字符串，比如webx对应的
+`$control.setTemplate`的[实现](https://github.com/shepherdwind/velocity.js/blob/master/tests/compile.js#L532)。
 
 ##Syntax
 
@@ -136,39 +68,16 @@ KISSY.use('velocity/index, velocity/parse', function(S, Velocity, Parser){
 
 ###Directives
 
-Directives支持`set`, `foreach`, `if|else|elseif`, `macro`, `parse`, `break`。不
-支持有，`stop`, `evaluate`, `define`，感觉这些语法比较偏，用处不大，暂时没有实现。
-其中`parse`，在web端，使用kissy的模块加载器加载，需要首先线下编译打包，[例子](http://shepherdwind.com/velocity/web/index.html)。
+Directives支持`set`, `foreach`, `if|else|elseif`, `macro`, `break`。不
+支持有，`stop`, `evaluate`, `define`, `parse`。不过可以通过context来实现，比如
+`parse` [实现](https://github.com/shepherdwind/velocity.js/blob/master/tests/compile.js#L458)。
 
 ###macro与parse
 
 宏分为系统的宏，比如`parse, include`，和用户自定义宏，通过`#macro`在vm中定义，此
 外可以使用自定义的js函数替代在vm中定义。对于系统宏和自定义宏，不做区分，对于
-`#parse`和`#include`的调用，可以使用自定义函数来执行。具体见[issue #3](https://github.com/shepherdwind/velocity.js/issues/3)。
+`#parse`和`#include`的调用，可以使用自定义函数来执行，可以参考测试用例中self defined macro部分。
 
-###foreach
-
-foreach在velocity中对对象的遍历，和js有区别，java中对象是一个map，需要通过方法
-`keyset`来获取map中的key，foreach循环写法等同于js的for in循环，感觉有点怪异。在
-一个foreach，有一个`$foreach`的对象可以使用，此变量作用域为当前循环范围。
-
-```
-#foreach($num in [1..5])
-  index => $foreach.index 
-  count => $foreach.count
-  #if (!$foreach.hasNext) end #end
-#end
-结果：
-index => 0
-count => 1
-
-index => 1
-count => 2
-...
-index => 4
-count => 5
-end
-```
 
 ###string
 
@@ -205,27 +114,19 @@ Example:
   $ velocity *.vm
 ```
 
-##Helper
+##Questions
 
-Helper提供一些额外的功能，主要用于解决vm数据模拟问题。
+提问有几种方式
 
-- `structure` 获取vm中所有变量的结构: `$foo.bar` => `foo: {bar: 'string'}`
-- `backstep` vm逆推，根据velocity文件和解析后的结果，计算数据结构和内容
-- `jsonify` 把vm转换为json结构，去除其中的html标签，比如：
-
-jsonify文档[issue #11](https://github.com/shepherdwind/velocity.js/issues/11)
-
-```
-hello world $foo.name.
-=>
-{foo: { name: $foo.name }}
-```
+1. 新建[issue](https://github.com/shepherdwind/velocity.js/issues/new)
+2. 邮件到eward.song at gmail.com
+3. 阿里内部员工，可以通过hanwen.sah搜到我的旺旺
 
 ##License
 
 (The MIT License)
 
-Copyright (c) 2012-2013 Eward Song<eward.song@gmail.com>
+Copyright (c) 2012-2013 Eward Song<eward.song at gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the 'Software'), to deal in
