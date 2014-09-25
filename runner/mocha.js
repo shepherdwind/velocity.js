@@ -1125,9 +1125,9 @@ Mocha.prototype._growl = function(runner, reporter) {
  * @api public
  */
 
-Mocha.prototype.grep = function(re, esc){
+Mocha.prototype.grep = function(re){
   this.options.grep = 'string' == typeof re
-    ? new RegExp(esc ? re : utils.escapeRegexp(re))
+    ? new RegExp(utils.escapeRegexp(re))
     : re;
   return this;
 };
@@ -4987,7 +4987,7 @@ process.on = function(e, fn){
     mocha.globals('location');
 
     var query = Mocha.utils.parseQuery(window.location.search || '');
-    if (query.grep) mocha.grep(query.grep, query.re);
+    if (query.grep) mocha.grep(query.grep);
     if (query.invert) mocha.invert();
 
     return Mocha.prototype.run.call(mocha, function(){

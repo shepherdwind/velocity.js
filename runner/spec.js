@@ -28,7 +28,7 @@ describe('Compile', function(){
 
     it('set method', function(){
       var vm = '$page.setTitle( "My Home Page" ).setname("haha")$page.Title $page.name'
-      assert.equal('My Home Page haha', render(vm))
+      assert.equal('My Home Page haha', render(vm, {page: {}}))
     })
 
     it('size method', function(){
@@ -524,7 +524,7 @@ describe('Compile', function(){
 
   describe('self defined function', function() {
 
-    it('$stop test', function(){
+    it('$control.setTemplate', function(){
 
       var control = {
 
@@ -552,6 +552,17 @@ describe('Compile', function(){
     })
 
   })
+
+  describe('issues', function() {
+    it('#29', function() {
+      var vm = '#set($total = 0) #foreach($i in [1,2,3]) #set($total = $total + $i) #end $total'
+      assert.equal(render(vm).trim(), "6")
+    });
+    it('#30', function() {
+      var vm = '$foo.setName'
+      assert.equal(render(vm, { foo: { setName: "foo" }}).trim(), "foo")
+    });
+  });
 
 })
 describe('Parser', function(){
