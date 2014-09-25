@@ -9,8 +9,17 @@
     <div id="mocha"></div>
     <script src="mocha.js"></script>
     <script src="assert.js"></script>
-    <script src="http://a.tbcdn.cn/??s/kissy/1.2.0/kissy.js" charset="utf-8"></script>
-    <script>mocha.setup('bdd')</script>
-    <script src="runner.js" charset="utf-8"></script>
+    <script src="./standalone-debug.js" charset="utf-8"></script>
+    <script src="./index.js"></script>
+    <script>
+      mocha.setup('bdd');
+      var Velocity = require('velocityjs/0.4.5/index');
+      var Parser = Velocity.Parser;
+      var Compile = Velocity.Compile;
+    </script>
+    <script src="./spec.js" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      mocha.run();
+    </script>
   </body>
 </html>

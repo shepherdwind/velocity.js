@@ -1,7 +1,14 @@
 var utils = require('../utils');
-var Helper = require('../helper/');
-function Velocity(asts) {
+var Helper = require('../helper/index');
+function Velocity(asts, config) {
   this.asts = asts;
+  this.config = {
+    // 自动输出为经过html encode输出
+    escape: true,
+    // 不需要转义的白名单
+    unescape: {}
+  };
+  utils.mixin(config, config);
   this.init();
 }
 

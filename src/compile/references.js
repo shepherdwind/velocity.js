@@ -59,7 +59,7 @@ module.exports = function(Velocity, utils){
       if (!utils.isArray(key)) key = [key]
 
       utils.forEach(key, function(key){
-        this.unescape[key] = true
+        this.config.unescape[key] = true
       }, this)
 
     },
@@ -73,8 +73,9 @@ module.exports = function(Velocity, utils){
     getReferences: function(ast, isVal) {
 
       if (ast.prue) {
-        if (ast.id in this.unescape) ast.prue = false
+        if (ast.id in this.config.unescape) ast.prue = false
       }
+      var escape = this.config.escape;
 
       var isSilent = this.silence || ast.leader === "$!";
       var isfn     = ast.args !== undefined;
@@ -85,7 +86,7 @@ module.exports = function(Velocity, utils){
       var text = Velocity.Helper.getRefText(ast)
 
       if (text in context) {
-        return ast.prue ? convert(context[text]) : context[text];
+        return (ast.prue && escape) ? convert(context[text]) : context[text];
       }
 
 
@@ -100,7 +101,7 @@ module.exports = function(Velocity, utils){
         utils.some(ast.path, function(property, i){
 
           //第三个参数，返回后面的参数ast
-          ret = this.getAttributes(property, ret, ast.path.slice(i + 1), ast);
+          ret = this.getAttributes(property, ret);
 
         }, this);
       }
@@ -109,7 +110,7 @@ module.exports = function(Velocity, utils){
         ret = isSilent? '' : Velocity.Helper.getRefText(ast);
       }
 
-      ret = ast.prue ? convert(ret) : ret
+      ret = (ast.prue && escape) ? convert(ret) : ret
 
       return ret;
     },
@@ -143,12 +144,9 @@ module.exports = function(Velocity, utils){
      * @param {object} property 属性描述，一个对象，主要包括id，type等定义
      * @param {object} baseRef 当前执行链结果，比如$a.b.c，第一次baseRef是$a,
      * 第二次是$a.b返回值
-     * @param {array} others 后面的属性，比如$a.b.c，求$a.b时，其余的是[c]所对
-     * 应的描述
-     * @param {object} total 整个ast描述
      * @private
      */
-    getAttributes: function(property, baseRef, others, total){
+    getAttributes: function(property, baseRef){
       /**
        * type对应着velocity.yy中的attribute，三种类型: method, index, property
        */
@@ -156,7 +154,7 @@ module.exports = function(Velocity, utils){
       var ret;
       var id = property.id;
       if (type === 'method'){
-        ret = this.getPropMethod(property, baseRef, others, total);
+        ret = this.getPropMethod(property, baseRef);
       } else if (type === 'property') {
         ret = baseRef[id];
       } else {
@@ -186,7 +184,7 @@ module.exports = function(Velocity, utils){
     /**
      * $foo.bar()求值
      */
-    getPropMethod: function(property, baseRef, others, total){
+    getPropMethod: function(property, baseRef){
 
       var id         = property.id;
       var ret        = '';
@@ -249,18 +247,10 @@ module.exports = function(Velocity, utils){
 
           var that = this;
 
-          baseRef.$sys = {
-            others: others,
-            vm: this,
-            total: total
-          };
-
           baseRef.eval = function() {
             return that.eval.apply(that, arguments);
           };
           ret = ret.apply(baseRef, args);
-
-          delete baseRef.$sys;
 
         } else {
           ret = undefined;
