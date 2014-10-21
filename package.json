@@ -26,6 +26,7 @@
     "test" : "make test"
   },
   "spm": {
-    "main": "index.js"
+    "main": "index.js",
+    "buildArgs": "--skip fs,path -O build"
   }
 }
