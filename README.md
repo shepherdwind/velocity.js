@@ -30,6 +30,11 @@ $ npm install velocityjs
 2. Date.now
 3. Object.keys
 
+##Examples
+
+在tests目录下有大量的例子，node和浏览器下使用是一致的，另外，examples目录下有一个
+最简单的例子。
+
 ##Public API
 
 文件组织通过CommonJS方式，对于浏览器，通过spm可以打包为cmd模块。
