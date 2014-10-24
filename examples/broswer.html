@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Velocity Test</title>
+    <script type="text/javascript" src="https://a.alipayobjects.com/seajs/seajs/2.2.0/sea.js"></script>
+</head>
+<body>
+
+<script id="tmpl" type="text/tmplate">
+    #foreach($item in $items)
+        $item.a
+    #end
+</script>
+
+<script>
+seajs.use('velocityjs/0.4.6/index',function(Velocity){
+    var Parser=Velocity.Parser;
+    var Compile=Velocity.Compile;
+
+    var asts=Parser.parse(document.querySelector('#tmpl').innerHTML);
+    var data = {
+       items: [{a:'1'},{a:2}]
+    };
+    var s = (new Compile(asts)).render(data);
+    console.log(s);
+});
+</script>
+</body>
+</html>
