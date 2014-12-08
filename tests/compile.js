@@ -251,6 +251,11 @@ describe('Compile', function(){
       assert.equal('Velocity', render(vm, {foo: 1}))
     })
 
+    it('#if not work', function(){
+      var vm = '#if($!css_pureui)hello world#end'
+      assert.equal('', render(vm))
+    })
+
     it('#elseif & #else', function(){
       var vm = '#if($foo < 5)Go North#elseif($foo == 8)Go East#{else}Go South#end'
       assert.equal('Go North' , render(vm, {foo: 4}))
@@ -416,6 +421,9 @@ describe('Compile', function(){
       var vm = '$!a(**** **** **** $stringUtil.right($!b,4))'
       var ret = '(**** **** **** $stringUtil.right($!b,4))'
       assert.equal(ret, render(vm))
+    })
+
+    it('issue #31, not logic', function(){
     })
 
     it('# meet with css property', function(){
