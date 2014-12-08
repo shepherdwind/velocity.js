@@ -423,9 +423,6 @@ describe('Compile', function(){
       assert.equal(ret, render(vm))
     })
 
-    it('issue #31, not logic', function(){
-    })
-
     it('# meet with css property', function(){
       var vm = '#margin-top:2px'
       assert.equal(vm, render(vm))
