@@ -3,6 +3,8 @@ Velocity - Template Engine
 [![Build Status](https://secure.travis-ci.org/shepherdwind/velocity.js.png)](https://travis-ci.org/shepherdwind/velocity.js)
 [![NPM version](https://badge.fury.io/js/velocityjs.png)](http://badge.fury.io/js/velocityjs)
 
+[![NPM](https://nodei.co/npm/velocityjs.png?downloads=true&stars=true)](https://nodei.co/npm/velocityjs/)
+
 velocity.js是[velocity](http://velocity.apache.org/)模板语法的javascript实现。
 
 ##Features
