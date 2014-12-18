@@ -5,10 +5,7 @@ var Compile = Velocity.Compile
 
 describe('Compile', function(){
 
-  function render(str, context, macros){
-    var compile = new Compile(Parser.parse(str))
-    return compile.render(context, macros)
-  }
+  var render = Velocity.render;
 
   function getContext(str, context, macros){
     var compile = new Compile(Parser.parse(str))
@@ -85,13 +82,35 @@ describe('Compile', function(){
       var vm = '$name $name2 $cn $cn1'
       var data = {
         name: 'hello world',
-        name2: '<i>a',
+        name2: '<i>&a',
         cn: '中文',
         cn1: '<i>中文'
       }
 
-      var ret  = 'hello world &lt;i&gt;a 中文 &lt;i&gt;&#20013;&#25991;'
+      var ret  = 'hello world &lt;i&gt;&amp;a 中文 &lt;i&gt;&#20013;&#25991;'
       assert.equal(ret, render(vm, data))
+    })
+
+    it('add custom ignore escape function', function(){
+      var vm = '$noIgnore($name), $ignore($name)'
+      var expected = '&lt;i&gt;, <i>'
+
+      var compile = new Compile(Parser.parse(vm))
+      compile.addIgnoreEscpape('ignore')
+
+      var context = {
+        name: '<i>',
+        noIgnore: function(name){
+          return name
+        },
+
+        ignore: function(name){
+          return name;
+        }
+      }
+
+      var ret = compile.render(context)
+      assert.equal(expected, ret)
     })
   })
 
@@ -105,6 +124,11 @@ describe('Compile', function(){
     it('empty map', function(){
       var vm = '#set($foo = {})'
       assert.deepEqual({}, getContext(vm).foo)
+    })
+
+    it('#set array', function(){
+      var vm = '#set($foo = []) #set($foo[0] = 12)'
+      assert.equal(12, getContext(vm).foo[0])
     })
 
     it('set equal to literal', function(){
@@ -235,12 +259,13 @@ describe('Compile', function(){
         '#set($a = {\n' +
         '  "a": [1, 2, ["1", "a"], {"a": 1}],\n' +
         '  "b": "12",\n' +
+        '  "d": null,\n' +
         '  "c": false\n' +
         '})\n' +
-        '' 
+        ''
 
       assert.deepEqual([{name: 1}, { name: 2 }], getContext(vm1).a)
-      assert.deepEqual({a: [1, 2, ["1", "a"], {a: 1}], b: "12", c: false}, getContext(vm2).a)
+      assert.deepEqual({a: [1, 2, ["1", "a"], {a: 1}], b: "12", d: null, c: false}, getContext(vm2).a)
     })
   })
 
@@ -299,6 +324,8 @@ describe('Compile', function(){
     it('#foreach with nest foreach', function(){
       var vm = '#foreach($i in [1..2])${velocityCount}#foreach($j in [2..3])${velocityCount}#end#end'
       assert.equal('112212', render(vm))
+      var vm = '#foreach($i in [5..2])$i#end'
+      assert.equal('5432', render(vm))
     })
 
     it('#foreach with map entrySet', function(){

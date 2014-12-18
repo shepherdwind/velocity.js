@@ -121,53 +121,8 @@ module.exports = function(Velocity, utils){
      * 对双引号字符串进行eval求值，替换其中的变量，只支持最基本的变量类型替换
      */
     evalStr: function(str){
-
-      // 如果是Broswer环境，使用正则执行evalStr，如果是node环境，或者自行设置
-      // Velocity.Parser = Parser，可以对evalStr完整支持
-      if (Velocity.Parser) {
-
-        var asts = Velocity.Parser.parse(str);
-        ret = this._render(asts);
-
-      } else {
-
-        var ret = str;
-        var reg = /\$\{{0,1}([_a-z][a-z_\-0-9.]*)\}{0,1}/gi;
-        var self = this;
-        ret = ret.replace(reg, function(){
-          return self._getFromVarname(arguments[1]);
-        });
-      }
-
-      return ret;
-    },
-
-    /**
-     * 通过变量名获取变量的值
-     * @param varname {string} 变量名，比如$name.name，只支持一种形式，变量和属性
-     * 的取值，index和method不支持，在字符处理中，只处理"$varname1 $foo.bar" 类似
-     * 的变量，对于复杂类型不支持
-     * @return ret {string} 变量对应的值
-     */
-    _getFromVarname: function(varname){
-      var varPath = varname.split('.');
-      var ast = {
-        type   : "references",
-        id     : varPath[0],
-        leader : "$"
-      };
-
-      var path = [];
-      for (var i=1; i < varPath.length; i++) {
-        path.push({
-          type: 'property',
-          id: varPath[i]
-        });
-      }
-
-      if (path.length) ast.path = path;
-      return this.getReferences(ast);
+      var asts = Velocity.Parser.parse(str);
+      return this._render(asts);
     }
-
   });
 };

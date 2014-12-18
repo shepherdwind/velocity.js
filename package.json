@@ -18,12 +18,13 @@
     "velocity": "bin/velocity"
   },
   "devDependencies": {
-    "mocha": ">=1.7.2",
+    "coffee-script": ">=1.4.0",
+    "istanbul": "^0.3.5",
     "jison": ">=0.3",
-    "coffee-script": ">=1.4.0"
+    "mocha": ">=1.7.2"
   },
   "scripts": {
-    "test" : "make test"
+    "test": "make test"
   },
   "spm": {
     "main": "index.js",

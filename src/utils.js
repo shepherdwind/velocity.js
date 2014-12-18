@@ -1,10 +1,5 @@
 "use strict";
-var utils = {
-  noop: function noop(){
-    var arg = arguments;
-    return function(){ return arg; };
-  }
-};
+var utils = {};
 
 ['forEach', 'some', 'every', 'filter', 'map'].forEach(function(fnName){
   utils[fnName] = function(arr, fn, context){

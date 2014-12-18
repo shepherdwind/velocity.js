@@ -6,3 +6,4 @@ build
 .sw*
 .idea/*
 dist/
+coverage

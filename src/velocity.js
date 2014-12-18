@@ -24,10 +24,6 @@ Parser.parse = function (str) {
   return utils.makeLevel(asts);
 };
 
-Helper.Structure = require('./helper/structure');
-Helper.Jsonify   = require('./helper/jsonify');
-Helper.BackStep  = require('./helper/backstep');
-
 var Velocity = {
   Parser  : Parser,
   Compile : Compile,
@@ -37,11 +33,7 @@ var Velocity = {
 
 Velocity.render = function (template, context, macros) {
 
-  var t1   = Date.now();
   var asts = Parser.parse(template);
-  var t2   = Date.now();
-  //var str  = 'parse syntax tree finished, cost time: ' + (t2 - t1)+ 'ms.';
-
   var compile = new Compile(asts);
   return compile.render(context, macros);
 };
