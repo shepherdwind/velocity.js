@@ -7,7 +7,7 @@ parse:
 	cd src/parse && jison velocity.yy velocity.l && mv velocity.js index.js
 
 test:
-	mocha tests tests/node
+	mocha tests
 
 spm:
 	spm build --skip fs,path -O build

@@ -626,6 +626,20 @@ describe('Compile', function(){
       var vm = "$bar.foo()\n#if(1>0)...\n#set($foo=$bar)\n#end"
       assert.equal("$bar.foo()\n...\n", render(vm))
     })
+
+    it('with references', function(){
+      var vm = [ 'a',
+                 '#foreach($b in $nums)',
+                 '#if($b)',
+                 'b',
+                 'e $b.alm',
+                 '#end',
+                 '#end',
+                 'c'].join("\n");
+      var expected = [ 'a', 'b', 'e 1', 'b', 'e 2', 'b', 'e 3', 'c'].join("\n")
+
+      assert.equal(expected, render(vm, {nums:[{alm:1},{alm:2},{alm:3}],bar:""}))
+    })
   })
 
 })
