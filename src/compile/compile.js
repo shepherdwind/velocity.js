@@ -51,7 +51,7 @@ module.exports = function(Velocity, utils){
 
       this.cost = cost;
 
-      return str ;
+      return str.replace(/\s+\n+/g, '\n');
     },
 
     /**
