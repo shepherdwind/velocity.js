@@ -630,7 +630,7 @@ describe('Compile', function(){
     it('with references', function(){
       var vm = [ 'a',
                  '#foreach($b in $nums)',
-                 '#if($b)',
+                 '#if($b) ',
                  'b',
                  'e $b.alm',
                  '#end',
