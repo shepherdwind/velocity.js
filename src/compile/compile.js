@@ -11,26 +11,6 @@ module.exports = function(Velocity, utils){
       this.local = {};
       this.silence = false;
       this.unescape = {};
-
-      utils.forEach(this.asts, this._init, this);
-    },
-
-    _init: function(ast, i){
-      if (!ast.type || ast.type !== 'references') {
-        this._trim(i + 1);
-      }
-    },
-
-    /**
-     * 删除多余的换行符，规则，所有非references的指令后面的换行符，都去除接下来的
-     * 换行符
-     */
-    _trim: function(i){
-      var asts = this.asts;
-      var _ast = asts[i];
-      if (typeof _ast === 'string' && _ast.slice(0, 1) === "\n") {
-        asts[i] = _ast.slice(1);
-      }
     },
 
     /**
@@ -51,8 +31,7 @@ module.exports = function(Velocity, utils){
 
       this.cost = cost;
 
-      // fix #32, clear too much new line
-      return str.replace(/\s+\n+/g, '\n');
+      return str;
     },
 
     /**

@@ -575,27 +575,27 @@ describe('Compile', function(){
   })
 
   describe('multiline', function(){
-    it('multiline: #set multiline', function(){
+    it('#set multiline', function(){
       var vm = "$bar.foo()\n#set($foo=$bar)\n..."
       assert.equal("$bar.foo()\n...", render(vm))
     })
 
-    it('multiline: #if multiline', function(){
+    it('#if multiline', function(){
       var vm = "$bar.foo()\n#if(1>0)\n...#end"
       assert.equal("$bar.foo()\n...", render(vm))
     })
 
-    it('multiline: #set #set', function(){
+    it('#set #set', function(){
       var vm = "$bar.foo()\n...\n#set($foo=$bar)\n#set($foo=$bar)"
       assert.equal("$bar.foo()\n...\n", render(vm))
     })
 
-    it('multiline: #if multiline #set', function(){
+    it('#if multiline #set', function(){
       var vm = "$bar.foo()\n#if(1>0)\n#set($foo=$bar)\n...#end"
       assert.equal("$bar.foo()\n...", render(vm))
     })
 
-    it('multiline: #if multiline #set #end', function(){
+    it('#if multiline #set #end', function(){
       var vm = "$bar.foo()\n#if(1>0)...\n#set($foo=$bar)\n#end"
       assert.equal("$bar.foo()\n...\n", render(vm))
     })

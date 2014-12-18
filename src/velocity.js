@@ -8,6 +8,19 @@ Parser._parse = Parser.parse;
 
 Parser.parse = function (str) {
   var asts = Parser._parse(str);
+
+  /**
+   * remove all newline after all direction such as `#set, #each`
+   */
+  utils.forEach(asts, function trim(ast, i){
+    if (ast.type && ast.type !== 'references') {
+      var _ast = asts[i + 1];
+      if (typeof _ast === 'string' && _ast.slice(0, 1) === "\n") {
+        asts[i + 1] = _ast.slice(1);
+      }
+    }
+  });
+
   return utils.makeLevel(asts);
 };
 
