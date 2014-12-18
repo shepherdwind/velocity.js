@@ -18,7 +18,6 @@
     "velocity": "bin/velocity"
   },
   "devDependencies": {
-    "coffee-script": ">=1.4.0",
     "istanbul": "^0.3.5",
     "jison": ">=0.3",
     "mocha": ">=1.7.2"

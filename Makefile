@@ -4,10 +4,12 @@ BIN := ./node_modules/.bin
 REPORTER ?= spec
 
 parse:
-	cd src/parse && jison velocity.yy velocity.l && mv velocity.js index.js
+	cd src/parse && \
+		node ../../$(BIN)/jison velocity.yy velocity.l \
+		&& mv velocity.js index.js
 
 test:
-	mocha tests
+	node $(BIN)/_mocha tests
 
 spm:
 	spm build --skip fs,path -O build
