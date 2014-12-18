@@ -51,6 +51,7 @@ module.exports = function(Velocity, utils){
 
       this.cost = cost;
 
+      // fix #32, clear too much new line
       return str.replace(/\s+\n+/g, '\n');
     },
 
