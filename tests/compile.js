@@ -112,6 +112,26 @@ describe('Compile', function(){
       var ret = compile.render(context)
       assert.equal(expected, ret)
     })
+
+    it('config support', function(){
+      var vm = '$foo($name)'
+      var expected = '<i>'
+
+      var compile = new Compile(Parser.parse(vm), { escape: false })
+      var context = {
+        name: '<i>',
+        foo: function(name){
+          return name;
+        }
+      }
+
+      var ret = compile.render(context)
+      assert.equal(expected, ret)
+
+      compile = new Compile(Parser.parse(vm))
+      ret = compile.render(context)
+      assert.equal('&lt;i&gt;', ret)
+    })
   })
 
   describe('Set && Expression', function(){
