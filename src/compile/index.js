@@ -8,7 +8,7 @@ function Velocity(asts, config) {
     // 不需要转义的白名单
     unescape: {}
   };
-  utils.mixin(config, config);
+  utils.mixin(this.config, config);
   this.init();
 }
 
