@@ -8,7 +8,7 @@ node_js:
   - 0.8
 
 install:
-  - npm install mocha
+  - npm install
 
 script:
-  - mocha tests tests/node
+  - make cov
