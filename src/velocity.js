@@ -1,7 +1,7 @@
 var Parser  = require('./parse/');
 var utils   = require('./utils');
 var Compile = require('./compile/');
-var Helper  = {};
+var Helper = require('./helper/index');
 
 Compile.Parser = Parser;
 Parser._parse = Parser.parse;
@@ -28,8 +28,7 @@ Parser.parse = function (str) {
 var Velocity = {
   Parser  : Parser,
   Compile : Compile,
-  Helper  : Helper,
-  Jsonify : Helper.Jsonify
+  Helper: Helper
 };
 
 Velocity.render = function (template, context, macros) {
