@@ -662,4 +662,9 @@ describe('Compile', function(){
     })
   })
 
+  it('multiple newlines after statement', function(){
+    var vm = '#if(1>0)\n\nb#end'
+    assert.equal('\nb', render(vm))
+  })
+
 })

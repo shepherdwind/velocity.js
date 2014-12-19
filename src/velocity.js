@@ -13,7 +13,7 @@ Parser.parse = function (str) {
    * remove all newline after all direction such as `#set, #each`
    */
   utils.forEach(asts, function trim(ast, i){
-    var TRIM_REG = /^\s*\n/;
+    var TRIM_REG = /^[ \t]*\n/;
     if (ast.type && ast.type !== 'references') {
       var _ast = asts[i + 1];
       if (typeof _ast === 'string' && TRIM_REG.test(_ast)) {
