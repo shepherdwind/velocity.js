@@ -509,26 +509,26 @@ describe('Compile', function(){
 
     it('print error stack of user-defined macro', function(){
       var vm = '111\n\n#foo($name)'
-      var vm1 = '\nhello#parse($vm)'
-      var expected = '<i>'
+      var vm1 = '\nhello#parse("vm.vm")'
+      var files = { 'vm.vm': vm, 'vm1.vm': vm1 };
 
-      var compile = new Compile(Parser.parse('\n\n#parse($vm1)'))
-      var context = {
+      var compile = new Compile(Parser.parse('\n\n#parse("vm1.vm")'))
+      var macros = {
         foo: function(name){
           throw new Error('Run error')
         },
-        parse: function(str){
-          return this.eval(str);
+        parse: function(name){
+          return this.eval(files[name]);
         }
       }
 
       var expected = '' +
                      'Run error\n' +
                      '      at #foo($name) L/N 3:0\n' +
-                     '      at #parse($vm) L/N 2:5\n' +
-                     '      at #parse($vm1) L/N 3:0';
+                     '      at #parse("vm.vm") L/N 2:5\n' +
+                     '      at #parse("vm1.vm") L/N 3:0';
       try {
-        compile.render({ vm: vm, vm1: vm1 }, context)
+        compile.render({}, macros)
       } catch(e) {
         assert.equal(expected, e.message);
       }
@@ -716,5 +716,5 @@ describe('Compile', function(){
     })
   })
 
-
 })
+
