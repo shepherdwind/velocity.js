@@ -96,9 +96,12 @@ case 4: case 32: case 81:
  this.$ = [].concat($$[$0-1], $$[$0]); 
 break;
 case 5:
- $$[$0]['prue'] = true;  this.$ = $$[$0]; 
+ $$[$0]['prue'] = true;  $$[$0].pos = this._$; this.$ = $$[$0]; 
 break;
-case 6: case 7: case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16: case 18: case 19: case 41: case 42: case 46: case 47: case 48: case 62: case 65: case 66: case 76: case 77: case 78: case 79: case 85: case 92: case 99: case 100: case 105: case 111: case 113: case 126: case 127:
+case 6:
+ $$[$0].pos = this._$; this.$ = $$[$0]; 
+break;
+case 7: case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16: case 18: case 19: case 41: case 42: case 46: case 47: case 48: case 62: case 65: case 66: case 76: case 77: case 78: case 79: case 85: case 92: case 99: case 100: case 105: case 111: case 113: case 126: case 127:
  this.$ = $$[$0]; 
 break;
 case 8:

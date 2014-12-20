@@ -7,6 +7,10 @@ module.exports = function(Helper, utils){
     var ret = ast.leader;
     var isFn = ast.args !== undefined;
 
+    if (ast.type === 'macro_call') {
+      ret = '#';
+    }
+
     if (ast.isWraped) ret += '{';
 
     if (isFn) {

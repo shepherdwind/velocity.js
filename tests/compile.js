@@ -486,7 +486,56 @@ describe('Compile', function(){
 
   })
 
-  describe('self defined macro', function(){
+  describe('throw friendly error message', function() {
+    it('print right posiont when error throw', function(){
+      var vm = '111\nsdfs\n$foo($name)'
+      var expected = '<i>'
+
+      var compile = new Compile(Parser.parse(vm), { escape: false })
+      var context = {
+        name: '<i>',
+        foo: function(name){
+          throw new Error('Run error')
+        }
+      }
+      assert.throws(function(){
+        compile.render(context)
+      }, /\$foo\(\$name\)/)
+
+      assert.throws(function(){
+        compile.render(context)
+      }, /L\/N 3:0/)
+    })
+
+    it('print error stack of user-defined macro', function(){
+      var vm = '111\n\n#foo($name)'
+      var vm1 = '\nhello#parse($vm)'
+      var expected = '<i>'
+
+      var compile = new Compile(Parser.parse('\n\n#parse($vm1)'))
+      var context = {
+        foo: function(name){
+          throw new Error('Run error')
+        },
+        parse: function(str){
+          return this.eval(str);
+        }
+      }
+
+      var expected = '' +
+                     'Run error\n' +
+                     '      at #foo($name) L/N 3:0\n' +
+                     '      at #parse($vm) L/N 2:5\n' +
+                     '      at #parse($vm1) L/N 3:0';
+      try {
+        compile.render({ vm: vm, vm1: vm1 }, context)
+      } catch(e) {
+        assert.equal(expected, e.message);
+      }
+    })
+  })
+
+  describe('user-defined macro, such as #include, #parse', function(){
 
     it('basic', function(){
       var macros = {
@@ -660,11 +709,12 @@ describe('Compile', function(){
 
       assert.equal(expected, render(vm, {nums:[{alm:1},{alm:2},{alm:3}],bar:""}))
     })
+
+    it('multiple newlines after statement', function(){
+      var vm = '#if(1>0)\n\nb#end'
+      assert.equal('\nb', render(vm))
+    })
   })
 
-  it('multiple newlines after statement', function(){
-    var vm = '#if(1>0)\n\nb#end'
-    assert.equal('\nb', render(vm))
-  })
 
 })

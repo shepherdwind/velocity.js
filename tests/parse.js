@@ -46,7 +46,8 @@ describe('Parser', function(){
         prue : true,
         type : "references",
         path : [{"type": "property","id": "Address"}],
-        leader : '$'
+        leader : '$',
+        pos: { first_line: 1, last_line: 1, first_column: 0, last_column: 17 }
       })
     })
 
