@@ -18,9 +18,11 @@
     "velocity": "bin/velocity"
   },
   "devDependencies": {
+    "coveralls": "~2.11.2",
     "istanbul": "~0.3.5",
     "jison": ">=0.3",
-    "mocha": ">=1.7.2"
+    "mocha": ">=1.7.2",
+    "mocha-lcov-reporter": "0.0.1"
   },
   "scripts": {
     "test": "make test"

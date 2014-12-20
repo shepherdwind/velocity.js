@@ -27,6 +27,8 @@ publish:
 cov: $(SRC) $(TESTS)
 	@node $(BIN)/istanbul cover \
 	  $(BIN)/_mocha -- \
-	    --reporter $(REPORTER) \
+	    --reporter mocha-lcov-reporter \
 	    --timeout 5s \
-			$(TESTS)
+			$(TESTS) \
+			&& cat ./coverage/lcov.info | \
+			$(BIN)/coveralls --verbose

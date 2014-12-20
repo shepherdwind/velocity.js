@@ -1,6 +1,7 @@
-Velocity - Template Engine 
+Velocity - Template Engine
 ==========================
 [![Build Status](https://secure.travis-ci.org/shepherdwind/velocity.js.png)](https://travis-ci.org/shepherdwind/velocity.js)
+[![Coverage Status](https://img.shields.io/coveralls/shepherdwind/velocity.js/master.svg?style=flat)](https://coveralls.io/r/shepherdwind/velocity.js)
 
 [![NPM](https://nodei.co/npm/velocityjs.png?downloads=true)](https://nodei.co/npm/velocityjs/)
 
