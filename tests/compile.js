@@ -23,6 +23,21 @@ describe('Compile', function(){
       assert.equal('bar bar', render(vm1, {customer: {Address: "bar"}}))
     })
 
+    it('method with attribute', function(){
+      var vm = '$foo().bar\n${foo().bar}'
+      assert.equal('hello\nhello', render(vm, {
+        foo: function(){
+          return { bar: 'hello' }
+        }
+      }))
+
+      assert.equal('foo', render('${foo()}', {
+        foo: function(){
+          return 'foo'
+        }
+      }))
+    })
+
     it('index notation', function(){
       var vm = '$foo[0] $foo[$i] $foo.get(1)'
       assert.equal('bar haha haha', render(vm, {foo: ["bar", "haha"], i: 1}))
@@ -482,6 +497,8 @@ describe('Compile', function(){
 
     it('empty string condiction', function(){
       assert.equal('', render(''))
+      assert.equal('', render('##hello'))
+      assert.equal('hello', render('hello'))
     })
 
   })
@@ -716,5 +733,11 @@ describe('Compile', function(){
     })
   })
 
+  describe('define support', function(){
+    it('basic', function(){
+      var vm = '#define( $block )\nHello $who#end\n#set( $who = "World!" )\n$block'
+      assert.equal('Hello World!', render(vm))
+    })
+  })
 })
 

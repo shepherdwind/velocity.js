@@ -73,7 +73,11 @@ module.exports = function(Velocity, utils){
     getReferences: function(ast, isVal) {
 
       if (ast.prue) {
-        if (ast.id in this.config.unescape) ast.prue = false
+        var define = this.defines[ast.id];
+        if (utils.isArray(define)) {
+          return this._render(define);
+        }
+        if (ast.id in this.config.unescape) ast.prue = false;
       }
       var escape = this.config.escape;
 
