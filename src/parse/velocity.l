@@ -61,10 +61,9 @@
 <mu,run,h,c,i>"$"/[{a-zA-Z_]      { return 'DOLLAR'; }
 <h,run,c,i>"!"                    { return yytext; }
 <h,c,i>"="                        { return 'EQUAL'; }
-<run,c>[ ]+/[^,]                  { 
-                                    var conditionStack = this.conditionStack;
-                                    var len = conditionStack.length;
-                                    if (len >= 2 && conditionStack[len - 1] === 'c' && conditionStack[len - 2] === 'run') {
+<run,c>[ ]+/[^,]                  {
+                                    var len = this.stateStackSize();
+                                    if (len >= 2 && this.topState() === 'c' && this.topState(1) === 'run') {
                                       return 'SPACE';
                                     }
                                   }
@@ -75,20 +74,20 @@
 <mu>"{"                              { yy.begin = true; return 'VAR_BEGIN'; }
 <mu>"}"                              { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
 <mu,h,run,c,i>"("[\s]*/[$'"\[\{\-0-9\w()!] { this.begin("c"); return 'PARENTHESIS'; }
-<mu,h,run,c,i>")"                 { 
+<mu,h,run,c,i>")"                 {
                                     if (this.popState() === "c") {
-                                      var conditionStack = this.conditionStack;
-                                      var len = conditionStack.length;
+                                      var len = this.stateStackSize();
 
-                                      if (conditionStack[len - 1] === 'run') {
+                                      if (this.topState() === 'run') {
                                         this.popState();
                                         len = len - 1;
                                       }
 
+                                      var tailStack = this.topState(len - 2);
                                       /** 遇到#set(a = b)括号结束后结束状态h*/
-                                      if (len === 2 && conditionStack[1] === "h"){
+                                      if (len === 2 && tailStack === "h"){
                                         this.popState();
-                                      } else if (len === 3 && conditionStack[1] === "mu" && conditionStack[2] === "h") {
+                                      } else if (len === 3 && tailStack === "mu" &&  this.topState(len - 3) === "h") {
                                         // issue#7 $foo#if($a)...#end
                                         this.popState();
                                         this.popState();

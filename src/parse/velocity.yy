@@ -11,23 +11,23 @@
 root
   : EOF
     { return []; }
-  | statements EOF 
+  | statements EOF
       { return $1; }
   ;
 
 statements
-  : statement 
+  : statement
       { $$ = [$1]; }
   | statements statement 
       { $$ = [].concat($1, $2); }
   ;
 
 statement
-  : references 
-      { $1['prue'] = true;  $$ = $1; }
-  | directives 
-      { $$ = $1; }
-  | content 
+  : references
+      { $1['prue'] = true;  $1.pos = @$; $$ = $1; }
+  | directives
+      { $1.pos = @$; $$ = $1; }
+  | content
       { $$ = $1; }
   | COMMENT
       { $$ = {type: 'comment', value: $1 }; }
@@ -212,7 +212,7 @@ references
       { $$ = {type: "references", id: $2, path: $3, leader: $1 }; }
   | DOLLAR brace_begin methodbd attributes brace_end
       { $$ = {type: "references", id: $3.id, path: $4, isWraped: true, leader: $1, args: $3.args }; }
-  | DOLLAR methodbd attributes 
+  | DOLLAR methodbd attributes
       { $$ = {type: "references", id: $2.id, path: $3, leader: $1, args: $2.args }; }
   | DOLLAR ID 
       { $$ = {type: "references", id: $2, leader: $1 }; }
@@ -220,7 +220,7 @@ references
       { $$ = {type: "references", id: $3, isWraped: true, leader: $1 }; }
   | DOLLAR methodbd
       { $$ = {type: "references", id: $2.id, leader: $1, args: $2.args }; }
-  | DOLLAR brace_end methodbd brace_end
+  | DOLLAR brace_begin methodbd brace_end
       { $$ = {type: "references", id: $3.id, isWraped: true, args: $3.args, leader: $1 }; }
   ;
 

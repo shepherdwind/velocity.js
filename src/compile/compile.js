@@ -7,6 +7,7 @@ module.exports = function(Velocity, utils){
     init: function(){
       this.context = {};
       this.macros = {};
+      this.defines = {};
       this.conditions = [];
       this.local = {};
       this.silence = false;

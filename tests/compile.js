@@ -23,6 +23,21 @@ describe('Compile', function(){
       assert.equal('bar bar', render(vm1, {customer: {Address: "bar"}}))
     })
 
+    it('method with attribute', function(){
+      var vm = '$foo().bar\n${foo().bar}'
+      assert.equal('hello\nhello', render(vm, {
+        foo: function(){
+          return { bar: 'hello' }
+        }
+      }))
+
+      assert.equal('foo', render('${foo()}', {
+        foo: function(){
+          return 'foo'
+        }
+      }))
+    })
+
     it('index notation', function(){
       var vm = '$foo[0] $foo[$i] $foo.get(1)'
       assert.equal('bar haha haha', render(vm, {foo: ["bar", "haha"], i: 1}))
@@ -482,11 +497,62 @@ describe('Compile', function(){
 
     it('empty string condiction', function(){
       assert.equal('', render(''))
+      assert.equal('', render('##hello'))
+      assert.equal('hello', render('hello'))
     })
 
   })
 
-  describe('self defined macro', function(){
+  describe('throw friendly error message', function() {
+    it('print right posiont when error throw', function(){
+      var vm = '111\nsdfs\n$foo($name)'
+      var expected = '<i>'
+
+      var compile = new Compile(Parser.parse(vm), { escape: false })
+      var context = {
+        name: '<i>',
+        foo: function(name){
+          throw new Error('Run error')
+        }
+      }
+      assert.throws(function(){
+        compile.render(context)
+      }, /\$foo\(\$name\)/)
+
+      assert.throws(function(){
+        compile.render(context)
+      }, /L\/N 3:0/)
+    })
+
+    it('print error stack of user-defined macro', function(){
+      var vm = '111\n\n#foo($name)'
+      var vm1 = '\nhello#parse("vm.vm")'
+      var files = { 'vm.vm': vm, 'vm1.vm': vm1 };
+
+      var compile = new Compile(Parser.parse('\n\n#parse("vm1.vm")'))
+      var macros = {
+        foo: function(name){
+          throw new Error('Run error')
+        },
+        parse: function(name){
+          return this.eval(files[name]);
+        }
+      }
+
+      var expected = '' +
+                     'Run error\n' +
+                     '      at #foo($name) L/N 3:0\n' +
+                     '      at #parse("vm.vm") L/N 2:5\n' +
+                     '      at #parse("vm1.vm") L/N 3:0';
+      try {
+        compile.render({}, macros)
+      } catch(e) {
+        assert.equal(expected, e.message);
+      }
+    })
+  })
+
+  describe('user-defined macro, such as #include, #parse', function(){
 
     it('basic', function(){
       var macros = {
@@ -660,11 +726,18 @@ describe('Compile', function(){
 
       assert.equal(expected, render(vm, {nums:[{alm:1},{alm:2},{alm:3}],bar:""}))
     })
+
+    it('multiple newlines after statement', function(){
+      var vm = '#if(1>0)\n\nb#end'
+      assert.equal('\nb', render(vm))
+    })
   })
 
-  it('multiple newlines after statement', function(){
-    var vm = '#if(1>0)\n\nb#end'
-    assert.equal('\nb', render(vm))
+  describe('define support', function(){
+    it('basic', function(){
+      var vm = '#define( $block )\nHello $who#end\n#set( $who = "World!" )\n$block'
+      assert.equal('Hello World!', render(vm))
+    })
   })
-
 })
+

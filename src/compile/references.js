@@ -1,6 +1,6 @@
 module.exports = function(Velocity, utils){
 
-  'use strict'
+  'use strict';
 
   function getSize(obj){
 
@@ -73,7 +73,11 @@ module.exports = function(Velocity, utils){
     getReferences: function(ast, isVal) {
 
       if (ast.prue) {
-        if (ast.id in this.config.unescape) ast.prue = false
+        var define = this.defines[ast.id];
+        if (utils.isArray(define)) {
+          return this._render(define);
+        }
+        if (ast.id in this.config.unescape) ast.prue = false;
       }
       var escape = this.config.escape;
 
@@ -83,7 +87,7 @@ module.exports = function(Velocity, utils){
       var ret      = context[ast.id];
       var local    = this.getLocal(ast);
 
-      var text = Velocity.Helper.getRefText(ast)
+      var text = Velocity.Helper.getRefText(ast);
 
       if (text in context) {
         return (ast.prue && escape) ? convert(context[text]) : context[text];
@@ -91,17 +95,17 @@ module.exports = function(Velocity, utils){
 
 
       if (ret !== undefined && isfn) {
-        ret = this.getPropMethod(ast, context);
+        ret = this.getPropMethod(ast, context, ast);
       }
 
       if (local.isLocaled) ret = local['value'];
 
       if (ast.path && ret !== undefined) {
 
-        utils.some(ast.path, function(property, i){
+        utils.some(ast.path, function(property){
 
           //第三个参数，返回后面的参数ast
-          ret = this.getAttributes(property, ret);
+          ret = this.getAttributes(property, ret, ast);
 
         }, this);
       }
@@ -110,7 +114,7 @@ module.exports = function(Velocity, utils){
         ret = isSilent? '' : Velocity.Helper.getRefText(ast);
       }
 
-      ret = (ast.prue && escape) ? convert(ret) : ret
+      ret = (ast.prue && escape) ? convert(ret) : ret;
 
       return ret;
     },
@@ -146,7 +150,7 @@ module.exports = function(Velocity, utils){
      * 第二次是$a.b返回值
      * @private
      */
-    getAttributes: function(property, baseRef){
+    getAttributes: function(property, baseRef, ast){
       /**
        * type对应着velocity.yy中的attribute，三种类型: method, index, property
        */
@@ -154,7 +158,7 @@ module.exports = function(Velocity, utils){
       var ret;
       var id = property.id;
       if (type === 'method'){
-        ret = this.getPropMethod(property, baseRef);
+        ret = this.getPropMethod(property, baseRef, ast);
       } else if (type === 'property') {
         ret = baseRef[id];
       } else {
@@ -184,7 +188,7 @@ module.exports = function(Velocity, utils){
     /**
      * $foo.bar()求值
      */
-    getPropMethod: function(property, baseRef){
+    getPropMethod: function(property, baseRef, ast){
 
       var id         = property.id;
       var ret        = '';
@@ -250,7 +254,17 @@ module.exports = function(Velocity, utils){
           baseRef.eval = function() {
             return that.eval.apply(that, arguments);
           };
-          ret = ret.apply(baseRef, args);
+
+          try {
+            ret = ret.apply(baseRef, args);
+          } catch(e) {
+            var pos = ast.pos;
+            var text = Velocity.Helper.getRefText(ast);
+            var err = ' on ' + text + ' at L/N ' + pos.first_line + ':' + pos.first_column;
+            e.name = '';
+            e.message += err;
+            throw new Error(e);
+          }
 
         } else {
           ret = undefined;

@@ -12,19 +12,38 @@ module.exports = function(Velocity, utils){
       var ast = block[0];
       var ret = '';
 
-      if (ast.type === 'if') {
-        ret = this.getBlockIf(block);
-      } else if (ast.type === 'foreach') {
-        ret = this.getBlockEach(block);
-      } else if (ast.type === 'macro') {
-        this.setBlockMacro(block);
-      } else if (ast.type === 'noescape') {
-        ret = this._render(block.slice(1));
-      } else {
-        ret = this._render(block);
+      switch (ast.type) {
+        case 'if':
+          ret = this.getBlockIf(block);
+          break;
+        case 'foreach':
+          ret = this.getBlockEach(block);
+          break;
+        case 'macro':
+          this.setBlockMacro(block);
+          break;
+        case 'noescape':
+          ret = this._render(block.slice(1));
+          break;
+        case 'define':
+          this.setBlockDefine(block);
+          break;
+        default:
+          ret = this._render(block);
       }
 
       return ret || '';
+    },
+
+    /**
+     * define
+     */
+    setBlockDefine: function(block){
+      var ast = block[0];
+      var _block = block.slice(1);
+      var defines = this.defines;
+
+      defines[ast.id] = _block;
     },
 
     /**
@@ -60,7 +79,17 @@ module.exports = function(Velocity, utils){
             jsArgs.push(this.getLiteral(a));
           }, this);
 
-          ret = macro.apply(this, jsArgs);
+          try {
+            ret = macro.apply(this, jsArgs);
+          } catch(e){
+            var pos = ast.pos;
+            var text = Velocity.Helper.getRefText(ast);
+            // throws error tree
+            var err = '\n      at ' + text + ' L/N ' + pos.first_line + ':' + pos.first_column;
+            e.name = '';
+            e.message += err;
+            throw new Error(e);
+          }
 
         }
 
