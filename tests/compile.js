@@ -431,6 +431,11 @@ describe('Compile', function(){
       assert.equal(' abd', render(vm, {foo: 'a', bar: 'b', dd: 'd'}))
     })
 
+    it('#macro map argument', function(){
+      var vm = '#macro( d $a)#foreach($_item in $a.entrySet())$_item.key = $_item.value #end#end #d ( {"foo": $foo,"bar":$bar} )'
+      assert.equal(' foo = a bar = b ', render(vm, {foo: 'a', bar: 'b'}))
+    })
+
     it('#noescape', function(){
       var vm = '#noescape()$hello#end'
       assert.equal('hello world', render(vm, {hello: 'hello world'}))
