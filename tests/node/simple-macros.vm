@@ -1,7 +1,0 @@
-  #macro(a $a $b)
-    $a $b
-  #end
-  #macro(b $aa $bb)
-    #a($aa, $bb)
-  #end
-  #b($aaa $bbb())

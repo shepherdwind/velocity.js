@@ -390,7 +390,7 @@ describe('Compile', function(){
         }
       }
 
-      assert.equal(ret, render(vm, data))
+      assert.equal(ret.trim(), render(vm, data).trim())
 
     })
 

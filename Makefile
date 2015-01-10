@@ -15,9 +15,12 @@ test:
 spm:
 	spm build --skip fs,path -O build
 
-pages:
-	cake runner && cp tests/runner/* ../gh-pages/velocity.js/runner/
+runner:
+	@node tests/script/syncRunner.js
+
+pages: spm runner
 	cp build/velocityjs/${version}/*.js tests/runner/
+	cp tests/runner/* ../gh-pages/velocity.js/runner/
 
 publish:
 	@git tag ${version}

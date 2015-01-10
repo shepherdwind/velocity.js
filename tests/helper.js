@@ -1,9 +1,9 @@
 var Velocity = require('../src/velocity')
 var assert = require("assert")
-var getRefText = Velocity.Helper.getRefText;
-var parse = Velocity.Parser.parse;
 
 describe('Helper', function(){
+  var getRefText = Velocity.Helper.getRefText
+  var parse = Velocity.Parser.parse
   describe('getRefText', function() {
     it('simple reference', function() {
       var foo = '$a.b'

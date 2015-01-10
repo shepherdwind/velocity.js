@@ -1,6 +1,0 @@
-{
-  "hello": {
-    "a": "$hello.a",
-    "b": "$hello.b"
-  }
-}
