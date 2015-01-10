@@ -1,9 +1,6 @@
 describe('Compile', function(){
 
-  function render(str, context, macros){
-    var compile = new Compile(Parser.parse(str))
-    return compile.render(context, macros)
-  }
+  var render = Velocity.render;
 
   function getContext(str, context, macros){
     var compile = new Compile(Parser.parse(str))
@@ -19,6 +16,21 @@ describe('Compile', function(){
 
       assert.equal('bar'    , render(vm, {customer: {Address: "bar"}}))
       assert.equal('bar bar', render(vm1, {customer: {Address: "bar"}}))
+    })
+
+    it('method with attribute', function(){
+      var vm = '$foo().bar\n${foo().bar}'
+      assert.equal('hello\nhello', render(vm, {
+        foo: function(){
+          return { bar: 'hello' }
+        }
+      }))
+
+      assert.equal('foo', render('${foo()}', {
+        foo: function(){
+          return 'foo'
+        }
+      }))
     })
 
     it('index notation', function(){
@@ -80,13 +92,55 @@ describe('Compile', function(){
       var vm = '$name $name2 $cn $cn1'
       var data = {
         name: 'hello world',
-        name2: '<i>a',
+        name2: '<i>&a',
         cn: '中文',
         cn1: '<i>中文'
       }
 
-      var ret  = 'hello world &lt;i&gt;a 中文 &lt;i&gt;&#20013;&#25991;'
+      var ret  = 'hello world &lt;i&gt;&amp;a 中文 &lt;i&gt;&#20013;&#25991;'
       assert.equal(ret, render(vm, data))
+    })
+
+    it('add custom ignore escape function', function(){
+      var vm = '$noIgnore($name), $ignore($name)'
+      var expected = '&lt;i&gt;, <i>'
+
+      var compile = new Compile(Parser.parse(vm))
+      compile.addIgnoreEscpape('ignore')
+
+      var context = {
+        name: '<i>',
+        noIgnore: function(name){
+          return name
+        },
+
+        ignore: function(name){
+          return name;
+        }
+      }
+
+      var ret = compile.render(context)
+      assert.equal(expected, ret)
+    })
+
+    it('config support', function(){
+      var vm = '$foo($name)'
+      var expected = '<i>'
+
+      var compile = new Compile(Parser.parse(vm), { escape: false })
+      var context = {
+        name: '<i>',
+        foo: function(name){
+          return name;
+        }
+      }
+
+      var ret = compile.render(context)
+      assert.equal(expected, ret)
+
+      compile = new Compile(Parser.parse(vm))
+      ret = compile.render(context)
+      assert.equal('&lt;i&gt;', ret)
     })
   })
 
@@ -100,6 +154,11 @@ describe('Compile', function(){
     it('empty map', function(){
       var vm = '#set($foo = {})'
       assert.deepEqual({}, getContext(vm).foo)
+    })
+
+    it('#set array', function(){
+      var vm = '#set($foo = []) #set($foo[0] = 12)'
+      assert.equal(12, getContext(vm).foo[0])
     })
 
     it('set equal to literal', function(){
@@ -230,12 +289,13 @@ describe('Compile', function(){
         '#set($a = {\n' +
         '  "a": [1, 2, ["1", "a"], {"a": 1}],\n' +
         '  "b": "12",\n' +
+        '  "d": null,\n' +
         '  "c": false\n' +
         '})\n' +
-        '' 
+        ''
 
       assert.deepEqual([{name: 1}, { name: 2 }], getContext(vm1).a)
-      assert.deepEqual({a: [1, 2, ["1", "a"], {a: 1}], b: "12", c: false}, getContext(vm2).a)
+      assert.deepEqual({a: [1, 2, ["1", "a"], {a: 1}], b: "12", d: null, c: false}, getContext(vm2).a)
     })
   })
 
@@ -244,6 +304,11 @@ describe('Compile', function(){
     it('#if', function(){
       var vm = '#if($foo)Velocity#end'
       assert.equal('Velocity', render(vm, {foo: 1}))
+    })
+
+    it('#if not work', function(){
+      var vm = '#if($!css_pureui)hello world#end'
+      assert.equal('', render(vm))
     })
 
     it('#elseif & #else', function(){
@@ -289,6 +354,8 @@ describe('Compile', function(){
     it('#foreach with nest foreach', function(){
       var vm = '#foreach($i in [1..2])${velocityCount}#foreach($j in [2..3])${velocityCount}#end#end'
       assert.equal('112212', render(vm))
+      var vm = '#foreach($i in [5..2])$i#end'
+      assert.equal('5432', render(vm))
     })
 
     it('#foreach with map entrySet', function(){
@@ -318,7 +385,7 @@ describe('Compile', function(){
         }
       }
 
-      assert.equal(ret, render(vm, data))
+      assert.equal(ret.trim(), render(vm, data).trim())
 
     })
 
@@ -357,6 +424,11 @@ describe('Compile', function(){
       var vm = '#macro( d $a $b $d)$a$b$!d#end #d ( $foo , $bar, $dd )'
       assert.equal(' ab', render(vm, {foo: 'a', bar: 'b'}))
       assert.equal(' abd', render(vm, {foo: 'a', bar: 'b', dd: 'd'}))
+    })
+
+    it('#macro map argument', function(){
+      var vm = '#macro( d $a)#foreach($_item in $a.entrySet())$_item.key = $_item.value #end#end #d ( {"foo": $foo,"bar":$bar} )'
+      assert.equal(' foo = a bar = b ', render(vm, {foo: 'a', bar: 'b'}))
     })
 
     it('#noescape', function(){
@@ -425,11 +497,62 @@ describe('Compile', function(){
 
     it('empty string condiction', function(){
       assert.equal('', render(''))
+      assert.equal('', render('##hello'))
+      assert.equal('hello', render('hello'))
     })
 
   })
 
-  describe('self defined macro', function(){
+  describe('throw friendly error message', function() {
+    it('print right posiont when error throw', function(){
+      var vm = '111\nsdfs\n$foo($name)'
+      var expected = '<i>'
+
+      var compile = new Compile(Parser.parse(vm), { escape: false })
+      var context = {
+        name: '<i>',
+        foo: function(name){
+          throw new Error('Run error')
+        }
+      }
+      assert.throws(function(){
+        compile.render(context)
+      }, /\$foo\(\$name\)/)
+
+      assert.throws(function(){
+        compile.render(context)
+      }, /L\/N 3:0/)
+    })
+
+    it('print error stack of user-defined macro', function(){
+      var vm = '111\n\n#foo($name)'
+      var vm1 = '\nhello#parse("vm.vm")'
+      var files = { 'vm.vm': vm, 'vm1.vm': vm1 };
+
+      var compile = new Compile(Parser.parse('\n\n#parse("vm1.vm")'))
+      var macros = {
+        foo: function(name){
+          throw new Error('Run error')
+        },
+        parse: function(name){
+          return this.eval(files[name]);
+        }
+      }
+
+      var expected = '' +
+                     'Run error\n' +
+                     '      at #foo($name) L/N 3:0\n' +
+                     '      at #parse("vm.vm") L/N 2:5\n' +
+                     '      at #parse("vm1.vm") L/N 3:0';
+      try {
+        compile.render({}, macros)
+      } catch(e) {
+        assert.equal(expected, e.message);
+      }
+    })
+  })
+
+  describe('user-defined macro, such as #include, #parse', function(){
 
     it('basic', function(){
       var macros = {
@@ -557,13 +680,121 @@ describe('Compile', function(){
     it('#29', function() {
       var vm = '#set($total = 0) #foreach($i in [1,2,3]) #set($total = $total + $i) #end $total'
       assert.equal(render(vm).trim(), "6")
-    });
+    })
     it('#30', function() {
       var vm = '$foo.setName'
       assert.equal(render(vm, { foo: { setName: "foo" }}).trim(), "foo")
-    });
-  });
+    })
+  })
 
+  describe('multiline', function(){
+    it('#set multiline', function(){
+      var vm = "$bar.foo()\n#set($foo=$bar)\n..."
+      assert.equal("$bar.foo()\n...", render(vm))
+    })
+
+    it('#if multiline', function(){
+      var vm = "$bar.foo()\n#if(1>0)\n...#end"
+      assert.equal("$bar.foo()\n...", render(vm))
+    })
+
+    it('#set #set', function(){
+      var vm = "$bar.foo()\n...\n#set($foo=$bar)\n#set($foo=$bar)"
+      assert.equal("$bar.foo()\n...\n", render(vm))
+    })
+
+    it('#if multiline #set', function(){
+      var vm = "$bar.foo()\n#if(1>0)\n#set($foo=$bar)\n...#end"
+      assert.equal("$bar.foo()\n...", render(vm))
+    })
+
+    it('#if multiline #set #end', function(){
+      var vm = "$bar.foo()\n#if(1>0)...\n#set($foo=$bar)\n#end"
+      assert.equal("$bar.foo()\n...\n", render(vm))
+    })
+
+    it('with references', function(){
+      var vm = [ 'a',
+                 '#foreach($b in $nums)',
+                 '#if($b) ',
+                 'b',
+                 'e $b.alm',
+                 '#end',
+                 '#end',
+                 'c'].join("\n");
+      var expected = [ 'a', 'b', 'e 1', 'b', 'e 2', 'b', 'e 3', 'c'].join("\n")
+
+      assert.equal(expected, render(vm, {nums:[{alm:1},{alm:2},{alm:3}],bar:""}))
+    })
+
+    it('multiple newlines after statement', function(){
+      var vm = '#if(1>0)\n\nb#end'
+      assert.equal('\nb', render(vm))
+    })
+  })
+
+  describe('define support', function(){
+    it('basic', function(){
+      var vm = '#define( $block )\nHello $who#end\n#set( $who = "World!" )\n$block'
+      assert.equal('Hello World!', render(vm))
+    })
+  })
+})
+
+describe('Helper', function(){
+  var getRefText = Velocity.Helper.getRefText
+  var parse = Velocity.Parser.parse
+  describe('getRefText', function() {
+    it('simple reference', function() {
+      var foo = '$a.b'
+      var ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+    })
+
+    it('reference method', function() {
+      var foo = '$a.b()'
+      var ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+    })
+
+    it('reference method with arguments', function() {
+      var foo = '$a.b("hello")'
+      var ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+
+      foo = '$a.b(\'hello\')'
+      ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+
+      foo = '$a.b(\'hello\',10)'
+      ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+    })
+
+    it('reference method with arguments array', function() {
+      var foo = '$a.b(["hello"])'
+      var ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+
+      foo = '$a.b([\'hello\', 2])'
+      ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+    })
+
+    it('reference index', function() {
+      var foo = '$a.b[1]'
+      var ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+
+      foo = '$a.b["cc"]'
+      ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+
+      foo = '$a.b[\'cc\']'
+      ast = parse(foo)[0]
+      assert.equal(getRefText(ast), foo)
+    })
+  })
 })
 describe('Parser', function(){
 
@@ -610,7 +841,8 @@ describe('Parser', function(){
         prue : true,
         type : "references",
         path : [{"type": "property","id": "Address"}],
-        leader : '$'
+        leader : '$',
+        pos: { first_line: 1, last_line: 1, first_column: 0, last_column: 17 }
       })
     })
 
