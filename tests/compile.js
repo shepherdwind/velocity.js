@@ -143,6 +143,10 @@ describe('Compile', function(){
       var ret = compile.render(context)
       assert.equal(expected, ret)
 
+      compile = new Compile(Parser.parse(vm), { unescape: { foo: true } })
+      ret = compile.render(context)
+      assert.equal(expected, ret)
+
       compile = new Compile(Parser.parse(vm))
       ret = compile.render(context)
       assert.equal('&lt;i&gt;', ret)
