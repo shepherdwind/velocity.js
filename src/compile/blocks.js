@@ -79,8 +79,15 @@ module.exports = function(Velocity, utils){
             jsArgs.push(this.getLiteral(a));
           }, this);
 
+          var self = this;
+          if (!jsmacros.eval) {
+            jsmacros.eval = function() {
+              return self.eval.apply(self, arguments);
+            };
+          }
+
           try {
-            ret = macro.apply(this, jsArgs);
+            ret = macro.apply(jsmacros, jsArgs);
           } catch(e){
             var pos = ast.pos;
             var text = Velocity.Helper.getRefText(ast);

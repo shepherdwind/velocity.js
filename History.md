@@ -1,5 +1,9 @@
 ## 0.4
 
+### 0.4.11 / 2015-01-24
+
+- feat: self define macro context keep to origin object
+
 ### 0.4.10 / 2015-01-08
 
 - fix: allow optional space after colon in map passed as parameter to macro

@@ -86,6 +86,19 @@ describe('Compile', function(){
       assert.equal('a = 1 hello hanwen', render(data, {a: new b(1)}))
     })
 
+    it('this context should keep corrent in macro', function() {
+      var data = '#parse()'
+      var Macro = function(name) {
+        this.name = name;
+      };
+
+      Macro.prototype.parse = function() {
+        return this.name;
+      };
+
+      assert.equal('hanwen', render(data, {}, new Macro('hanwen')))
+    })
+
     it('get variable form text', function(){
       var vm = 'hello $user.getName().getFullName("hanwen")'
       var data = { '$user.getName().getFullName("hanwen")': 'world' }
