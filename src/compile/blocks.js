@@ -1,3 +1,4 @@
+'use strict';
 module.exports = function(Velocity, utils){
 
   /**
@@ -84,18 +85,13 @@ module.exports = function(Velocity, utils){
             jsmacros.eval = function() {
               return self.eval.apply(self, arguments);
             };
+            jsmacros.prototype.context = this.context;
           }
 
           try {
             ret = macro.apply(jsmacros, jsArgs);
           } catch(e){
-            var pos = ast.pos;
-            var text = Velocity.Helper.getRefText(ast);
-            // throws error tree
-            var err = '\n      at ' + text + ' L/N ' + pos.first_line + ':' + pos.first_column;
-            e.name = '';
-            e.message += err;
-            throw new Error(e);
+            getErrorMessage(ast, e, jsArgs);
           }
 
         }
@@ -251,4 +247,32 @@ module.exports = function(Velocity, utils){
       return this._render(asts);
     }
   });
+
+  function getErrorMessage(ast, e, args) {
+    var pos = ast.pos;
+    var text = Velocity.Helper.getRefText(ast);
+    // throws error tree
+
+    var stacks = e.stack.split('\n');
+    var msgs = [''];
+    var spase = stacks[1].replace(/^(\s+)\w[\s\S]+$/, '$1');
+    var err = spase + 'at ' + text + ' L/N ' + pos.first_line + ':' +
+      pos.first_column + ', args: '+ args;
+
+    stacks.some(function(msg, i) {
+      if (msg.indexOf('Velocity.utils.mixin.getMacro') > -1) {
+        return true;
+      }
+
+      if (i && msg.indexOf('getErrorMessage') === -1) {
+        msgs.push(msg);
+      }
+    });
+    msgs.push(err);
+    e.message += msgs.join('\n');
+    e.name = '';
+
+    throw new Error(e);
+  }
 };
+
