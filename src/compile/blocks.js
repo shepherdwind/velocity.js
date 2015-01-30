@@ -85,7 +85,10 @@ module.exports = function(Velocity, utils){
             jsmacros.eval = function() {
               return self.eval.apply(self, arguments);
             };
-            jsmacros.prototype.context = this.context;
+          }
+
+          if (!jsmacros.context)
+            jsmacros.context = this.context;
           }
 
           try {
