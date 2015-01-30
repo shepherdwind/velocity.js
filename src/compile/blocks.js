@@ -87,9 +87,7 @@ module.exports = function(Velocity, utils){
             };
           }
 
-          if (!jsmacros.context) {
-            jsmacros.context = this.context;
-          }
+          jsmacros.context = this.context;
 
           try {
             ret = macro.apply(jsmacros, jsArgs);
