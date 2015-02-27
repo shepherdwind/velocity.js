@@ -1,10 +1,29 @@
-module.exports = function(Velocity, utils){
+'use strict';
+module.exports = function(Velocity, utils) {
+
+  function step(arr, i) {
+    var result = '';
+    i = i || 0;
+    if (!arr[i]) {
+      return Promise.resolve('');
+    }
+
+    return new Promise(function(resolve) {
+      arr[i]().then(function(ret) {
+        result += ret;
+        step(arr, i + 1).then(function(ret) {
+          result += ret;
+          resolve(result);
+        });
+      });
+    });
+  }
 
   /**
    * compile
    */
   utils.mixin(Velocity.prototype, {
-    init: function(){
+    init: function() {
       this.context = {};
       this.macros = {};
       this.defines = {};
@@ -20,19 +39,24 @@ module.exports = function(Velocity, utils){
      * @param silent {bool} 如果是true，$foo变量将原样输出
      * @return str
      */
-    render: function(context, macros, silence){
+    render: function(context, macros, silence) {
 
       this.silence = !!silence;
       this.context = context || {};
       this.jsmacros = macros || {};
-      var t1 = utils.now();
-      var str = this._render();
-      var t2 = utils.now();
-      var cost = t2 - t1;
 
-      this.cost = cost;
+      if (!this.config.isAsync) {
+        var t1 = utils.now();
+        var str = this._render();
+        var t2 = utils.now();
+        var cost = t2 - t1;
 
-      return str;
+        this.cost = cost;
+
+        return str;
+      }
+
+      return this.asyncRender(this.asts);
     },
 
     /**
@@ -42,14 +66,13 @@ module.exports = function(Velocity, utils){
      * 取值，都放在一个this.local下，通过contextId查找
      * @return {string}解析后的字符串
      */
-    _render: function(asts, contextId){
+    _render: function(asts, contextId) {
 
-      var str = '';
       asts = asts || this.asts;
 
       if (contextId) {
 
-        if (contextId !== this.condition && 
+        if (contextId !== this.condition &&
             utils.indexOf(contextId, this.conditions) === -1) {
           this.conditions.unshift(contextId);
         }
@@ -60,35 +83,50 @@ module.exports = function(Velocity, utils){
         this.condition = null;
       }
 
-      utils.forEach(asts, function(ast){
+      return utils.map(asts, this.compute, this).join('');
+    },
 
-        switch(ast.type) {
-          case 'references':
-            str += this.getReferences(ast, true);
-          break;
+    asyncRender: function(asts) {
+      return step(this.toPromises(asts));
+    },
 
-          case 'set':
-            this.setValue(ast);
-          break;
+    compute: function(ast) {
+      switch (ast.type) {
+        case 'references':
+          return this.getReferences(ast, true);
 
-          case 'break':
-            this.setBreak = true;
-          break;
+        case 'set':
+          this.setValue(ast);
+          return '';
 
-          case 'macro_call':
-            str += this.getMacro(ast);
-          break;
+        case 'break':
+          this.setBreak = true;
+          return '';
 
-          case 'comment':
-            break;
+        case 'macro_call':
+          return this.getMacro(ast);
 
-          default:
-            str += typeof ast == 'string' ? ast : this.getBlock(ast);
-          break;
-        }
-      }, this);
+        case 'comment':
+          return '';
 
-      return str;
+        default:
+          return typeof ast === 'string' ? ast : this.getBlock(ast);
+      }
+    },
+
+    toPromises: function(asts) {
+      var self = this;
+      return utils.map(asts, function(ast) {
+        return function() {
+          var ret = self.compute(ast);
+          if (typeof ret === 'string') {
+            return Promise.resolve(ret);
+          }
+
+          // 否则是promise对象
+          return ret;
+        };
+      });
     }
   });
 };

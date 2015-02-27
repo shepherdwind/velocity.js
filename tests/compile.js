@@ -164,6 +164,25 @@ describe('Compile', function(){
       ret = compile.render(context)
       assert.equal('&lt;i&gt;', ret)
     })
+
+    it('async render support', function(done) {
+      var vm = 'abc#parse("hello")11'
+      var macros = {
+        parse: function(word) {
+          return new Promise(function(resolve) {
+            setTimeout(function() {
+              resolve(word);
+            }, 30);
+          });
+        }
+      };
+
+      var compile = new Compile(Parser.parse(vm), { isAsync: true })
+      compile.render({}, macros).then(function(ret) {
+        assert.equal(ret, 'abchello11');
+        done();
+      });
+    })
   })
 
   describe('Set && Expression', function(){
@@ -767,5 +786,6 @@ describe('Compile', function(){
       assert.equal('Hello World!', render(vm))
     })
   })
+
 })
 
