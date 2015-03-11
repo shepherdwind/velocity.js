@@ -5,7 +5,7 @@ notifications:
     - eward.song@gmail.com
 
 node_js:
-  - 0.8
+  - 0.12
 
 install:
   - npm install
