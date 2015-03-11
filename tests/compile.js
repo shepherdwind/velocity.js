@@ -164,6 +164,25 @@ describe('Compile', function(){
       ret = compile.render(context)
       assert.equal('&lt;i&gt;', ret)
     })
+
+    it('async render support', function(done) {
+      var vm = 'abc#parse("hello")11'
+      var macros = {
+        parse: function(word) {
+          return new Promise(function(resolve) {
+            setTimeout(function() {
+              resolve(word);
+            }, 30);
+          });
+        }
+      };
+
+      var compile = new Compile(Parser.parse(vm), { isAsync: true })
+      compile.render({}, macros).then(function(ret) {
+        assert.equal(ret, 'abchello11');
+        done();
+      });
+    })
   })
 
   describe('Set && Expression', function(){
@@ -561,15 +580,21 @@ describe('Compile', function(){
         }
       }
 
-      var expected = '' +
-                     'Run error\n' +
-                     '      at #foo($name) L/N 3:0\n' +
-                     '      at #parse("vm.vm") L/N 2:5\n' +
-                     '      at #parse("vm1.vm") L/N 3:0';
+      var expected = [
+        'Run error\n',
+        'at #foo($name) L/N 3:0' ,
+        'tests/compile.js',
+        'at #parse("vm.vm") L/N 2:5' ,
+        'at #parse("vm1.vm") L/N 3:0'
+      ];
+
       try {
         compile.render({}, macros)
       } catch(e) {
-        assert.equal(expected, e.message);
+        console.log(e.message);
+        expected.forEach(function(msg){
+          assert.ok(e.message.indexOf(msg) > -1);
+        });
       }
     })
   })
@@ -761,5 +786,6 @@ describe('Compile', function(){
       assert.equal('Hello World!', render(vm))
     })
   })
+
 })
 

@@ -1,3 +1,4 @@
+'use strict';
 var utils = require('../utils');
 var Helper = require('../helper/index');
 function Velocity(asts, config) {
@@ -6,7 +7,9 @@ function Velocity(asts, config) {
     // 自动输出为经过html encode输出
     escape: true,
     // 不需要转义的白名单
-    unescape: {}
+    unescape: {},
+    // 是否支持异步宏
+    isAsync: false
   };
   utils.mixin(this.config, config);
   this.init();
