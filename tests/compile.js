@@ -455,7 +455,7 @@ describe('Compile', function(){
 
     it('#noescape', function(){
       var vm = '#noescape()$hello#end'
-      assert.equal('hello world', render(vm, {hello: 'hello world'}))
+      assert.equal('<p>hello</p> world', render(vm, {hello: '<p>hello</p> world'}))
     })
 
   })

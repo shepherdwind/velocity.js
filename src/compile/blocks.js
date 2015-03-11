@@ -23,7 +23,10 @@ module.exports = function(Velocity, utils){
           this.setBlockMacro(block);
           break;
         case 'noescape':
+          var escape = this.config.escape;
+          this.config.escape = false;
           ret = this._render(block.slice(1));
+          this.config.escape = escape;
           break;
         case 'define':
           this.setBlockDefine(block);

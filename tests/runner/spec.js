@@ -81,6 +81,19 @@ describe('Compile', function(){
       assert.equal('a = 1 hello hanwen', render(data, {a: new b(1)}))
     })
 
+    it('this context should keep corrent in macro', function() {
+      var data = '#parse()'
+      var Macro = function(name) {
+        this.name = name;
+      };
+
+      Macro.prototype.parse = function() {
+        return this.name;
+      };
+
+      assert.equal('hanwen', render(data, {}, new Macro('hanwen')))
+    })
+
     it('get variable form text', function(){
       var vm = 'hello $user.getName().getFullName("hanwen")'
       var data = { '$user.getName().getFullName("hanwen")': 'world' }
@@ -136,6 +149,10 @@ describe('Compile', function(){
       }
 
       var ret = compile.render(context)
+      assert.equal(expected, ret)
+
+      compile = new Compile(Parser.parse(vm), { unescape: { foo: true } })
+      ret = compile.render(context)
       assert.equal(expected, ret)
 
       compile = new Compile(Parser.parse(vm))
@@ -433,7 +450,7 @@ describe('Compile', function(){
 
     it('#noescape', function(){
       var vm = '#noescape()$hello#end'
-      assert.equal('hello world', render(vm, {hello: 'hello world'}))
+      assert.equal('<p>hello</p> world', render(vm, {hello: '<p>hello</p> world'}))
     })
 
   })
