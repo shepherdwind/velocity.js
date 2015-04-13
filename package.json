@@ -1,7 +1,7 @@
 {
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "keywords": [
     "velocity template"
   ],
@@ -17,6 +17,9 @@
   "bin": {
     "velocity": "bin/velocity"
   },
+  "dependencies": {
+    "brfs": "1.2.0"
+  },
   "devDependencies": {
     "mocha": ">=1.7.2",
     "jison": ">=0.3",
@@ -24,9 +27,6 @@
   },
   "scripts": {
     "test": "make test"
-  },
-  "peerDependencies": {
-    "brfs": "^1.1.2"
   },
   "browserify": {
     "transform": ["brfs"]
