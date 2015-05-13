@@ -1,6 +1,7 @@
-## 0.6
-- change: remove Velocity.Parser, change to Velocity.parse #43
-- feat: add custom blocks support #44
+## [0.6](https://github.com/shepherdwind/velocity.js/milestones/0.6)
+
+- change: remove Velocity.Parser, change to Velocity.parse [#43](https://github.com/shepherdwind/velocity.js/issues/43)
+- feat: add custom blocks support [#44](https://github.com/shepherdwind/velocity.js/issues/44)
 
 ## 0.4
 

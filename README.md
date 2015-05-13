@@ -47,11 +47,10 @@ var Velocity = require('velocityjs');
 //1. 直接解析
 Velocity.render('string of velocity', context, macros);
 
-//2. 使用Parser和Compile
-var Parser = Velocity.Parser;
+//2. 使用parse和Compile
 var Compile = Velocity.Compile;
 
-var asts = Parser.parse('string of velocity');
+var asts = Velocity.parse('string of velocity');
 (new Compile(asts)).render(context, macros);
 ```
 
