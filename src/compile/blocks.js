@@ -1,4 +1,5 @@
-module.exports = function(Velocity, utils){
+'use strict';
+module.exports = function(Velocity, utils) {
 
   /**
    * blocks语法处理
@@ -38,7 +39,7 @@ module.exports = function(Velocity, utils){
     /**
      * define
      */
-    setBlockDefine: function(block){
+    setBlockDefine: function(block) {
       var ast = block[0];
       var _block = block.slice(1);
       var defines = this.defines;
@@ -49,7 +50,7 @@ module.exports = function(Velocity, utils){
     /**
      * define macro
      */
-    setBlockMacro: function(block){
+    setBlockMacro: function(block) {
       var ast = block[0];
       var _block = block.slice(1);
       var macros = this.macros;
@@ -63,7 +64,7 @@ module.exports = function(Velocity, utils){
     /**
      * parse macro call
      */
-    getMacro: function(ast){
+    getMacro: function(ast) {
       var macro = this.macros[ast.id];
       var ret = '';
 
@@ -75,7 +76,7 @@ module.exports = function(Velocity, utils){
 
         if (macro && macro.apply) {
 
-          utils.forEach(ast.args, function(a){
+          utils.forEach(ast.args, function(a) {
             jsArgs.push(this.getLiteral(a));
           }, this);
 
@@ -88,7 +89,7 @@ module.exports = function(Velocity, utils){
 
           try {
             ret = macro.apply(jsmacros, jsArgs);
-          } catch(e){
+          } catch(e) {
             var pos = ast.pos;
             var text = Velocity.Helper.getRefText(ast);
             // throws error tree
@@ -109,7 +110,7 @@ module.exports = function(Velocity, utils){
         var guid = utils.guid();
         var contextId = 'macro:' + ast.id + ':' + guid;
 
-        utils.forEach(args, function(ref, i){
+        utils.forEach(args, function(ref, i) {
           if (_call_args[i]) {
             local[ref.id] = this.getLiteral(_call_args[i]);
           } else {
@@ -130,7 +131,7 @@ module.exports = function(Velocity, utils){
      * @param contextId {string} 
      * @return {string}
      */
-    eval: function(str, local, contextId){
+    eval: function(str, local, contextId) {
 
       if (!local) {
 
@@ -143,16 +144,16 @@ module.exports = function(Velocity, utils){
       } else {
 
         var asts = [];
-        var Parser = Velocity.Parser;
+        var parse = Velocity.parse;
         contextId = contextId || ('eval:' + utils.guid());
 
         if (utils.isArray(str)) {
 
           asts = str;
 
-        } else if (Parser) {
+        } else if (parse) {
 
-          asts = Parser.parse(str);
+          asts = parse(str);
 
         }
 
@@ -174,7 +175,7 @@ module.exports = function(Velocity, utils){
     /**
      * parse #foreach
      */
-    getBlockEach: function(block){
+    getBlockEach: function(block) {
 
       var ast = block[0];
       var _from = this.getLiteral(ast.from);
@@ -194,7 +195,7 @@ module.exports = function(Velocity, utils){
 
       var len = utils.isArray(_from)? _from.length: utils.keys(_from).length;
 
-      utils.forEach(_from, function(val, i){
+      utils.forEach(_from, function(val, i) {
 
         if (this.setBreak) return;
         //构造临时变量
@@ -230,7 +231,7 @@ module.exports = function(Velocity, utils){
       var received = false;
       var asts = [];
 
-      utils.some(block, function(ast){
+      utils.some(block, function(ast) {
 
         if (ast.condition) {
 

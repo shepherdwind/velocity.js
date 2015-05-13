@@ -1,9 +1,10 @@
+'use strict';
 var Velocity = require('../src/velocity')
 var assert = require("assert")
 
-describe('Helper', function(){
+describe('Helper', function() {
   var getRefText = Velocity.Helper.getRefText
-  var parse = Velocity.Parser.parse
+  var parse = Velocity.parse
   describe('getRefText', function() {
     it('simple reference', function() {
       var foo = '$a.b'

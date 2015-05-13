@@ -1,122 +1,130 @@
-var Parser = require('../src/velocity').Parser
+'use strict';
+var parse = require('../src/velocity').parse
 var assert = require("assert")
 
-describe('Parser', function(){
+describe('Parser', function() {
 
-  describe('simple references', function(){
+  describe('simple references', function() {
 
-    it('simple references', function(){
+    it('self define block', function() {
+      var vm = '#cms(1)<div class="abs-right"> #H(1,"第一个链接") </div> #end';
+      var ast = parse(vm, { cms: true });
+      assert(ast.length, 1);
+      assert(ast[0][0].type, 'cms');
+      console.log(ast[0][0])
+    });
+
+    it('simple references', function() {
       var vm = 'hello world: $foo'
-      var ret = Parser.parse(vm)
+      var ret = parse(vm)
 
       assert.ok(ret instanceof Array)
       assert.equal(2, ret.length)
       assert.equal('hello world: ', ret[0])
       assert.equal('foo', ret[1].id)
-
     })
 
-    it('valid variable references', function(){
+    it('valid variable references', function() {
       var vm = '$mud-Slinger_1'
-      assert.equal('mud-Slinger_1', Parser.parse(vm)[0].id)
+      assert.equal('mud-Slinger_1', parse(vm)[0].id)
     })
 
-    it('wraped references', function(){
+    it('wraped references', function() {
       var vm = '${mudSlinger}'
-      var ast = Parser.parse(vm)[0]
+      var ast = parse(vm)[0]
       assert.equal(true, ast.isWraped)
       assert.equal('mudSlinger', ast.id)
     })
 
-    it('function call references', function(){
-      var ast = Parser.parse('$foo()')[0]
+    it('function call references', function() {
+      var ast = parse('$foo()')[0]
       assert.equal(false, ast.args)
       assert.equal('references', ast.type)
     })
 
   })
 
-  describe('Properties', function(){
+  describe('Properties', function() {
 
-    it('simple property', function(){
+    it('simple property', function() {
       var vm = '$customer.Address'
-      var asts = Parser.parse(vm)
+      var asts = parse(vm)
       assert.deepEqual(asts[0], {
-        id : "customer",
-        prue : true,
-        type : "references",
-        path : [{"type": "property","id": "Address"}],
-        leader : '$',
+        id: "customer",
+        prue: true,
+        type: "references",
+        path: [{type: 'property', id: 'Address'}],
+        leader: '$',
         pos: { first_line: 1, last_line: 1, first_column: 0, last_column: 17 }
       })
     })
 
   })
 
-  describe('Methods ', function(){
+  describe('Methods ', function() {
 
-    it('with no arguments', function(){
+    it('with no arguments', function() {
       var vm  = '$foo.bar()'
-      var ast = Parser.parse(vm)[0]
+      var ast = parse(vm)[0]
 
       assert.deepEqual(ast['path'], [{
-        type : "method",
-        id   : "bar",
-        args : false
+        type: "method",
+        id: "bar",
+        args: false
       }])
     })
 
-    it('with arguments integer', function(){
+    it('with arguments integer', function() {
       var vm = '$foo.bar(10)'
-      var ast = Parser.parse(vm)[0]
+      var ast = parse(vm)[0]
 
       assert.deepEqual(ast['path'], [{
-        type : "method",
-        id   : "bar",
-        args : [{
-          type  : "integer",
-          value : "10"
+        type: "method",
+        id: "bar",
+        args: [{
+          type: "integer",
+          value: "10"
         }]
       }])
     })
 
-    it('with arguments references', function(){
+    it('with arguments references', function() {
       var vm = '$foo.bar($bar)'
-      var ast = Parser.parse(vm)[0]
+      var ast = parse(vm)[0]
 
       assert.equal(ast.prue, true)
 
       assert.deepEqual(ast.path[0].args, [{
-        type   : "references",
-        leader : "$",
-        id     : "bar"
+        type: "references",
+        leader: "$",
+        id: "bar"
       }])
     })
 
   })
 
-  describe('Index', function(){
+  describe('Index', function() {
 
-    it('all kind of indexs', function(){
+    it('all kind of indexs', function() {
       var vm = '$foo[0] $foo[$i] $foo["bar"]'
-      var asts = Parser.parse(vm)
+      var asts = parse(vm)
 
       assert.equal(5, asts.length)
 
-      //asts[0].path[0] => $foo[0] 
-      //{type: 'index', id: {type: 'integer', value: '0'}}
+      // asts[0].path[0] => $foo[0]
+      // {type: 'index', id: {type: 'integer', value: '0'}}
       assert.equal('index', asts[0].path[0].type)
       assert.equal('integer', asts[0].path[0].id.type)
       assert.equal('0', asts[0].path[0].id.value)
 
-      //asts[2].path[0] => $foo[$i]
-      //{type: 'references', id: {type:'references', id: 'i', leader: '$'}}
+      // asts[2].path[0] => $foo[$i]
+      // {type: 'references', id: {type:'references', id: 'i', leader: '$'}}
       assert.equal('index', asts[2].path[0].type)
       assert.equal('references', asts[2].path[0].id.type)
       assert.equal('i', asts[2].path[0].id.id)
 
-      //asts[4].path[0] => $foo["bar"]
-      //{type: 'index', id: {type: 'string', value: 'bar', isEval: true}}
+      // asts[4].path[0] => $foo["bar"]
+      // {type: 'index', id: {type: 'string', value: 'bar', isEval: true}
       assert.equal('index', asts[4].path[0].type)
       assert.equal('string', asts[4].path[0].id.type)
       assert.equal('bar', asts[4].path[0].id.value)
@@ -125,11 +133,11 @@ describe('Parser', function(){
 
   })
 
-  describe('complex references', function(){
+  describe('complex references', function() {
 
-    it('property + index + property', function(){
+    it('property + index + property', function() {
       var vm = '$foo.bar[1].junk'
-      var ast = Parser.parse(vm)[0]
+      var ast = parse(vm)[0]
 
       assert.equal('foo', ast.id)
       assert.equal(3, ast.path.length)
@@ -143,9 +151,9 @@ describe('Parser', function(){
     })
 
 
-    it('method + index', function(){
+    it('method + index', function() {
       var vm = '$foo.callMethod()[1]'
-      var ast = Parser.parse(vm)[0]
+      var ast = parse(vm)[0]
 
       assert.equal(2, ast.path.length)
 
@@ -158,9 +166,9 @@ describe('Parser', function(){
 
     })
 
-    it('property should not start with alphabet', function(){
-      var asts = Parser.parse('$foo.124')
-      var ast2 = Parser.parse('$foo.-24')[0]
+    it('property should not start with alphabet', function() {
+      var asts = parse('$foo.124')
+      var ast2 = parse('$foo.-24')[0]
 
       assert.equal(3, asts.length)
       assert.equal('foo', asts[0].id)
@@ -170,19 +178,19 @@ describe('Parser', function(){
 
     })
 
-    it('index should end with close bracket', function(){
-      assert.throws(function(){
-        Parser.parse("$foo.bar['a'12]")
+    it('index should end with close bracket', function() {
+      assert.throws(function() {
+        parse("$foo.bar['a'12]")
       }, /Parse error/)
     })
 
   })
 
-  describe('Directives', function(){
+  describe('Directives', function() {
 
-    it('#macro', function(){
+    it('#macro', function() {
       var vm = '#macro( d $a $b)#if($b)$a#end#end #d($foo $bar)'
-      var asts = Parser.parse(vm)
+      var asts = parse(vm)
 
       var ifAst = asts[0][1]
 
@@ -200,10 +208,10 @@ describe('Parser', function(){
 
   })
 
-  describe('comment identify', function(){
+  describe('comment identify', function() {
 
-    it('one line comment', function(){
-      var asts = Parser.parse('#set( $monkey.Number = 123)##number literal')
+    it('one line comment', function() {
+      var asts = parse('#set( $monkey.Number = 123)##number literal')
 
       assert.equal(2, asts.length)
       assert.equal('comment', asts[1].type)

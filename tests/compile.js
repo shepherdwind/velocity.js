@@ -1,6 +1,7 @@
+'use strict';
 var Velocity = require('../src/velocity')
 var assert = require("assert")
-var Parser = Velocity.Parser
+var parse = Velocity.parse
 var Compile = Velocity.Compile
 
 describe('Compile', function(){
@@ -8,7 +9,7 @@ describe('Compile', function(){
   var render = Velocity.render;
 
   function getContext(str, context, macros){
-    var compile = new Compile(Parser.parse(str))
+    var compile = new Compile(parse(str))
     compile.render(context, macros)
     return compile.context
   }
@@ -68,16 +69,16 @@ describe('Compile', function(){
     it('silence all reference', function(){
       var vm = 'my email is $email'
 
-      var compile = new Compile(Parser.parse(vm))
+      var compile = new Compile(parse(vm))
       assert.equal('my email is ', compile.render(null, null, true))
     })
 
     it('this context keep correct, see #16', function(){
       var data = 'a = $a.get()'
-      Compile.Parser = Parser
       function b(c) {
         this.c = c
       }
+
       b.prototype.get = function() {
         var t = this.eval(" hello $name", {name: 'hanwen'})
         return this.c + t
@@ -123,7 +124,7 @@ describe('Compile', function(){
       var vm = '$noIgnore($name), $ignore($name)'
       var expected = '&lt;i&gt;, <i>'
 
-      var compile = new Compile(Parser.parse(vm))
+      var compile = new Compile(parse(vm))
       compile.addIgnoreEscpape('ignore')
 
       var context = {
@@ -145,7 +146,7 @@ describe('Compile', function(){
       var vm = '$foo($name)'
       var expected = '<i>'
 
-      var compile = new Compile(Parser.parse(vm), { escape: false })
+      var compile = new Compile(parse(vm), { escape: false })
       var context = {
         name: '<i>',
         foo: function(name){
@@ -156,11 +157,11 @@ describe('Compile', function(){
       var ret = compile.render(context)
       assert.equal(expected, ret)
 
-      compile = new Compile(Parser.parse(vm), { unescape: { foo: true } })
+      compile = new Compile(parse(vm), { unescape: { foo: true } })
       ret = compile.render(context)
       assert.equal(expected, ret)
 
-      compile = new Compile(Parser.parse(vm))
+      compile = new Compile(parse(vm))
       ret = compile.render(context)
       assert.equal('&lt;i&gt;', ret)
     })
@@ -530,7 +531,7 @@ describe('Compile', function(){
       var vm = '111\nsdfs\n$foo($name)'
       var expected = '<i>'
 
-      var compile = new Compile(Parser.parse(vm), { escape: false })
+      var compile = new Compile(parse(vm), { escape: false })
       var context = {
         name: '<i>',
         foo: function(name){
@@ -551,7 +552,7 @@ describe('Compile', function(){
       var vm1 = '\nhello#parse("vm.vm")'
       var files = { 'vm.vm': vm, 'vm1.vm': vm1 };
 
-      var compile = new Compile(Parser.parse('\n\n#parse("vm1.vm")'))
+      var compile = new Compile(parse('\n\n#parse("vm1.vm")'))
       var macros = {
         foo: function(name){
           throw new Error('Run error')
@@ -591,9 +592,6 @@ describe('Compile', function(){
     })
 
     it('use eval', function(){
-      //这一句非常重要，在node端无需处理，web端必须如此声明
-      Compile.Parser = Parser
-
       var macros = {
         cmsparse: function(str){
           return this.eval(str)
@@ -613,12 +611,10 @@ describe('Compile', function(){
     })
 
     it('use eval with local variable', function(){
-      //这一句非常重要，在node端无需处理，web端必须如此声明
-      Compile.Parser = Parser
 
       var macros = {
 
-        cmsparse: function(str){
+        cmsparse: function(){
           return macros.include.apply(this, arguments)
         },
 
@@ -630,7 +626,7 @@ describe('Compile', function(){
           return file
         },
 
-        d: function($name){
+        d: function(){
           return this.eval('I am $name!')
         }
       }
@@ -648,9 +644,6 @@ describe('Compile', function(){
     })
 
     it('eval work with #set', function(){
-      //这一句非常重要，在node端无需处理，web端必须如此声明
-      Compile.Parser = Parser
-
       var macros = {
         cmsparse: function(str){
           return this.eval(str)

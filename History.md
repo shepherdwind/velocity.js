@@ -1,3 +1,7 @@
+## 0.6
+- change: remove Velocity.Parser, change to Velocity.parse #43
+- feat: add custom blocks support #44
+
 ## 0.4
 
 ### 0.4.11 / 2015-01-24
