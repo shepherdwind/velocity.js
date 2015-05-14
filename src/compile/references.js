@@ -49,19 +49,6 @@ module.exports = function(Velocity, utils) {
     return escape ? result : str
   }
 
-  /**
-   * getAddress => address
-   */
-  function getterProperty(property, len) {
-    len = len || 3;
-    var next = len + 1;
-    if (property.length > len) {
-      return property.slice(len, next).toLowerCase() + property.slice(next);
-    }
-
-    return false;
-  }
-
   function getter(base, property) {
     // get(1)
     if (typeof property === 'number') {

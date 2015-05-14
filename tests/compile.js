@@ -19,6 +19,9 @@ describe('Compile', function() {
     it('get/is method', function() {
       var vm = '$customer.getAddress() $customer.getaddress()'
       var vm1 = '$customer.get("address") $customer.get("Address")'
+      var vm3 = '$customer.isAddress() $customer.isaddress()'
+
+      assert.equal('bar bar', render(vm3, {customer: {Address: "bar"}}))
 
       assert.equal('bar bar', render(vm, {customer: {address: "bar"}}))
       assert.equal('foo bar', render(vm, {
