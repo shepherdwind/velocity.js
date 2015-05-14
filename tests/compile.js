@@ -17,11 +17,24 @@ describe('Compile', function() {
   describe('References', function() {
 
     it('get/is method', function() {
-      var vm = '$customer.getAddress()'
-      var vm1 = '$customer.get("address") $customer.isAddress()'
+      var vm = '$customer.getAddress() $customer.getaddress()'
+      var vm1 = '$customer.get("address") $customer.get("Address")'
 
-      assert.equal('bar', render(vm, {customer: {address: "bar"}}))
+      assert.equal('bar bar', render(vm, {customer: {address: "bar"}}))
+      assert.equal('foo bar', render(vm, {
+        customer: {
+          address: 'bar',
+          Address: 'foo'
+        }
+      }))
+
       assert.equal('bar bar', render(vm1, {customer: {address: "bar"}}))
+      assert.equal('foo bar', render(vm1, {
+        customer: {
+          Address: 'bar',
+          address: 'foo'
+        }
+      }))
     })
 
     it('method with attribute', function() {
@@ -46,7 +59,7 @@ describe('Compile', function() {
 
     it('set method', function() {
       var vm = '$page.setTitle("My Home Page").setname("haha")' +
-      '$page.title $page.name'
+      '$page.Title $page.name'
       assert.equal('My Home Page haha', render(vm, {page: {}}))
     })
 

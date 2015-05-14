@@ -62,6 +62,33 @@ module.exports = function(Velocity, utils) {
     return false;
   }
 
+  function getter(base, property) {
+    // get(1)
+    if (typeof property === 'number') {
+      return base[property];
+    }
+
+    var letter = property.charCodeAt(0);
+    var isUpper = letter < 91;
+    var ret = base[property];
+
+    if (ret !== undefined) {
+      return ret;
+    }
+
+    if (isUpper) {
+      // Address => address
+      property = String.fromCharCode(letter).toLowerCase() + property.slice(1);
+    }
+
+    if (!isUpper) {
+      // address => Address
+      property = String.fromCharCode(letter).toUpperCase() + property.slice(1);
+    }
+
+    return base[property];
+  }
+
   utils.mixin(Velocity.prototype, {
     // 增加某些函数，不需要执行html转义
     addIgnoreEscpape: function(key) {
@@ -202,17 +229,15 @@ module.exports = function(Velocity, utils) {
 
       var id = property.id;
       var ret = '';
-      var _id;
 
       // getter 处理
       if (id.indexOf('get') === 0 && !(id in baseRef)) {
-        _id = getterProperty(id);
-        if (_id) {
-          ret = baseRef[_id];
+        if (id.length === 3) {
+          // get('address')
+          ret = getter(baseRef, this.getLiteral(property.args[0]));
         } else {
-          // map 对应的get方法
-          _id = this.getLiteral(property.args[0]);
-          ret = baseRef[_id];
+          // getAddress()
+          ret = getter(baseRef, id.slice(3));
         }
 
         return ret;
@@ -220,18 +245,14 @@ module.exports = function(Velocity, utils) {
       // setter 处理
       } else if (id.indexOf('set') === 0 && !baseRef[id]) {
 
-        _id = getterProperty(id);
-        baseRef[_id] = this.getLiteral(property.args[0]);
+        baseRef[id.slice(3)] = this.getLiteral(property.args[0]);
         // $page.setName(123)
         baseRef.toString = function() { return ''; };
         return baseRef;
 
       } else if (id.indexOf('is') === 0 && !(id in baseRef)) {
 
-        _id = getterProperty(id, 2);
-        ret = baseRef[_id];
-        return ret;
-
+        return getter(baseRef, id.slice(2));
       } else if (id === 'keySet') {
 
         return utils.keys(baseRef);
