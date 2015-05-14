@@ -1,8 +1,8 @@
-module.exports = function(Velocity, utils){
+module.exports = function(Velocity, utils) {
 
   'use strict';
 
-  function getSize(obj){
+  function getSize(obj) {
 
     if (utils.isArray(obj)) {
       return obj.length;
@@ -16,7 +16,7 @@ module.exports = function(Velocity, utils){
   /**
    * unicode转码
    */
-  function convert(str){
+  function convert(str) {
 
     if (typeof str !== 'string') return str;
 
@@ -24,16 +24,16 @@ module.exports = function(Velocity, utils){
     var escape = false
     var i, c, cstr;
 
-    for(i = 0 ; i < str.length ; i++) {
+    for (i = 0 ; i < str.length ; i++) {
       c = str.charAt(i);
-      if((' ' <= c && c <= '~') || (c == '\r') || (c == '\n')) {
-        if(c == '&') {
+      if ((' ' <= c && c <= '~') || (c === '\r') || (c === '\n')) {
+        if (c === '&') {
           cstr = "&amp;"
           escape = true
-        } else if(c == '<') {
+        } else if (c === '<') {
           cstr = "&lt;"
           escape = true
-        } else if(c == '>') {
+        } else if (c === '>') {
           cstr = "&gt;"
           escape = true
         } else {
@@ -47,18 +47,28 @@ module.exports = function(Velocity, utils){
     }
 
     return escape ? result : str
-
   }
-  
+
+  /**
+   * getAddress => address
+   */
+  function getterProperty(property, len) {
+    len = len || 3;
+    var next = len + 1;
+    if (property.length > len) {
+      return property.slice(len, next).toLowerCase() + property.slice(next);
+    }
+
+    return false;
+  }
 
   utils.mixin(Velocity.prototype, {
-    
-    //增加某些函数，不需要执行html转义
-    addIgnoreEscpape: function(key){
+    // 增加某些函数，不需要执行html转义
+    addIgnoreEscpape: function(key) {
 
       if (!utils.isArray(key)) key = [key]
 
-      utils.forEach(key, function(key){
+      utils.forEach(key, function(key) {
         this.config.unescape[key] = true
       }, this)
 
@@ -102,16 +112,16 @@ module.exports = function(Velocity, utils){
 
       if (ast.path && ret !== undefined) {
 
-        utils.some(ast.path, function(property){
+        utils.some(ast.path, function(property) {
 
-          //第三个参数，返回后面的参数ast
+          // 第三个参数，返回后面的参数ast
           ret = this.getAttributes(property, ret, ast);
 
         }, this);
       }
 
       if (isVal && ret === undefined) {
-        ret = isSilent? '' : Velocity.Helper.getRefText(ast);
+        ret = isSilent ? '' : Velocity.Helper.getRefText(ast);
       }
 
       ret = (ast.prue && escape) ? convert(ret) : ret;
@@ -122,13 +132,13 @@ module.exports = function(Velocity, utils){
     /**
      * 获取局部变量，在macro和foreach循环中使用
      */
-    getLocal: function(ast){
+    getLocal: function(ast) {
 
       var id = ast.id;
       var local = this.local;
       var ret = false;
 
-      var isLocaled = utils.some(this.conditions, function(contextId){
+      var isLocaled = utils.some(this.conditions, function(contextId) {
         var _local = local[contextId];
         if (id in _local) {
           ret = _local[id];
@@ -150,14 +160,14 @@ module.exports = function(Velocity, utils){
      * 第二次是$a.b返回值
      * @private
      */
-    getAttributes: function(property, baseRef, ast){
+    getAttributes: function(property, baseRef, ast) {
       /**
        * type对应着velocity.yy中的attribute，三种类型: method, index, property
        */
       var type = property.type;
       var ret;
       var id = property.id;
-      if (type === 'method'){
+      if (type === 'method') {
         ret = this.getPropMethod(property, baseRef, ast);
       } else if (type === 'property') {
         ret = baseRef[id];
@@ -171,12 +181,12 @@ module.exports = function(Velocity, utils){
      * $foo.bar[1] index求值
      * @private
      */
-    getPropIndex: function(property, baseRef){
+    getPropIndex: function(property, baseRef) {
       var ast = property.id;
       var key;
-      if (ast.type === 'references'){
+      if (ast.type === 'references') {
         key = this.getReferences(ast);
-      } else if(ast.type === 'integer'){
+      } else if (ast.type === 'integer') {
         key = ast.value;
       } else {
         key = ast.value;
@@ -188,19 +198,19 @@ module.exports = function(Velocity, utils){
     /**
      * $foo.bar()求值
      */
-    getPropMethod: function(property, baseRef, ast){
+    getPropMethod: function(property, baseRef, ast) {
 
-      var id         = property.id;
-      var ret        = '';
-      var _id        = id.slice(3);
+      var id = property.id;
+      var ret = '';
+      var _id;
 
       // getter 处理
       if (id.indexOf('get') === 0 && !(id in baseRef)) {
-
+        _id = getterProperty(id);
         if (_id) {
           ret = baseRef[_id];
         } else {
-          //map 对应的get方法
+          // map 对应的get方法
           _id = this.getLiteral(property.args[0]);
           ret = baseRef[_id];
         }
@@ -210,14 +220,15 @@ module.exports = function(Velocity, utils){
       // setter 处理
       } else if (id.indexOf('set') === 0 && !baseRef[id]) {
 
+        _id = getterProperty(id);
         baseRef[_id] = this.getLiteral(property.args[0]);
         // $page.setName(123)
-        baseRef.toString =  function() { return ''; };
+        baseRef.toString = function() { return ''; };
         return baseRef;
 
       } else if (id.indexOf('is') === 0 && !(id in baseRef)) {
 
-        _id = id.slice(2);
+        _id = getterProperty(id, 2);
         ret = baseRef[_id];
         return ret;
 
@@ -228,7 +239,7 @@ module.exports = function(Velocity, utils){
       } else if (id === 'entrySet') {
 
         ret = [];
-        utils.forEach(baseRef, function(value, key){
+        utils.forEach(baseRef, function(value, key) {
           ret.push({key: key, value: value});
         });
 
@@ -243,7 +254,7 @@ module.exports = function(Velocity, utils){
         ret = baseRef[id];
         var args = [];
 
-        utils.forEach(property.args, function(exp){
+        utils.forEach(property.args, function(exp) {
           args.push(this.getLiteral(exp));
         }, this);
 
@@ -257,10 +268,11 @@ module.exports = function(Velocity, utils){
 
           try {
             ret = ret.apply(baseRef, args);
-          } catch(e) {
+          } catch (e) {
             var pos = ast.pos;
             var text = Velocity.Helper.getRefText(ast);
-            var err = ' on ' + text + ' at L/N ' + pos.first_line + ':' + pos.first_column;
+            var err = ' on ' + text + ' at L/N ' +
+              pos.first_line + ':' + pos.first_column;
             e.name = '';
             e.message += err;
             throw new Error(e);
