@@ -1,4 +1,5 @@
-module.exports = function(Velocity, utils){
+'use strict';
+module.exports = function(Velocity, utils) {
   /**
    * literal解释模块
    * @require {method} getReferences
@@ -10,36 +11,36 @@ module.exports = function(Velocity, utils){
      * 是literal值描述
      * @return {object|string|number|array}返回对应的js变量
      */
-    getLiteral: function(literal){
+    getLiteral: function(literal) {
 
       var type = literal.type;
       var ret = '';
 
-      if (type == 'string') {
+      if (type === 'string') {
 
         ret = this.getString(literal);
 
-      } else if (type == 'integer') {
+      } else if (type === 'integer') {
 
         ret = parseInt(literal.value, 10);
 
-      } else if (type == 'decimal') {
+      } else if (type === 'decimal') {
 
         ret = parseFloat(literal.value, 10);
 
-      } else if (type == 'array') {
+      } else if (type === 'array') {
 
         ret = this.getArray(literal);
 
-      } else if(type == 'map') {
+      } else if (type === 'map') {
 
         ret = {};
         var map = literal.value;
 
-        utils.forEach(map, function(exp, key){
+        utils.forEach(map, function(exp, key) {
           ret[key] = this.getLiteral(exp);
         }, this);
-      } else if(type == 'bool') {
+      } else if (type === 'bool') {
 
         if (literal.value === "null") {
           ret = null;
@@ -61,11 +62,12 @@ module.exports = function(Velocity, utils){
     /**
      * 对字符串求值，对已双引号字符串，需要做变量替换
      */
-    getString: function(literal){
+    getString: function(literal) {
       var val = literal.value;
       var ret = val;
 
-      if (literal.isEval && (val.indexOf('#') !== -1 || val.indexOf("$") !== -1)) {
+      if (literal.isEval && (val.indexOf('#') !== -1 ||
+            val.indexOf("$") !== -1)) {
         ret = this.evalStr(val);
       }
 
@@ -78,7 +80,7 @@ module.exports = function(Velocity, utils){
      * ，和js基本一致
      * @return {array} 求值得到的数组
      */
-    getArray: function(literal){
+    getArray: function(literal) {
 
       var ret = [];
 
@@ -109,7 +111,7 @@ module.exports = function(Velocity, utils){
         }
 
       } else {
-        utils.forEach(literal.value, function(exp){
+        utils.forEach(literal.value, function(exp) {
           ret.push(this.getLiteral(exp));
         }, this);
       }
@@ -120,8 +122,8 @@ module.exports = function(Velocity, utils){
     /**
      * 对双引号字符串进行eval求值，替换其中的变量，只支持最基本的变量类型替换
      */
-    evalStr: function(str){
-      var asts = Velocity.Parser.parse(str);
+    evalStr: function(str) {
+      var asts = Velocity.parse(str);
       return this._render(asts);
     }
   });
