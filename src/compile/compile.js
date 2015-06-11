@@ -82,6 +82,10 @@ module.exports = function(Velocity, utils){
           case 'comment':
             break;
 
+          case 'raw':
+            str += ast.value;
+            break;
+
           default:
             str += typeof ast == 'string' ? ast : this.getBlock(ast);
           break;

@@ -29,6 +29,8 @@ statement
       { $1.pos = @$; $$ = $1; }
   | content
       { $$ = $1; }
+  | RAW
+      { $$ = {type: 'raw', value: $1 }; }
   | COMMENT
       { $$ = {type: 'comment', value: $1 }; }
   ;

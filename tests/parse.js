@@ -219,4 +219,13 @@ describe('Parser', function() {
 
   })
 
+  describe('raw identify', function() {
+    it('raw content', function() {
+      var asts = parse('#[[\nThis content is ignored.\n]]#');
+
+      assert.equal('raw', asts[0].type);
+      assert.equal('\nThis content is ignored.\n', asts[0].value);
+    });
+  });
+
 })

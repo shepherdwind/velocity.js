@@ -789,5 +789,14 @@ describe('Compile', function() {
       assert.equal('Hello World!', render(vm))
     })
   })
+
+  describe('raw content render', function() {
+    it('simple', function() {
+      var vm = '#[[\nThis content is ignored. $val\n]]#';
+      assert.equal('\nThis content is ignored. $val\n', render(vm, {
+        val: 'foo'
+      }));
+    });
+  });
 })
 
