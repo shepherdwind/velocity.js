@@ -1,3 +1,7 @@
+## 0.6.1
+
+- feat: merge [46](https://github.com/shepherdwind/velocity.js/pull/46)
+
 ## [0.6](https://github.com/shepherdwind/velocity.js/milestones/0.6)
 
 - change: remove Velocity.Parser, change to Velocity.parse [#43](https://github.com/shepherdwind/velocity.js/issues/43)
