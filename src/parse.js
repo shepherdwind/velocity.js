@@ -16,16 +16,17 @@ var customBlocks = [];
 /**
  * @param {string} str string to parse
  * @param {object} blocks self define blocks, such as `#cms(1) hello #end`
+ * @param {boolean} ignoreSpace if set true, then ignore the newline trim.
  * @return {array} ast array
  */
-var parse = function(str, blocks) {
+var parse = function(str, blocks, ignoreSpace) {
   var asts = _parse(str);
   customBlocks = blocks || {};
 
   /**
    * remove all newline after all direction such as `#set, #each`
    */
-  utils.forEach(asts, function trim(ast, i) {
+  ignoreSpace || utils.forEach(asts, function trim(ast, i) {
     var TRIM_REG = /^[ \t]*\n/;
     if (ast.type && ast.type !== 'references') {
       var _ast = asts[i + 1];
