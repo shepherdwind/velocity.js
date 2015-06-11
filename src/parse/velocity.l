@@ -34,7 +34,7 @@
 
 [^\x00]+                          { return 'CONTENT'; }
 <h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
-<h>"#"\[\[[\s\S]+?\]\]"#"         { this.popState(); yytext = yytext.replace(/^#\[\[|\]\]#$/g, ''); return 'CONTENT'}
+<h>"#"\[\[[\s\S]+?\]\]"#"         { this.popState(); yytext = yytext.replace(/^#\[\[|\]\]#$/g, ''); return 'RAW'}
 <h,mu>"##"[^\n]+                  { this.popState(); return 'COMMENT'; }
 <h>"#"/[a-zA-Z{]                  { return 'HASH'; }
 <h>"set"[ ]*                      { return 'SET'; }
