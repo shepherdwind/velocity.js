@@ -1,7 +1,7 @@
 {
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "keywords": [
     "velocity template"
   ],
@@ -22,7 +22,8 @@
     "istanbul": "~0.3.5",
     "jison": ">=0.3",
     "mocha": ">=1.7.2",
-    "mocha-lcov-reporter": "0.0.1"
+    "mocha-lcov-reporter": "0.0.1",
+    "should": "^7.0.1"
   },
   "scripts": {
     "test": "make test"
