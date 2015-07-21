@@ -37,17 +37,17 @@
 <h>"#"\[\[[\s\S]+?\]\]"#"         { this.popState(); yytext = yytext.replace(/^#\[\[|\]\]#$/g, ''); return 'RAW'}
 <h,mu>"##"[^\n]+                  { this.popState(); return 'COMMENT'; }
 <h>"#"/[a-zA-Z{]                  { return 'HASH'; }
-<h>"set"[ ]*                      { return 'SET'; }
-<h>"if"[ ]*                       { return 'IF'; }
-<h>"elseif"[ ]*                   { return 'ELSEIF'; }
+<h>"set"[ ]*/[^a-zA-Z0-9_]+       { return 'SET'; }
+<h>"if"[ ]*/[^a-zA-Z0-9_]+        { return 'IF'; }
+<h>"elseif"[ ]*/[^a-zA-Z0-9_]+    { return 'ELSEIF'; }
 <h>"else"                         { this.popState(); return 'ELSE'; }
 <h>"{else}"                       { this.popState(); return 'ELSE'; }
 <h>"end"                          { this.popState(); return 'END'; }
 <h>"break"                        { this.popState(); return 'BREAK'; }
-<h>"foreach"[ ]*                  { return 'FOREACH'; }
-<h>"noescape"                     { return 'NOESCAPE'; }
-<h>"define"[ ]*                   { return 'DEFINE'; }
-<h>"macro"[ ]*                    { return 'MACRO'; }
+<h>"foreach"[ ]*/[^a-zA-Z0-9_]+   { return 'FOREACH'; }
+<h>"noescape"/[^a-zA-Z0-9_]+      { return 'NOESCAPE'; }
+<h>"define"[ ]*/[^a-zA-Z0-9_]+    { return 'DEFINE'; }
+<h>"macro"[ ]*/[^a-zA-Z0-9_]+     { return 'MACRO'; }
 <c,i>"in"                         { return 'IN'; }
 <c,i>[%\+\-\*/]                   { return yytext; }
 <c,i>"<="                         { return yytext; }
