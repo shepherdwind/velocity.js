@@ -11,7 +11,6 @@ describe('Parser', function() {
       var ast = parse(vm, { cms: true });
       assert(ast.length, 1);
       assert(ast[0][0].type, 'cms');
-      console.log(ast[0][0])
     });
 
     it('simple references', function() {
@@ -41,7 +40,6 @@ describe('Parser', function() {
       assert.equal(false, ast.args)
       assert.equal('references', ast.type)
     })
-
   })
 
   describe('Properties', function() {
@@ -205,6 +203,17 @@ describe('Parser', function() {
       assert.equal(asts.length, 3)
       assert.equal(ifAst.length, 2)
     })
+
+    it('#setter will work fine', function() {
+      var vm = '<a href="#setter" target="_blank"></a>';
+      var asts = parse(vm);
+      asts.every(function(ast) {
+        return typeof ast === 'string';
+      }).should.equal(true);
+      var vm2 = '<a href="#setter()" target="_blank"></a>';
+      asts = parse(vm2);
+      asts[1].type.should.equal('macro_call');
+    });
 
   })
 
