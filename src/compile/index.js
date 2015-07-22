@@ -9,6 +9,7 @@ function Velocity(asts, config) {
     unescape: {}
   };
   utils.mixin(this.config, config);
+  this._state = { stop: false, break: false };
   this.init();
 }
 

@@ -10,7 +10,7 @@ parse:
 		&& mv velocity.js index.js
 
 test:
-	node $(BIN)/_mocha tests
+	node $(BIN)/_mocha tests --require should
 
 spm:
 	spm build --skip fs,path -O build
@@ -31,6 +31,7 @@ cov: $(SRC) $(TESTS)
 	@node $(BIN)/istanbul cover \
 	  $(BIN)/_mocha -- \
 	    --reporter mocha-lcov-reporter \
+			--require should \
 	    --timeout 5s \
 			$(TESTS) \
 			&& cat ./coverage/lcov.info | \

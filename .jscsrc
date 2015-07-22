@@ -62,7 +62,7 @@
   ],
   "validateLineBreaks": "LF",
   "maximumLineLength": {
-    "value": 80,
+    "value": 120,
     "allowUrlComments": true,
     "allowComments": true,
     "allowRegex": true

@@ -1,10 +1,10 @@
-module.exports = function(Velocity, utils){
+module.exports = function(Velocity, utils) {
 
   /**
    * compile
    */
   utils.mixin(Velocity.prototype, {
-    init: function(){
+    init: function() {
       this.context = {};
       this.macros = {};
       this.defines = {};
@@ -12,6 +12,14 @@ module.exports = function(Velocity, utils){
       this.local = {};
       this.silence = false;
       this.unescape = {};
+
+      var self = this;
+      this.directive = {
+        stop: function() {
+          self._state.stop = true;
+          return '';
+        }
+      };
     },
 
     /**
@@ -20,11 +28,11 @@ module.exports = function(Velocity, utils){
      * @param silent {bool} 如果是true，$foo变量将原样输出
      * @return str
      */
-    render: function(context, macros, silence){
+    render: function(context, macros, silence) {
 
       this.silence = !!silence;
       this.context = context || {};
-      this.jsmacros = macros || {};
+      this.jsmacros = utils.mixin(macros || {}, this.directive);
       var t1 = utils.now();
       var str = this._render();
       var t2 = utils.now();
@@ -42,14 +50,14 @@ module.exports = function(Velocity, utils){
      * 取值，都放在一个this.local下，通过contextId查找
      * @return {string}解析后的字符串
      */
-    _render: function(asts, contextId){
+    _render: function(asts, contextId) {
 
       var str = '';
       asts = asts || this.asts;
 
       if (contextId) {
 
-        if (contextId !== this.condition && 
+        if (contextId !== this.condition &&
             utils.indexOf(contextId, this.conditions) === -1) {
           this.conditions.unshift(contextId);
         }
@@ -60,9 +68,14 @@ module.exports = function(Velocity, utils){
         this.condition = null;
       }
 
-      utils.forEach(asts, function(ast){
+      utils.forEach(asts, function(ast) {
 
-        switch(ast.type) {
+        // 进入stop，直接退出
+        if (this._state.stop === true) {
+          return false;
+        }
+
+        switch (ast.type) {
           case 'references':
             str += this.getReferences(ast, true);
           break;
@@ -72,7 +85,7 @@ module.exports = function(Velocity, utils){
           break;
 
           case 'break':
-            this.setBreak = true;
+            this._state.break = true;
           break;
 
           case 'macro_call':
@@ -80,14 +93,14 @@ module.exports = function(Velocity, utils){
           break;
 
           case 'comment':
-            break;
+          break;
 
           case 'raw':
             str += ast.value;
-            break;
+          break;
 
           default:
-            str += typeof ast == 'string' ? ast : this.getBlock(ast);
+            str += typeof ast === 'string' ? ast : this.getBlock(ast);
           break;
         }
       }, this);

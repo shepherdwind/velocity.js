@@ -1,3 +1,7 @@
+## 0.6.2
+
+- feat: merge [47](https://github.com/shepherdwind/velocity.js/pull/47)
+
 ## 0.6.1
 
 - feat: merge [46](https://github.com/shepherdwind/velocity.js/pull/46)

@@ -89,7 +89,7 @@ module.exports = function(Velocity, utils) {
 
           try {
             ret = macro.apply(jsmacros, jsArgs);
-          } catch(e) {
+          } catch (e) {
             var pos = ast.pos;
             var text = Velocity.Helper.getRefText(ast);
             // throws error tree
@@ -104,15 +104,14 @@ module.exports = function(Velocity, utils) {
       } else {
         var asts = macro.asts;
         var args = macro.args;
-        var _call_args = ast.args;
+        var callArgs = ast.args;
         var local = {};
-        var localKey = [];
         var guid = utils.guid();
         var contextId = 'macro:' + ast.id + ':' + guid;
 
         utils.forEach(args, function(ref, i) {
-          if (_call_args[i]) {
-            local[ref.id] = this.getLiteral(_call_args[i]);
+          if (callArgs[i]) {
+            local[ref.id] = this.getLiteral(callArgs[i]);
           } else {
             local[ref.id] = undefined;
           }
@@ -128,7 +127,7 @@ module.exports = function(Velocity, utils) {
      * eval
      * @param str {array|string} 需要解析的字符串
      * @param local {object} 局部变量
-     * @param contextId {string} 
+     * @param contextId {string}
      * @return {string}
      */
     eval: function(str, local, contextId) {
@@ -191,29 +190,36 @@ module.exports = function(Velocity, utils) {
       var contextId = 'foreach:' + guid;
 
       var type = ({}).toString.call(_from);
-      if (!_from || (type !== '[object Array]' && type !== '[object Object]')) return;
+      if (!_from || (type !== '[object Array]' && type !== '[object Object]')) {
+        return '';
+      }
 
-      var len = utils.isArray(_from)? _from.length: utils.keys(_from).length;
+      var len = utils.isArray(_from) ? _from.length : utils.keys(_from).length;
 
       utils.forEach(_from, function(val, i) {
 
-        if (this.setBreak) return;
-        //构造临时变量
+        if (this._state.break) {
+          return;
+        }
+        // 构造临时变量
         local[_to] = val;
-        //TODO: here, the foreach variable give to local, when _from is not an
-        //array, count and hasNext would be undefined, also i is not the
-        //index.
-        local['foreach']['count'] = i + 1;
-        local['foreach']['index'] = i;
-        local['foreach']['hasNext'] = i + 1 < len;
-        local['velocityCount'] = i + 1;
+        // TODO: here, the foreach variable give to local, when _from is not an
+        // array, count and hasNext would be undefined, also i is not the
+        // index.
+        local.foreach = {
+          count: i + 1,
+          index: i,
+          hasNext: i + 1 < len
+        };
+        local.velocityCount = i + 1;
+
         this.local[contextId] = local;
         ret += this._render(_block, contextId);
 
       }, this);
 
-      this.setBreak = false;
-      //删除临时变量
+      this._state.break = false;
+      // 删除临时变量
       this.local[contextId] = {};
       this.conditions.shift();
       this.condition = this.conditions[0] || '';
@@ -227,7 +233,6 @@ module.exports = function(Velocity, utils) {
      */
     getBlockIf: function(block) {
 
-      var str = '';
       var received = false;
       var asts = [];
 
@@ -235,11 +240,15 @@ module.exports = function(Velocity, utils) {
 
         if (ast.condition) {
 
-          if (received) return true;
+          if (received) {
+            return true;
+          }
           received = this.getExpression(ast.condition);
 
         } else if (ast.type === 'else') {
-          if (received) return true;
+          if (received) {
+            return true;
+          }
           received = true;
         } else if (received) {
           asts.push(ast);
