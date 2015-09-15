@@ -81,11 +81,12 @@ module.exports = function(Velocity, utils) {
           }, this);
 
           var self = this;
-          if (!jsmacros.eval) {
-            jsmacros.eval = function() {
-              return self.eval.apply(self, arguments);
-            };
-          }
+
+          // bug修复：此处由于闭包特性，导致eval函数执行时的this对象是上一次函数执行时的this对象，渲染时上下文发生错误。
+          jsmacros.eval = function() {
+            return self.eval.apply(self, arguments);
+          };
+
 
           try {
             ret = macro.apply(jsmacros, jsArgs);
