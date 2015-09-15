@@ -1,3 +1,11 @@
+## 0.7.1
+
+- fix: merge [51](https://github.com/shepherdwind/velocity.js/pull/51)
+
+## 0.7.0
+
+- feat: merge [49](https://github.com/shepherdwind/velocity.js/pull/49) and [#50](https://github.com/shepherdwind/velocity.js/pull/50)
+
 ## 0.6.2
 
 - feat: merge [47](https://github.com/shepherdwind/velocity.js/pull/47)
