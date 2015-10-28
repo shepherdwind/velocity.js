@@ -214,6 +214,13 @@ describe('Compile', function() {
       assert.equal("onica", getContext(vm).result)
     })
 
+    it('set equal to result of method ', function () {
+      var vm = "#set( $monkey = 1234 ) ## number literal\n" +
+               '#set( $result = $monkey.toString() ) ##calling method'
+      assert.equal("1234", getContext(vm).monkey)
+      assert.equal("1234", getContext(vm).result)
+    })
+
     it('equal to method/property reference', function() {
       var vm = "#set($monkey.Blame = $spindoctor.Leak) ## property \n" +
                '#set( $monkey.Plan = $spindoctor.weave($web) ) ## method'
