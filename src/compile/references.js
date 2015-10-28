@@ -270,9 +270,11 @@ module.exports = function(Velocity, utils) {
 
           var that = this;
 
-          baseRef.eval = function() {
-            return that.eval.apply(that, arguments);
-          };
+          if(typeof baseRef === 'object'){
+            baseRef.eval = function() {
+              return that.eval.apply(that, arguments);
+            };
+          }
 
           try {
             ret = ret.apply(baseRef, args);

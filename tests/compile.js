@@ -206,6 +206,20 @@ describe('Compile', function() {
       assert.equal("monica", getContext(vm).monkey.Friend)
       assert.equal("123", getContext(vm).monkey.Number)
     })
+    
+    it('set equal to result of method ', function () {
+      var vm = "#set( $monkey = 'monica' ) ## string literal\n" +
+               '#set( $result = $monkey.substring(1) ) ##calling method'
+      assert.equal("monica", getContext(vm).monkey)
+      assert.equal("onica", getContext(vm).result)
+    })
+
+    it('set equal to result of method ', function () {
+      var vm = "#set( $monkey = 1234 ) ## number literal\n" +
+               '#set( $result = $monkey.toString() ) ##calling method'
+      assert.equal("1234", getContext(vm).monkey)
+      assert.equal("1234", getContext(vm).result)
+    })
 
     it('equal to method/property reference', function() {
       var vm = "#set($monkey.Blame = $spindoctor.Leak) ## property \n" +
