@@ -753,6 +753,13 @@ describe('Compile', function() {
       var vm = '$foo.setName'
       assert.equal(render(vm, { foo: { setName: "foo" }}).trim(), "foo")
     })
+    it('#54', function() {
+      var vm = '$a.b.c'
+      assert.equal(render(vm, { a: { b: null }}).trim(), "$a.b.c")
+
+      vm = '$a.b.c()'
+      assert.equal(render(vm, { a: { b: null }}).trim(), "$a.b.c()")
+    });
   })
 
   describe('multiline', function() {
