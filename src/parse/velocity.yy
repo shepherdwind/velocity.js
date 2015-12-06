@@ -18,7 +18,7 @@ root
 statements
   : statement
       { $$ = [$1]; }
-  | statements statement 
+  | statements statement
       { $$ = [].concat($1, $2); }
   ;
 
@@ -36,13 +36,13 @@ statement
   ;
 
 directives
-  : set 
+  : set
       { $$ = $1; }
-  | if 
+  | if
       { $$ = $1; }
   | elseif
       { $$ = $1; }
-  | else 
+  | else
       { $$ = $1; }
   | end
       { $$ = $1; }
@@ -264,43 +264,45 @@ method
 methodbd
   : ID PARENTHESIS params CLOSE_PARENTHESIS
       { $$ = {id: $1, args: $3 }; }
-  | ID PARENTHESIS CLOSE_PARENTHESIS 
+  | ID PARENTHESIS CLOSE_PARENTHESIS
       { $$ = {id: $1, args: false }; }
   ;
 
 params
-  : literals 
+  : literals
       { $$ = [$1]; }
-  | references 
+  | ID
+      { $$ = [ { type: 'runt', value: $1 } ]; }
+  | references
       { $$ = [$1]; }
-  | params COMMA literals 
+  | params COMMA literals
       { $$ = [].concat($1, $3); }
-  | params COMMA references 
+  | params COMMA references
       { $$ = [].concat($1, $3); }
   ;
 
 property
-  : DOT ID 
+  : DOT ID
       { $$ = $2; }
-  | DOT CONTENT 
+  | DOT CONTENT
       { $$ = {type: 'content', value: $1 + $2 }; }
   ;
 
 index
-  : BRACKET literal CLOSE_BRACKET 
-      { $$ = $2; } 
-  | BRACKET references CLOSE_BRACKET 
-      { $$ = $2; } 
-  | BRACKET literal CONTENT 
-      { $$ = {type: "content", value: $1 + $2.value + $3 }; } 
-  | BRACKET CONTENT 
-      { $$ = {type: "content", value: $1 + $2 }; } 
-  | BRACKET CLOSE_BRACKET 
-      { $$ = {type: "content", value: $1 + $2 }; } 
+  : BRACKET literal CLOSE_BRACKET
+      { $$ = $2; }
+  | BRACKET references CLOSE_BRACKET
+      { $$ = $2; }
+  | BRACKET literal CONTENT
+      { $$ = {type: "content", value: $1 + $2.value + $3 }; }
+  | BRACKET CONTENT
+      { $$ = {type: "content", value: $1 + $2 }; }
+  | BRACKET CLOSE_BRACKET
+      { $$ = {type: "content", value: $1 + $2 }; }
   ;
 
 literal
-  : string 
+  : string
       { $$ = $1; }
   | number
       { $$ = $1; }

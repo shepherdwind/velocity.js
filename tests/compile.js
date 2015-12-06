@@ -66,6 +66,11 @@ describe('Compile', function() {
       assert.equal('My Home Page haha', render(vm, {page: {}}))
     })
 
+    it('runt type support', function() {
+      var vm = '$page.header(page)'
+      assert.equal('$page.header(page)', render(vm, {page: {}}))
+    })
+
     it('size method', function() {
       var vm = '$foo.bar.size()'
       assert.equal('2', render(vm, {foo: {bar: [1, 2]}}))
@@ -78,7 +83,7 @@ describe('Compile', function() {
 
     it('quiet reference', function() {
       var vm = 'my email is $email'
-      var vmquiet = 'my email is $!email'
+      var vmquiet = 'my email is $!email.xxx'
       assert.equal(vm, render(vm))
       assert.equal('my email is ', render(vmquiet))
     })

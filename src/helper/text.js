@@ -86,6 +86,7 @@ module.exports = function(Helper, utils){
       }
 
       case 'integer':
+      case 'runt':
       case 'bool'   : {
         ret = ast.value;
         break;
