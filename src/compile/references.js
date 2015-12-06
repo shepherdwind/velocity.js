@@ -175,6 +175,11 @@ module.exports = function(Velocity, utils) {
      * @private
      */
     getAttributes: function(property, baseRef, ast) {
+      // fix #54
+      if (baseRef === null || baseRef === undefined) {
+        return undefined;
+      }
+
       /**
        * type对应着velocity.yy中的attribute，三种类型: method, index, property
        */
