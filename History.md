@@ -1,3 +1,8 @@
+## 0.7.3
+
+- fix [53](https://github.com/shepherdwind/velocity.js/issues/52)
+- runt support [54](https://github.com/shepherdwind/velocity.js/pull/54)
+
 ## 0.7.2
 
 - fix: merge [52](https://github.com/shepherdwind/velocity.js/pull/52)
