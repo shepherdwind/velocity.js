@@ -1,3 +1,7 @@
+## 0.7.4
+
+- toString like org.apache.velocity when render [56](https://github.com/shepherdwind/velocity.js/issues/56)
+
 ## 0.7.3
 
 - fix [53](https://github.com/shepherdwind/velocity.js/issues/52)
