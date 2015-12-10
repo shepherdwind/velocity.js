@@ -824,5 +824,61 @@ describe('Compile', function() {
       }));
     });
   });
+
+  describe('Object|Array#toString', function() {
+    it('simple object', function() {
+      var vm = '$data';
+      var expected = '{k=v, k2=v2}';
+      assert.equal(render(vm, {data: {k: "v", k2: "v2"}}), expected)
+    });
+
+    it('object.keySet()', function() {
+      var vm = '$data.keySet()';
+      var expected = '[k, k2]';
+      assert.equal(render(vm, {data: {k: "v", k2: "v2"}}), expected)
+    });
+
+    it('object.entrySet()', function() {
+      var vm = '$data.entrySet()';
+      var expected = '[{key=k, value=v}, {key=k2, value=v2}]';
+      assert.equal(render(vm, {data: {k: "v", k2: "v2"}}), expected)
+    });
+
+    it('nested object', function() {
+      var vm = '$data';
+      var expected = '{k={k2=v2}, kk={k3=v3}}';
+      assert.equal(render(vm, {data: {k: {k2: "v2"}, kk: {k3: "v3"}}}), expected)
+    });
+
+    it('object that has toString as own property', function() {
+      var vm = '$data';
+      var expected = 'custom';
+      assert.equal(render(vm, {data: {toString: function() { return 'custom'; }, key: "value", key2: "value2", key3: {key4: "value4"}}}), expected)
+    });
+
+    it('simple array', function() {
+      var vm = '$data';
+      var expected = '[a, b]';
+      assert.equal(render(vm, {data: ["a", "b"]}), expected)
+    });
+
+    it('nested array', function() {
+      var vm = '$data';
+      var expected = '[a, [b]]';
+      assert.equal(render(vm, {data: ["a", ["b"]]}), expected)
+    });
+
+    it('object in array', function() {
+      var vm = '$data';
+      var expected = '[a, {k=v}]';
+      assert.equal(render(vm, {data: ["a", {k: "v"}]}), expected)
+    });
+
+    it('array in object', function() {
+      var vm = '$data';
+      var expected = '{k=[a, b]}';
+      assert.equal(render(vm, {data: {k: ["a", "b"]}}), expected)
+    });
+  });
 })
 

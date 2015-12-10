@@ -77,7 +77,7 @@ module.exports = function(Velocity, utils) {
 
         switch (ast.type) {
           case 'references':
-            str += this.getReferences(ast, true);
+            str += this.format(this.getReferences(ast, true));
           break;
 
           case 'set':
@@ -106,6 +106,22 @@ module.exports = function(Velocity, utils) {
       }, this);
 
       return str;
+    },
+    format: function(value) {
+      if (utils.isArray(value)) {
+        return "[" + value.map(this.format.bind(this)).join(", ") + "]";
+      }
+
+      if (utils.isObject(value)) {
+        if (value.hasOwnProperty('toString')) {
+          return value.toString();
+        }
+
+        var kvJoin = function(k) { return k + "=" + this.format(value[k]); }.bind(this);
+        return "{" + Object.keys(value).map(kvJoin).join(", ") + "}";
+      }
+
+      return value;
     }
   });
 };
