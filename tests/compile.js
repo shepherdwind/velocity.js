@@ -714,7 +714,12 @@ describe('Compile', function() {
 
     it('$control.setTemplate', function() {
 
-      var control = {
+      var Control = function() {
+        this.__temp = {};
+      };
+
+      Control.prototype = {
+        constructor: Control,
 
         setTemplate: function(vm) {
 
@@ -723,9 +728,9 @@ describe('Compile', function() {
 
         },
         toString: function() {
+          debugger;
           return this.eval(this.vm, this.__temp);
         },
-        __temp: {},
         setParameter: function(key, value) {
           this.__temp[key] = value;
           return this;
@@ -737,7 +742,7 @@ describe('Compile', function() {
       var vm = '$control.setTemplate($str).setParameter("who", "Blob")' +
       '.setParameter("where", "China")'
       var expected = 'hello Blob, welcome to China';
-      assert.equal(render(vm, {str: str, control: control}), expected)
+      assert.equal(render(vm, {str: str, control: new Control()}), expected)
 
     })
 

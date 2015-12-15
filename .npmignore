@@ -2,6 +2,8 @@
 .gitignore
 .rvmrc
 Makefile
-tests/runner/*
-examples/*
-build/*
+examples
+coverage
+build
+dist
+tests
