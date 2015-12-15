@@ -113,8 +113,8 @@ module.exports = function(Velocity, utils) {
       }
 
       if (utils.isObject(value)) {
-        if (value.hasOwnProperty('toString')) {
-          return value.toString();
+        if (value.toString.toString().indexOf('[native code]') === -1) {
+          return value;
         }
 
         var kvJoin = function(k) { return k + "=" + this.format(value[k]); }.bind(this);
