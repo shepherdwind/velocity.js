@@ -1,10 +1,10 @@
 ## 0.7.5
 
-- toString rewrite only when toString equal function { [native code]} [57](https://github.com/shepherdwind/velocity.js/issues/57)
+- toString rewrite only when toString equal function { [native code]} [57](https://github.com/shepherdwind/velocity.js/pull/57)
 
 ## 0.7.4
 
-- toString like org.apache.velocity when render [56](https://github.com/shepherdwind/velocity.js/issues/56)
+- toString like org.apache.velocity when render [56](https://github.com/shepherdwind/velocity.js/pull/56)
 
 ## 0.7.3
 
