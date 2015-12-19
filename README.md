@@ -11,10 +11,10 @@ Velocityjs is [velocity](http://velocity.apache.org/) template engine for javasc
 
 ##Features
 
-- Supports both client and server side use
-- Separation of parsing and rendering templates
-- The basic syntax is fully supported all java version velocity
-- [Vim Syntax](https://github.com/shepherdwind/vim-velocity)
+- Supports both client and server side use.
+- Separation of parsing and rendering templates.
+- The basic syntax is fully supported all java version velocity.
+- [Vim Syntax](https://github.com/shepherdwind/vim-velocity) for vim.
 
 ##Install
 
