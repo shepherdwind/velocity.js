@@ -87,7 +87,7 @@ params:
 - escape {boolean} default `true`, default escape variable to html encode, you can set false to close it.
 - unescape {object} define the object, which key do not need escape. For example, set unescape equal `{control: true}`, so `$control.html` will not escape.
 
-#### render
+#### parse
 
 params:
 
