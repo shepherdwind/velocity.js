@@ -1,3 +1,19 @@
+## 0.8.0 2016-04-20
+
+- set bug fix [#63](https://github.com/shepherdwind/velocity.js/issues/63)
+
+### Break api change
+
+Before set value will set undefined node as plan object
+
+```
+#set($a = {}) #set($a.c.d = 1) $a.c.d
+```
+
+This will output `1` .
+
+But now, in 0.8.0 version, a.c will not set as {}, so output is `$a.c.d`.
+
 ## 0.7.5
 
 - toString rewrite only when toString equal function { [native code]} [57](https://github.com/shepherdwind/velocity.js/pull/57)
