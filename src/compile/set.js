@@ -53,14 +53,24 @@ module.exports = function(Velocity, utils){
         var len = ref.path ? ref.path.length: 0;
 
         //console.log(val);
-        utils.forEach(ref.path, function(exp, i){
+        utils.some(ref.path, function(exp, i){
 
           var isEnd = len === i + 1;
           var key = exp.id;
           if (exp.type === 'index')  key = key.value;
-          baseRef[key] = isEnd? val: {};
+
+          if (isEnd) {
+            return baseRef[key] = val;
+          }
+
           baseRef = baseRef[key];
 
+          // such as
+          // #set($a.d.c2 = 2)
+          // but $a.d is undefined , value set fail
+          if (baseRef === undefined) {
+            return true;
+          }
         });
 
       }
