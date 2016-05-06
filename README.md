@@ -45,7 +45,7 @@ You can find a lot of examples from the tests directory. There is no different b
   // render method
   render(vm: string, context?: Object, macros?: Object): string;
 
-  parse(vm: string): Array<Ast>;
+  parse(vm: string, config?: Object, ignorespace?: boolean): Array<Ast>;
 
   Compile: {
     (asts: Array<Ast>, config?: Object): {
