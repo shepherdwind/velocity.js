@@ -56,8 +56,8 @@ describe('Compile', function() {
     })
 
     it('index notation', function() {
-      var vm = '$foo[0] $foo[$i] $foo.get(1)'
-      assert.equal('bar haha haha', render(vm, {foo: ["bar", "haha"], i: 1}))
+      var vm = '$foo[0] $foo[$i] $foo.get(1) $xx["oo"]'
+      assert.equal('bar haha haha oo', render(vm, {foo: ["bar", "haha"], i: 1, xx: { oo: 'oo' }}))
     })
 
     it('set method', function() {
@@ -352,6 +352,10 @@ describe('Compile', function() {
       assert.equal('  1   2   3     4 ', render(vm))
     })
 
+    it('foreach for null', function() {
+      var vm = '#foreach($num in $bar) #end';
+      assert.equal('', render(vm))
+    })
   })
 
   describe('Velocimacros', function() {

@@ -29,6 +29,7 @@ publish:
 
 cov: $(SRC) $(TESTS)
 	@node $(BIN)/istanbul cover \
+		-x src/parse/index.js \
 	  $(BIN)/_mocha -- \
 	    --reporter mocha-lcov-reporter \
 			--require should \

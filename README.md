@@ -40,6 +40,21 @@ You can find a lot of examples from the tests directory. There is no different b
 
 ##Public API
 
+```
+{
+  // render method
+  render(vm: string, context?: Object, macros?: Object): string;
+
+  parse(vm: string): Array<Ast>;
+
+  Compile: {
+    (asts: Array<Ast>, config?: Object): {
+      render(context?: Object, macros?: Object);
+    };
+  };
+}
+```
+
 ### render
 
 params:
