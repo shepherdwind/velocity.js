@@ -1,3 +1,7 @@
+## 0.8.2 2016-05-28
+
+- nothing change, just update npm page readme
+
 ## 0.8.0 2016-04-20
 
 - set bug fix [#63](https://github.com/shepherdwind/velocity.js/issues/63)
