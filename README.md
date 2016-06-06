@@ -1,9 +1,21 @@
 Velocity - Template Engine
 ==========================
-[![Build Status](https://travis-ci.org/shepherdwind/velocity.js.svg?branch=master)](https://travis-ci.org/shepherdwind/velocity.js)
-[![Coverage Status](https://img.shields.io/coveralls/shepherdwind/velocity.js/master.svg?style=flat)](https://coveralls.io/r/shepherdwind/velocity.js)
 
-[![NPM](https://nodei.co/npm/velocityjs.png?downloads=true)](https://nodei.co/npm/velocityjs/)
+
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+[![npm download][download-image]][download-url]
+
+[npm-image]: http://img.shields.io/npm/v/velocityjs.svg?style=flat-square
+[npm-url]: http://npmjs.org/package/velocityjs
+[download-image]: https://img.shields.io/npm/dm/velocityjs.svg?style=flat-square
+[download-url]: https://npmjs.org/package/velocityjs
+[travis-image]: https://img.shields.io/travis/shepherdwind/velocity.js.svg?style=flat-square
+[travis-url]: https://travis-ci.org/react-component/upload
+[coveralls-image]: https://img.shields.io/coveralls/shepherdwind/velocity.js.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/react-component/upload?branch=master
+
 
 Velocityjs is [velocity](http://velocity.apache.org/) template engine for javascript.
 
