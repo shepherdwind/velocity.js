@@ -226,6 +226,17 @@ describe('Parser', function() {
       assert.equal('comment', asts[1].type)
     })
 
+    it('all comment', function() {
+      var asts = parse('##number literal')
+
+      asts.length.should.equal(1)
+      asts[0].type.should.equal('comment');
+
+      asts = parse('##');
+      asts.length.should.equal(1)
+      asts[0].type.should.equal('comment');
+    });
+
   })
 
   describe('raw identify', function() {

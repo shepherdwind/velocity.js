@@ -15,10 +15,10 @@
                                       this.begin('esc');
                                     }
                                     if (_num > 1) yytext = yytext.replace(/(\\\\)+$/, '\\');
-                                    if(yytext) return 'CONTENT'; 
+                                    if(yytext) return 'CONTENT';
                                   }
 
-[^\$]*?/"#"                       { 
+[^\$]*?/"#"                       {
                                     var _reg = /\\+$/;
                                     var _esc = yytext.match(_reg);
                                     var _num = _esc ? _esc[0].length: null;
@@ -29,13 +29,13 @@
                                       this.begin('esc');
                                     }
                                     if (_num > 1) yytext = yytext.replace(/(\\\\)+$/, '\\');
-                                    if(yytext) return 'CONTENT'; 
+                                    if(yytext) return 'CONTENT';
                                   }
 
 [^\x00]+                          { return 'CONTENT'; }
 <h>"#"\*[\s\S]+?\*"#"             { this.popState(); return 'COMMENT'; }
 <h>"#"\[\[[\s\S]+?\]\]"#"         { this.popState(); yytext = yytext.replace(/^#\[\[|\]\]#$/g, ''); return 'RAW'}
-<h,mu>"##"[^\n]+                  { this.popState(); return 'COMMENT'; }
+<h,mu>"##"[^\n]*                  { this.popState(); return 'COMMENT'; }
 <h>"#"/[a-zA-Z{]                  { return 'HASH'; }
 <h>"set"[ ]*/[^a-zA-Z0-9_]+       { return 'SET'; }
 <h>"if"[ ]*/[^a-zA-Z0-9_]+        { return 'IF'; }
