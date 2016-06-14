@@ -1,3 +1,7 @@
+## 0.8.3 2016-06-15
+
+- fix comment bug [#67](https://github.com/shepherdwind/velocity.js/pull/67)
+
 ## 0.8.2 2016-05-28
 
 - nothing change, just update npm page readme
