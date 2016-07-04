@@ -88,8 +88,12 @@ end
 foreach
   : HASH FOREACH PARENTHESIS DOLLAR ID IN references CLOSE_PARENTHESIS
       { $$ = {type: 'foreach', to: $5, from: $7 }; }
+  | HASH FOREACH PARENTHESIS DOLLAR MAP_BEGIN ID MAP_END IN references CLOSE_PARENTHESIS
+      { $$ = {type: 'foreach', to: $6, from: $9 }; }
   | HASH FOREACH PARENTHESIS DOLLAR ID IN array CLOSE_PARENTHESIS
       { $$ = {type: 'foreach', to: $5, from: $7 }; }
+  | HASH FOREACH PARENTHESIS DOLLAR MAP_BEGIN ID MAP_END IN array CLOSE_PARENTHESIS
+      { $$ = {type: 'foreach', to: $6, from: $9 }; }
   ;
 
 break
