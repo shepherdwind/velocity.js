@@ -1,3 +1,8 @@
+## 0.8.4 2016-07-04
+
+- fix bug when render `#foreach(${itemData} in ${defaultData})`, see
+[#69](https://github.com/shepherdwind/velocity.js/issues/69#issuecomment-230152986)
+
 ## 0.8.3 2016-06-15
 
 - fix comment bug [#67](https://github.com/shepherdwind/velocity.js/pull/67)
