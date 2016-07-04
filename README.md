@@ -12,14 +12,14 @@ Velocity - Template Engine
 [download-image]: https://img.shields.io/npm/dm/velocityjs.svg?style=flat-square
 [download-url]: https://npmjs.org/package/velocityjs
 [travis-image]: https://img.shields.io/travis/shepherdwind/velocity.js.svg?style=flat-square
-[travis-url]: https://travis-ci.org/react-component/upload
+[travis-url]: https://travis-ci.org/shepherdwind/velocity.js
 [coveralls-image]: https://img.shields.io/coveralls/shepherdwind/velocity.js.svg?style=flat-square
-[coveralls-url]: https://coveralls.io/r/react-component/upload?branch=master
+[coveralls-url]: https://coveralls.io/r/shepherdwind/velocity.js?branch=master
 
 
 Velocityjs is [velocity](http://velocity.apache.org/) template engine for javascript.
 
-[中文版文档](./README.cn.md)
+[中文版文档](./README-cn.md)
 
 ##Features
 
