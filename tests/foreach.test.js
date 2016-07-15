@@ -33,6 +33,20 @@ describe('Loops', function() {
     assert.equal('5432', render(vm))
   })
 
+  it('#foreach with nest non-empty foreach', function() {
+    var vm = '#foreach($i in [1..2])' +
+    '[#foreach($j in [1..2])$j#if($foreach.hasNext),#end#end]' + 
+    '#if($foreach.hasNext),#end#end'
+    assert.equal('[1,2],[1,2]', render(vm))
+  })
+
+  it('#foreach with nest empty foreach', function() {
+    var vm = '#foreach($i in [1..2])' +
+    '[#foreach($j in [])$j#if($foreach.hasNext),#end#end]' + 
+    '#if($foreach.hasNext),#end#end'
+    assert.equal('[],[]', render(vm))
+  })
+
   it('#foreach with map entrySet', function() {
     var vm = '' +
     '#set($js_file = {\n' +
