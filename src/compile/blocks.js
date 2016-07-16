@@ -219,11 +219,15 @@ module.exports = function(Velocity, utils) {
 
       }, this);
 
-      this._state.break = false;
-      // 删除临时变量
-      this.local[contextId] = {};
-      this.conditions.shift();
-      this.condition = this.conditions[0] || '';
+      // if foreach items be an empty array, then this code will shift current
+      // conditions, but not this._render call, so this will shift parent context
+      if (_from && _from.length) {
+        this._state.break = false;
+        // empty current local context object
+        this.local[contextId] = {};
+        this.conditions.shift();
+        this.condition = this.conditions[0] || '';
+      }
 
       return ret;
 

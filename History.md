@@ -1,3 +1,7 @@
+## 0.8.5 2016-07-16
+
+- fix bug #foreach with nest empty foreach [!70](https://github.com/shepherdwind/velocity.js/pull/70)
+
 ## 0.8.4 2016-07-04
 
 - fix bug when render `#foreach(${itemData} in ${defaultData})`, see
