@@ -124,9 +124,13 @@ module.exports = function(Velocity, utils) {
 
       if (local.isLocaled) ret = local['value'];
 
-      if (ast.path && ret !== undefined) {
+      if (ast.path) {
 
-        utils.some(ast.path, function(property) {
+        utils.some(ast.path, function(property, i, len) {
+
+          if (ret === undefined) {
+            this._throw(ast, property);
+          }
 
           // 第三个参数，返回后面的参数ast
           ret = this.getAttributes(property, ret, ast);
@@ -294,11 +298,31 @@ module.exports = function(Velocity, utils) {
           }
 
         } else {
+          this._throw(ast, property, 'TypeError');
           ret = undefined;
         }
       }
 
       return ret;
+    },
+
+    _throw: function(ast, property, errorName) {
+      if (this.config.env !== 'development') {
+        return;
+      }
+
+      var text = Velocity.Helper.getRefText(ast);
+      var pos = ast.pos;
+      var propertyName = property.type === 'index' ? property.id.value : property.id;
+      var errorMsg = 'get property ' + propertyName + ' of undefined';
+      if (errorName === 'TypeError') {
+        errorMsg = propertyName + ' is not method';
+      }
+
+      errorMsg += '\n  at L/N ' + text + ' ' + pos.first_line + ':' + pos.first_column;
+      var e = new Error(errorMsg);
+      e.name = errorName || 'ReferenceError';
+      throw e;
     }
   })
 

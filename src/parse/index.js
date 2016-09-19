@@ -808,19 +808,19 @@ case 11: this.popState(); return 31;
 break;
 case 12: this.popState(); return 32; 
 break;
-case 13: this.popState(); return 40; 
+case 13: this.popState(); return 32; 
 break;
-case 14: return 33; 
+case 14: this.popState(); return 40; 
 break;
-case 15: return 21; 
+case 15: return 33; 
 break;
-case 16: return 41; 
+case 16: return 21; 
 break;
-case 17: return 42; 
+case 17: return 41; 
 break;
-case 18: return 36; 
+case 18: return 42; 
 break;
-case 19: return yy_.yytext; 
+case 19: return 36; 
 break;
 case 20: return yy_.yytext; 
 break;
@@ -836,36 +836,38 @@ case 25: return yy_.yytext;
 break;
 case 26: return yy_.yytext; 
 break;
-case 27: return 34; 
+case 27: return yy_.yytext; 
 break;
 case 28: return 34; 
 break;
-case 29: return yy_.yytext; 
+case 29: return 34; 
 break;
-case 30: return 49; 
+case 30: return yy_.yytext; 
 break;
-case 31:
+case 31: return 49; 
+break;
+case 32:
                                     var len = this.stateStackSize();
                                     if (len >= 2 && this.topState() === 'c' && this.topState(1) === 'run') {
                                       return 47;
                                     }
                                   
 break;
-case 32: /*ignore whitespace*/ 
+case 33: /*ignore whitespace*/ 
 break;
-case 33: return 37; 
+case 34: return 37; 
 break;
-case 34: return 38; 
+case 35: return 38; 
 break;
-case 35: return 94; 
+case 36: return 94; 
 break;
-case 36: yy.begin = true; return 72; 
+case 37: yy.begin = true; return 72; 
 break;
-case 37: this.popState(); if (yy.begin === true) { yy.begin = false; return 73;} else { return 80; } 
+case 38: this.popState(); if (yy.begin === true) { yy.begin = false; return 73;} else { return 80; } 
 break;
-case 38: this.begin("c"); return 22; 
+case 39: this.begin("c"); return 22; 
 break;
-case 39:
+case 40:
                                     if (this.popState() === "c") {
                                       var len = this.stateStackSize();
 
@@ -890,9 +892,9 @@ case 39:
                                     }
                                   
 break;
-case 40: this.begin("i"); return 81; 
+case 41: this.begin("i"); return 81; 
 break;
-case 41: 
+case 42: 
                                     if (this.popState() === "i") {
                                       return 82; 
                                     } else {
@@ -900,46 +902,46 @@ case 41:
                                     }
                                   
 break;
-case 42: return 92; 
+case 43: return 92; 
 break;
-case 43: return 78; 
+case 44: return 78; 
 break;
-case 44: return 88; 
+case 45: return 88; 
 break;
-case 45: return 48; 
+case 46: return 48; 
 break;
-case 46: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\"/g,'"'); return 90; 
+case 47: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\"/g,'"'); return 90; 
 break;
-case 47: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\'/g,"'"); return 89; 
-break;
-case 48: return 85; 
+case 48: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2).replace(/\\'/g,"'"); return 89; 
 break;
 case 49: return 85; 
 break;
 case 50: return 85; 
 break;
-case 51: return 87; 
+case 51: return 85; 
 break;
-case 52: return 35; 
+case 52: return 87; 
 break;
-case 53: this.begin("run"); return 35; 
+case 53: return 35; 
 break;
-case 54: this.begin('h'); return 20; 
+case 54: this.begin("run"); return 35; 
 break;
-case 55: this.popState(); return 80; 
+case 55: this.begin('h'); return 20; 
 break;
 case 56: this.popState(); return 80; 
 break;
 case 57: this.popState(); return 80; 
 break;
-case 58: this.popState(); return 4; 
+case 58: this.popState(); return 80; 
 break;
-case 59: return 4; 
+case 59: this.popState(); return 4; 
+break;
+case 60: return 4; 
 break;
 }
 },
-rules: [/^(?:[^#]*?(?=\$))/,/^(?:[^\$]*?(?=#))/,/^(?:[^\x00]+)/,/^(?:#\*[\s\S]+?\*#)/,/^(?:#\[\[[\s\S]+?\]\]#)/,/^(?:##[^\n]*)/,/^(?:#(?=[a-zA-Z{]))/,/^(?:set[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:if[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:elseif[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:else\b)/,/^(?:\{else\})/,/^(?:end\b)/,/^(?:break\b)/,/^(?:foreach[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:noescape(?=[^a-zA-Z0-9_]+))/,/^(?:define[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:macro[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:in\b)/,/^(?:[%\+\-\*\/])/,/^(?:<=)/,/^(?:>=)/,/^(?:[><])/,/^(?:==)/,/^(?:\|\|)/,/^(?:&&)/,/^(?:!=)/,/^(?:\$!(?=[{a-zA-Z_]))/,/^(?:\$(?=[{a-zA-Z_]))/,/^(?:!)/,/^(?:=)/,/^(?:[ ]+(?=[^,]))/,/^(?:\s+)/,/^(?:\{)/,/^(?:\})/,/^(?::[\s]*)/,/^(?:\{)/,/^(?:\})/,/^(?:\([\s]*(?=[$'"\[\{\-0-9\w()!]))/,/^(?:\))/,/^(?:\[[\s]*(?=[\-$"'0-9{\[\]]+))/,/^(?:\])/,/^(?:\.\.)/,/^(?:\.(?=[a-zA-Z_]))/,/^(?:\.(?=[\d]))/,/^(?:,[ ]*)/,/^(?:"(\\"|[^\"])*")/,/^(?:'(\\'|[^\'])*')/,/^(?:null\b)/,/^(?:false\b)/,/^(?:true\b)/,/^(?:[0-9]+)/,/^(?:[_a-zA-Z][a-zA-Z0-9_\-]*)/,/^(?:[_a-zA-Z][a-zA-Z0-9_\-]*[ ]*(?=\())/,/^(?:#)/,/^(?:.)/,/^(?:\s+)/,/^(?:[\$#])/,/^(?:$)/,/^(?:$)/],
-conditions: {"mu":{"rules":[5,27,28,36,37,38,39,40,41,43,52,54,55,56,58],"inclusive":false},"c":{"rules":[18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,38,39,40,41,43,44,45,46,47,48,49,50,51,52],"inclusive":false},"i":{"rules":[18,19,20,21,22,23,24,25,26,27,28,29,30,32,33,33,34,34,35,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52],"inclusive":false},"h":{"rules":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,27,28,29,30,35,38,39,40,41,43,51,53,55,56,58],"inclusive":false},"esc":{"rules":[57],"inclusive":false},"run":{"rules":[27,28,29,31,32,33,34,35,38,39,40,41,43,44,45,46,47,48,49,50,51,52,55,56,58],"inclusive":false},"INITIAL":{"rules":[0,1,2,59],"inclusive":true}}
+rules: [/^(?:[^#]*?(?=\$))/,/^(?:[^\$]*?(?=#))/,/^(?:[^\x00]+)/,/^(?:#\*[\s\S]+?\*#)/,/^(?:#\[\[[\s\S]+?\]\]#)/,/^(?:##[^\n]*)/,/^(?:#(?=[a-zA-Z{]))/,/^(?:set[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:if[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:elseif[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:else\b)/,/^(?:\{else\})/,/^(?:end\b)/,/^(?:\{end\})/,/^(?:break\b)/,/^(?:foreach[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:noescape(?=[^a-zA-Z0-9_]+))/,/^(?:define[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:macro[ ]*(?=[^a-zA-Z0-9_]+))/,/^(?:in\b)/,/^(?:[%\+\-\*\/])/,/^(?:<=)/,/^(?:>=)/,/^(?:[><])/,/^(?:==)/,/^(?:\|\|)/,/^(?:&&)/,/^(?:!=)/,/^(?:\$!(?=[{a-zA-Z_]))/,/^(?:\$(?=[{a-zA-Z_]))/,/^(?:!)/,/^(?:=)/,/^(?:[ ]+(?=[^,]))/,/^(?:\s+)/,/^(?:\{)/,/^(?:\})/,/^(?::[\s]*)/,/^(?:\{)/,/^(?:\})/,/^(?:\([\s]*(?=[$'"\[\{\-0-9\w()!]))/,/^(?:\))/,/^(?:\[[\s]*(?=[\-$"'0-9{\[\]]+))/,/^(?:\])/,/^(?:\.\.)/,/^(?:\.(?=[a-zA-Z_]))/,/^(?:\.(?=[\d]))/,/^(?:,[ ]*)/,/^(?:"(\\"|[^\"])*")/,/^(?:'(\\'|[^\'])*')/,/^(?:null\b)/,/^(?:false\b)/,/^(?:true\b)/,/^(?:[0-9]+)/,/^(?:[_a-zA-Z][a-zA-Z0-9_\-]*)/,/^(?:[_a-zA-Z][a-zA-Z0-9_\-]*[ ]*(?=\())/,/^(?:#)/,/^(?:.)/,/^(?:\s+)/,/^(?:[\$#])/,/^(?:$)/,/^(?:$)/],
+conditions: {"mu":{"rules":[5,28,29,37,38,39,40,41,42,44,53,55,56,57,59],"inclusive":false},"c":{"rules":[19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,39,40,41,42,44,45,46,47,48,49,50,51,52,53],"inclusive":false},"i":{"rules":[19,20,21,22,23,24,25,26,27,28,29,30,31,33,34,34,35,35,36,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53],"inclusive":false},"h":{"rules":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,28,29,30,31,36,39,40,41,42,44,52,54,56,57,59],"inclusive":false},"esc":{"rules":[58],"inclusive":false},"run":{"rules":[28,29,30,32,33,34,35,36,39,40,41,42,44,45,46,47,48,49,50,51,52,53,56,57,59],"inclusive":false},"INITIAL":{"rules":[0,1,2,60],"inclusive":true}}
 });
 return lexer;
 })();
