@@ -186,6 +186,53 @@ describe('Compile', function() {
       ret = compile.render(context)
       assert.equal('&lt;i&gt;', ret)
     })
+
+    describe('env', function() {
+      it('should throw on property when parent is null', function() {
+        var vm = '$foo.bar';
+        var compile = new Compile(parse(vm), { env: 'development' })
+        function foo() {
+          compile.render()
+        };
+        foo.should.throw(/get property bar of undefined/);
+      });
+
+      it('should throw on index when parent is null', function() {
+        var vm = '$foo[1]';
+        var compile = new Compile(parse(vm), { env: 'development' })
+        function foo() {
+          compile.render()
+        };
+        foo.should.throw(/get property 1 of undefined/);
+      });
+
+      it('should throw on function when parent is null', function() {
+        var vm = '$foo.xx()';
+        var compile = new Compile(parse(vm), { env: 'development' })
+        function foo() {
+          compile.render()
+        };
+        foo.should.throw(/get property xx of undefined/);
+      });
+
+      it('should throw when mult level', function() {
+        var vm = '$foo.bar.xx.bar1';
+        var compile = new Compile(parse(vm), { env: 'development' })
+        function foo() {
+          compile.render({ foo: { bar: {} }});
+        };
+        foo.should.throw(/get property bar1 of undefined/);
+      });
+
+      it('not function', function() {
+        var vm = '$foo.bar.xx()';
+        var compile = new Compile(parse(vm), { env: 'development' })
+        function foo() {
+          return compile.render({ foo: { bar: {} }});
+        };
+        foo.should.throw(/xx is not method/);
+      });
+    });
   })
 
 
