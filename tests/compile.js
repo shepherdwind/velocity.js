@@ -267,7 +267,7 @@ describe('Compile', function() {
     })
 
     it('#if with arguments', function() {
-      var vm = '#if($foo.isTrue(true))true#end'
+      var vm = '#if($foo.isTrue(true))true#{end}'
       var foo = {
         isTrue: function(str) {
           return !!str

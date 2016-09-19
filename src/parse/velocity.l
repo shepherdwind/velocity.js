@@ -43,6 +43,7 @@
 <h>"else"                         { this.popState(); return 'ELSE'; }
 <h>"{else}"                       { this.popState(); return 'ELSE'; }
 <h>"end"                          { this.popState(); return 'END'; }
+<h>"{end}"                        { this.popState(); return 'END'; }
 <h>"break"                        { this.popState(); return 'BREAK'; }
 <h>"foreach"[ ]*/[^a-zA-Z0-9_]+   { return 'FOREACH'; }
 <h>"noescape"/[^a-zA-Z0-9_]+      { return 'NOESCAPE'; }
