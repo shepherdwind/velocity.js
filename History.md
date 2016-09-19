@@ -1,3 +1,8 @@
+## 0.9.0 2016-09-20
+
+- feat: support to throw errors in case null values are used [!71](https://github.com/shepherdwind/velocity.js/issues/71)
+- fix: support {end} [!70](https://github.com/shepherdwind/velocity.js/issues/71)
+
 ## 0.8.5 2016-07-16
 
 - fix bug #foreach with nest empty foreach [!70](https://github.com/shepherdwind/velocity.js/pull/70)
