@@ -1,3 +1,7 @@
+## 0.9.1 2016-11-22
+
+- add typescript DefinitelyTyped index.d.ts
+
 ## 0.9.0 2016-09-20
 
 - feat: support to throw errors in case null values are used [!71](https://github.com/shepherdwind/velocity.js/issues/71)
