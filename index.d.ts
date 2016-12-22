@@ -1,6 +1,6 @@
 interface Velocity {
   parse(vmString: string, blocks?: { [blockName: string]: boolean }, ignoreSpace?: boolean): Array<VELOCITY_AST>
-  render(vmString: string, context?: RenderContext, macros?: Macros): string
+  render(vmString: string, context?: RenderContext, macros?: Macros, config?: CompileConfig): string
 
   Compile: Compile
   Helper: Helper

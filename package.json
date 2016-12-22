@@ -29,7 +29,8 @@
     "should": "^7.0.1"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "pub": "npm version patch && git push origin master && git push origin --tag"
   },
   "spm": {
     "main": "index.js",
