@@ -1,3 +1,7 @@
+## 0.9.3 2017-01-04
+
+- fix: #set false when in forEach statement [#77](https://github.com/shepherdwind/velocity.js/issues/77)
+
 ## 0.9.1 2016-11-22
 
 - add typescript DefinitelyTyped index.d.ts
