@@ -147,4 +147,16 @@ describe('Set && Expression', function() {
       context.a.should.not.have.property('d')
     })
   })
+
+  it('set with foreach', function() {
+    var tpl = `
+#foreach($item in [1..2])
+  #set($bTest = false)
+  #if($item > 1) #set($bTest = true) #end
+  <h1>$bTest</h1>
+#end`
+    const html = render(tpl)
+    html.should.containEql('true')
+    html.should.containEql('false')
+  })
 })

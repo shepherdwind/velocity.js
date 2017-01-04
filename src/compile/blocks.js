@@ -263,7 +263,8 @@ module.exports = function(Velocity, utils) {
 
       }, this);
 
-      return this._render(asts);
+      // keep current condition fix #77
+      return this._render(asts, this.condition);
     }
   });
 };
