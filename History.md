@@ -1,3 +1,7 @@
+## 0.9.4 2017-01-16
+
+- fix: #set bug with eval string [#79](https://github.com/shepherdwind/velocity.js/issues/79)
+
 ## 0.9.3 2017-01-04
 
 - fix: #set false when in forEach statement [#77](https://github.com/shepherdwind/velocity.js/issues/77)

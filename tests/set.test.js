@@ -159,4 +159,19 @@ describe('Set && Expression', function() {
     html.should.containEql('true')
     html.should.containEql('false')
   })
+
+  it('set error #78', function() {
+    var tpl = `
+      #foreach($item in [1..4])
+        #set($bTest = "test1")
+        #if($item % 2 == 0)
+          #set($bTest = "$!{bTest} test2")
+        #end
+        #set($bTest = "$!{bTest} test3")
+        <h1>$bTest</h1>
+      #end
+    `
+    const html = render(tpl).replace(/\n\s.|\s{2}/g, '').trim();
+    html.should.eql('<h1>test1 test3</h1><h1>test1 test2 test3</h1><h1>test1 test3</h1><h1>test1 test2 test3</h1>');
+  })
 })

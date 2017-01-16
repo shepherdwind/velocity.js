@@ -124,7 +124,7 @@ module.exports = function(Velocity, utils) {
      */
     evalStr: function(str) {
       var asts = Velocity.parse(str);
-      return this._render(asts);
+      return this._render(asts, this.condition);
     }
   });
 };
