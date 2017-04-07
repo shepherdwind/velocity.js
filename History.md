@@ -1,3 +1,7 @@
+## 0.9.5 2017-04-07
+
+- fix: support foreach.hasnext when iterating objects [!81](https://github.com/shepherdwind/velocity.js/pull/81)
+
 ## 0.9.4 2017-01-16
 
 - fix: #set bug with eval string [#79](https://github.com/shepherdwind/velocity.js/issues/79)
