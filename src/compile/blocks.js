@@ -195,29 +195,42 @@ module.exports = function(Velocity, utils) {
         return '';
       }
 
-      var len = utils.isArray(_from) ? _from.length : utils.keys(_from).length;
+      if (utils.isArray(_from)) {
+        var len = _from.length;
+        utils.forEach(_from, function(val, i) {
+          if (this._state.break) {
+            return;
+          }
+          // 构造临时变量
+          local[_to] = val;
+          local.foreach = {
+            count: i + 1,
+            index: i,
+            hasNext: i + 1 < len
+          };
+          local.velocityCount = i + 1;
 
-      utils.forEach(_from, function(val, i) {
+          this.local[contextId] = local;
+          ret += this._render(_block, contextId);
 
-        if (this._state.break) {
-          return;
-        }
-        // 构造临时变量
-        local[_to] = val;
-        // TODO: here, the foreach variable give to local, when _from is not an
-        // array, count and hasNext would be undefined, also i is not the
-        // index.
-        local.foreach = {
-          count: i + 1,
-          index: i,
-          hasNext: i + 1 < len
-        };
-        local.velocityCount = i + 1;
-
-        this.local[contextId] = local;
-        ret += this._render(_block, contextId);
-
-      }, this);
+        }, this);
+      } else {
+        var len = utils.keys(_from).length;
+        utils.forEach(utils.keys(_from), function(key, i) {
+          if (this._state.break) {
+            return;
+          }
+          local[_to] = _from[key];
+          local.foreach = {
+            count: i + 1,
+            index: i,
+            hasNext: i + 1 < len
+          };
+          local.velocityCount = i + 1;
+          this.local[contextId] = local;
+          ret += this._render(_block, contextId);
+        }, this);
+      }
 
       // if foreach items be an empty array, then this code will shift current
       // conditions, but not this._render call, so this will shift parent context
