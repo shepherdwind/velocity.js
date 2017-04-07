@@ -18,6 +18,12 @@ describe('Loops', function() {
     assert.equal(' name => hanwen ', render(vm, data))
   })
 
+  it('#foreach with map hasNext', function() {
+    var vm   = '#foreach($product in $products)$product.name#if($foreach.hasNext),#end#end'
+    var data = {products: {product1: {name: "hanwen1"}, product2: {name: "hanwen2"}, product3: {name: "hanwen3"}}};
+    assert.equal('hanwen1,hanwen2,hanwen3', render(vm, data))
+  })
+
   it('#foreach with map keySet', function() {
     var vm = '#foreach($key in $products.keySet())' +
     ' $key => $products.get($key) #end'
@@ -89,6 +95,13 @@ describe('Loops', function() {
     var vm = '#foreach($num in [1..6])' +
     ' #if($foreach.count > 3) #break #end $num #end'
     assert.equal('  1   2   3     4 ', render(vm))
+  })
+
+  it('#break for map', function() {
+    var vm = '#foreach($item in $map)' +
+    ' #if($foreach.count > 2) #break #end $item #end'
+    var data = {map: {item1: '1', item2: '2', item3: '3', item4: '4'}}
+    assert.equal('  1   2     3 ', render(vm, data))
   })
 
   it('foreach for null', function() {
