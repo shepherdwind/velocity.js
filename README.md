@@ -21,14 +21,14 @@ Velocityjs is [velocity](http://velocity.apache.org/) template engine for javasc
 
 [中文版文档](./README-cn.md)
 
-##Features
+## Features
 
 - Supports both client and server side use.
 - Separation of parsing and rendering templates.
 - The basic syntax is fully supported all java version velocity.
 - [Vim Syntax](https://github.com/shepherdwind/vim-velocity) for vim.
 
-##Install
+## Install
 
 via npm:
 
@@ -36,7 +36,7 @@ via npm:
 $ npm install velocityjs
 ```
 
-##Broswer
+## Broswer
 
 Compatible all modern broswer, You can try [test case](http://git.shepherdwind.com/velocity.js/runner/tests.html) on your browser to test it.
 
@@ -46,11 +46,11 @@ For other lower version broswer, you need have those polyfill function.
 2. Date.now
 3. Object.keys
 
-##Examples
+## Examples
 
 You can find a lot of examples from the tests directory. There is no different between the use of browser and NodeJs.
 
-##Public API
+## Public API
 
 ```
 {
@@ -81,7 +81,7 @@ var Velocity = require('velocityjs');
 Velocity.render('string of velocity', context, macros);
 ```
 
-####context
+#### context
 
 `context` is an object or undefined, for vm `$foo.bar`, data look up path will be `context.foo.bar`.
 `context` can have method, and call it just on velocity string.
@@ -123,17 +123,17 @@ params:
 - blocks {object} self define blocks, such as `#cms(1) hello #end`, you can set `{cms: true}`
 - ignorespace {boolean} if set true, then ignore the newline trim.
 
-##Syntax
+## Syntax
 
 Syntax you can find from [velocity user guide](http://velocity.apache.org/engine/devel/user-guide.html)。
 
-###Directives
+### Directives
 
 Directives supports have `set`, `foreach`, `if|else|elseif`, `macro`, `break`, `stop`.
 
 Some othe directive `evaluate`, `define`, `parse`, do not supported default, but You can realize by context or macros, for example [parse](https://github.com/shepherdwind/velocity.js/blob/master/tests/compile.js#L627)
 
-##Questions
+## Questions
 
 You can find help from those ways:
 
@@ -145,6 +145,6 @@ You can find help from those ways:
 
 Recommend an other [velocity](https://github.com/fool2fish/velocity).
 
-##License
+## License
 
 (The MIT License)
