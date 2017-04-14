@@ -685,6 +685,12 @@ describe('Compile', function() {
         val: 'foo'
       }));
     });
+    it.only('newline after', function() {
+      var vm = '#[[This content is ignored. $val]]#\na';
+      assert.equal('This content is ignored. $val\na', render(vm, {
+        val: 'foo'
+      }));
+    });
   });
 
   describe('Object|Array#toString', function() {
