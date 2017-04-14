@@ -28,7 +28,8 @@ var parse = function(str, blocks, ignoreSpace) {
    */
   ignoreSpace || utils.forEach(asts, function trim(ast, i) {
     var TRIM_REG = /^[ \t]*\n/;
-    if (ast.type && ast.type !== 'references') {
+    // after raw and references, then keep the newline.
+    if (ast.type && ['references', 'raw'].indexOf(ast.type) === -1) {
       var _ast = asts[i + 1];
       if (typeof _ast === 'string' && TRIM_REG.test(_ast)) {
         asts[i + 1] = _ast.replace(TRIM_REG, '');
