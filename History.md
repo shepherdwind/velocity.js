@@ -1,3 +1,7 @@
+## 0.9.6 2017-04-14
+
+- fix: keep newline after unparse block [!83](https://github.com/shepherdwind/velocity.js/pull/83)
+
 ## 0.9.5 2017-04-07
 
 - fix: support foreach.hasnext when iterating objects [!81](https://github.com/shepherdwind/velocity.js/pull/81)
