@@ -2,6 +2,7 @@
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
   "version": "0.9.6",
+  "license": "MIT",
   "keywords": [
     "velocity template"
   ],
