@@ -1,3 +1,7 @@
+## 0.10.0 2017-11-08
+
+- feat: support text version of logical operators [!90](https://github.com/shepherdwind/velocity.js/pull/90)
+
 ## 0.9.6 2017-04-14
 
 - fix: keep newline after unparse block [!83](https://github.com/shepherdwind/velocity.js/pull/83)
