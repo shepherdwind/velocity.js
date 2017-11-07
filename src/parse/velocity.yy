@@ -169,9 +169,9 @@ expression
 
 math
   : math '||' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '||' }; }
   | math '&&' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '&&' }; }
   | math '+' math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '-' math
@@ -183,17 +183,17 @@ math
   | math '%' math
       { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
   | math '>' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '>' }; }
   | math '<' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '<' }; }
   | math '==' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '==' }; }
   | math '>=' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '>=' }; }
   | math '<=' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '<=' }; }
   | math '!=' math
-      { $$ = {type: 'math', expression: [$1, $3], operator: $2 }; }
+      { $$ = {type: 'math', expression: [$1, $3], operator: '!=' }; }
   | parenthesis
       { $$ = $1; }
   | '-' parenthesis
