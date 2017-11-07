@@ -52,12 +52,22 @@
 <c,i>"in"                         { return 'IN'; }
 <c,i>[%\+\-\*/]                   { return yytext; }
 <c,i>"<="                         { return yytext; }
+<c,i>"le"                         { return '<='; }
 <c,i>">="                         { return yytext; }
+<c,i>"ge"                         { return '>='; }
 <c,i>[><]                         { return yytext; }
+<c,i>"gt"                         { return '>'; }
+<c,i>"lt"                         { return '<'; }
 <c,i>"=="                         { return yytext; }
+<c,i>"eq"                         { return '=='; }
 <c,i>"||"                         { return yytext; }
+<c,i>"or"                         { return '||'; }
 <c,i>"&&"                         { return yytext; }
+<c,i>"and"                        { return '&&'; }
 <c,i>"!="                         { return yytext; }
+<c,i>"ne"                         { return '!='; }
+<c,i>"not"                        { return '!'; }
+
 <mu,c,run,h,i>"$!"/[{a-zA-Z_]     { return 'DOLLAR'; }
 <mu,run,h,c,i>"$"/[{a-zA-Z_]      { return 'DOLLAR'; }
 <h,run,c,i>"!"                    { return yytext; }

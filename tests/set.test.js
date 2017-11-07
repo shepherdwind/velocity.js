@@ -109,6 +109,17 @@ describe('Set && Expression', function() {
     assert.equal(false, getContext('#set($foo = 10 == 11)').foo)
   })
 
+  it('expression compare text version', function() {
+    assert.equal(false, getContext('#set($foo = 10 gt 11)').foo)
+    assert.equal(true, getContext('#set($foo = 10 lt 11)').foo)
+    assert.equal(true, getContext('#set($foo = 10 ne 11)').foo)
+    assert.equal(true, getContext('#set($foo = 10 le 11)').foo)
+    assert.equal(true, getContext('#set($foo = 11 le 11)').foo)
+    assert.equal(false, getContext('#set($foo = 12 le 11)').foo)
+    assert.equal(true, getContext('#set($foo = 12 ge 11)').foo)
+    assert.equal(false, getContext('#set($foo = 10 eq 11)').foo)
+  })
+
   it('expression logic', function() {
     assert.equal(false, getContext('#set($foo = 10 == 11 && 3 > 1)').foo)
     assert.equal(true, getContext('#set($foo = 10 < 11 && 3 > 1)').foo)
@@ -117,6 +128,16 @@ describe('Set && Expression', function() {
     assert.equal(false, getContext('#set($foo = $a > $b)', {a: 1, b: 2}).foo)
     assert.equal(false, getContext('#set($foo = $a && $b)', {a: 1, b: 0}).foo)
     assert.equal(true, getContext('#set($foo = $a || $b)', {a: 1, b: 0}).foo)
+  })
+
+  it('expression logic text version', function() {
+    assert.equal(false, getContext('#set($foo = 10 eq 11 and 3 gt 1)').foo)
+    assert.equal(true, getContext('#set($foo = 10 lt 11 and 3 gt 1)').foo)
+    assert.equal(true, getContext('#set($foo = 10 gt 11 or 3 gt 1)').foo)
+    assert.equal(true, getContext('#set($foo = not(10 gt 11) and 3 gt 1)').foo)
+    assert.equal(false, getContext('#set($foo = $a gt $b)', {a: 1, b: 2}).foo)
+    assert.equal(false, getContext('#set($foo = $a and $b)', {a: 1, b: 0}).foo)
+    assert.equal(true, getContext('#set($foo = $a or $b)', {a: 1, b: 0}).foo)
   })
 
   it('#set context should be global, #25', function() {
