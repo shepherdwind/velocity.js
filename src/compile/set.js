@@ -52,12 +52,19 @@ module.exports = function(Velocity, utils){
         context[ref.id] = baseRef;
         var len = ref.path ? ref.path.length: 0;
 
+        const self = this;
         //console.log(val);
         utils.some(ref.path, function(exp, i){
 
           var isEnd = len === i + 1;
           var key = exp.id;
-          if (exp.type === 'index')  key = key.value;
+          if (exp.type === 'index')  {
+            if (exp.id) {
+              key = self.getLiteral(exp.id);
+            } else {
+              key = key.value;
+            }
+          }
 
           if (isEnd) {
             return baseRef[key] = val;

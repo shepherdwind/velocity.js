@@ -140,6 +140,27 @@ describe('Set && Expression', function() {
     assert.equal(true, getContext('#set($foo = $a or $b)', {a: 1, b: 0}).foo)
   })
 
+  it('var in key', function() {
+    var vm = '#set($o = {}) #set($key = "k") #set($o[$key] = "c") #set($o.f = "d") $o $o[$key]'
+    var ret = render(vm).replace(/\s+/g, '')
+    assert.equal('{k=c,f=d}c', ret)
+
+    var vm2 = `
+      #set($obj = {})
+      #set($objlist = [
+        {"k": "a"},
+        {"k": "b"},
+        {"k": "c"}
+      ])
+      #foreach( $item in $!{objlist} )
+        #set($obj[$item.k] = $item)
+      #end
+      $obj
+    `
+    var ret2 = render(vm2).replace(/\s+/g, '')
+    assert.equal('{a={k=a},b={k=b},c={k=c}}', ret2);
+  })
+
   it('#set context should be global, #25', function() {
     var vm = '#macro(local) #set($val =1) $val #end #local() $val'
     var ret = render(vm).replace(/\s+/g, '')
