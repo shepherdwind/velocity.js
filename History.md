@@ -1,3 +1,7 @@
+## 0.10.1 2017-11-10
+
+- fix: #set variable key not work [!91](https://github.com/shepherdwind/velocity.js/issues/92)
+
 ## 0.10.0 2017-11-08
 
 - feat: support text version of logical operators [!90](https://github.com/shepherdwind/velocity.js/pull/90)
