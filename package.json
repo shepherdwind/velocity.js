@@ -18,7 +18,7 @@
   "bin": {
     "velocity": "bin/velocity"
   },
-  "broswer": {
+  "browser": {
     "fs": false
   },
   "devDependencies": {
