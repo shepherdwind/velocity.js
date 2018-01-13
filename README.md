@@ -11,7 +11,7 @@ Velocity - Template Engine
 [npm-url]: http://npmjs.org/package/velocityjs
 [download-image]: https://img.shields.io/npm/dm/velocityjs.svg?style=flat-square
 [download-url]: https://npmjs.org/package/velocityjs
-[travis-image]: https://img.shields.io/travis/shepherdwind/velocity.js.svg?style=flat-square
+[travis-image]: https://img.shields.io/travis/shepherdwind/velocity.js/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/shepherdwind/velocity.js
 [coveralls-image]: https://img.shields.io/coveralls/shepherdwind/velocity.js.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/shepherdwind/velocity.js?branch=master
