@@ -1,3 +1,7 @@
+## 1.0.0 2018-01-13
+
+- feat: support macro bodyContext [!97](https://github.com/shepherdwind/velocity.js/pull/97)
+
 ## 0.10.1 2017-11-10
 
 - fix: #set variable key not work [!91](https://github.com/shepherdwind/velocity.js/issues/92)
