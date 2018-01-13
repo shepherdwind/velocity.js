@@ -8,7 +8,8 @@ var blockTypes = {
   foreach: true,
   macro: true,
   noescape: true,
-  define: true
+  define: true,
+  macro_body: true,
 };
 
 var customBlocks = [];
