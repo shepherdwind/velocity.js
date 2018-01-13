@@ -29,6 +29,9 @@ module.exports = function(Velocity, utils) {
         case 'define':
           this.setBlockDefine(block);
           break;
+        case 'macro_body':
+          ret = this.getMacroBody(block);
+          break;
         default:
           ret = this._render(block);
       }
@@ -61,10 +64,17 @@ module.exports = function(Velocity, utils) {
       };
     },
 
+    getMacroBody: function(asts) {
+      const ast = asts[0];
+      var _block = asts.slice(1);
+      var bodyContent = this.eval(_block, {});
+      return this.getMacro(ast, bodyContent);
+    },
+
     /**
      * parse macro call
      */
-    getMacro: function(ast) {
+    getMacro: function(ast, bodyContent) {
       var macro = this.macros[ast.id];
       var ret = '';
 
@@ -106,7 +116,7 @@ module.exports = function(Velocity, utils) {
         var asts = macro.asts;
         var args = macro.args;
         var callArgs = ast.args;
-        var local = {};
+        var local = { bodyContent: bodyContent };
         var guid = utils.guid();
         var contextId = 'macro:' + ast.id + ':' + guid;
 

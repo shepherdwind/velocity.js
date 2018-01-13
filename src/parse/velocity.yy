@@ -58,6 +58,8 @@ directives
       { $$ = $1; }
   | macro_call
       { $$ = $1; }
+  | macro_body
+      { $$ = $1; }
   ;
 
 set
@@ -125,6 +127,13 @@ macro_call
       { $$ = { type:"macro_call", id: $2.replace(/^\s+|\s+$/g, ''), args: $4 }; }
   | HASH ID PARENTHESIS CLOSE_PARENTHESIS
       { $$ = { type:"macro_call", id: $2.replace(/^\s+|\s+$/g, '') }; }
+  ;
+
+macro_body
+  : MACRO_BODY ID PARENTHESIS macro_call_args_all CLOSE_PARENTHESIS
+      { $$ = {type: 'macro_body', id: $2, args: $4 }; }
+  | MACRO_BODY ID PARENTHESIS CLOSE_PARENTHESIS
+      { $$ = {type: 'macro_body', id: $2 }; }
   ;
 
 macro_call_args
