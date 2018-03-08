@@ -1,3 +1,7 @@
+## 10.1 2018-03-08
+
+- fix: #set bug in nested #foreach loops [#100](https://github.com/shepherdwind/velocity.js/issues/100)
+
 ## 1.0.0 2018-01-13
 
 - feat: support macro bodyContext [!97](https://github.com/shepherdwind/velocity.js/pull/97)

@@ -22,10 +22,11 @@ module.exports = function(Velocity, utils){
       var ref = ast.equal[0];
       var context  = this.getContext();
 
-      //see https://github.com/shepherdwind/velocity.js/issues/25
+      // @see #25
       if (this.condition && this.condition.indexOf('macro:') === 0) {
         context = this.context;
-      } else if (this.context[ref.id] != null) {
+      } else {
+        // set var to global context, see #100
         context = this.context;
       }
 

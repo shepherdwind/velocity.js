@@ -116,4 +116,27 @@ describe('Loops', function() {
     html.should.containEql('<li>1</li>');
     html.should.containEql('<li>2</li>');
   });
+
+  it('issue 100', function() {
+    const vm = `
+      #set($records = [[1], [2], [3]])
+      #foreach($rec in $records)
+        #set($match = true)
+        #foreach($val in $rec)
+            #if($val % 2 != 0)
+                #set($match = false)
+                #break
+            #end
+        #end
+        #if($match == true)
+            matched: "$rec"
+        #end
+      #end
+    `;
+    const context = {
+      records: [[1], [2], [3]]
+    };
+    const ret = render(vm, context);
+    ret.replace(/\s+/g, '').should.equal('matched:"[2]"');
+  });
 })
