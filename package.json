@@ -19,7 +19,8 @@
     "velocity": "bin/velocity"
   },
   "browser": {
-    "fs": false
+    "fs": false,
+    "path": false
   },
   "devDependencies": {
     "coveralls": "~2.11.2",
