@@ -1,4 +1,8 @@
-## 10.1 2018-03-08
+## 1.0.2 2018-06-06
+
+- fix: ignore path where build on broswer, fix issue [#102](https://github.com/shepherdwind/velocity.js/issues/102)
+
+## 1.0.1 2018-03-08
 
 - fix: #set bug in nested #foreach loops [#100](https://github.com/shepherdwind/velocity.js/issues/100)
 
