@@ -265,7 +265,8 @@ module.exports = function(Velocity, utils) {
       } else if (id === 'size') {
 
         return getSize(baseRef);
-
+      } else if (id === 'put') {
+        return baseRef[this.getLiteral(property.args[0])] = this.getLiteral(property.args[1]);
       } else {
 
         ret = baseRef[id];
