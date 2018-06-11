@@ -1,4 +1,4 @@
-module.exports = function(Velocity, utils){
+module.exports = function(Velocity, utils) {
   /**
    * 变量设置
    */
@@ -6,7 +6,7 @@ module.exports = function(Velocity, utils){
     /**
      * 获取执行环境，对于macro中定义的变量，为局部变量，不贮存在全局中，执行后销毁
      */
-    getContext: function(){
+    getContext: function() {
       var condition = this.condition;
       var local = this.local;
       if (condition) {
@@ -18,9 +18,9 @@ module.exports = function(Velocity, utils){
     /**
      * parse #set
      */
-    setValue: function(ast){
+    setValue: function(ast) {
       var ref = ast.equal[0];
-      var context  = this.getContext();
+      var context = this.getContext();
 
       // @see #25
       if (this.condition && this.condition.indexOf('macro:') === 0) {
@@ -36,7 +36,7 @@ module.exports = function(Velocity, utils){
       if (valAst.type === 'math') {
         val = this.getExpression(valAst);
       } else {
-        val = this.getLiteral(ast.equal[1]);
+        val = this.config.valueMapper(this.getLiteral(ast.equal[1]));
       }
 
       if (!ref.path) {
@@ -54,9 +54,7 @@ module.exports = function(Velocity, utils){
         var len = ref.path ? ref.path.length: 0;
 
         const self = this;
-        //console.log(val);
-        utils.some(ref.path, function(exp, i){
-
+        utils.some(ref.path, function(exp, i) {
           var isEnd = len === i + 1;
           var key = exp.id;
           if (exp.type === 'index')  {

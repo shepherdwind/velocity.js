@@ -187,6 +187,19 @@ describe('Compile', function() {
       assert.equal('&lt;i&gt;', ret)
     })
 
+    it ('valueMapper support', () => {
+      const values = [];
+      const vm = '#set($foo = "bar")\n$foo'
+      const ret = render(vm, {}, {}, {
+        valueMapper: (value) => {
+          values.push(value);
+          return 'foo';
+        },
+      });
+      assert.deepEqual(values, ['bar']);
+      assert.equal(ret.trim(), 'foo');
+    });
+
     describe('env', function() {
       it('should throw on property when parent is null', function() {
         var vm = '$foo.bar';
