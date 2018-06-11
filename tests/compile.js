@@ -694,6 +694,18 @@ describe('Compile', function() {
     });
   });
 
+  describe('assignment via .put', function () {
+    it('should set a key to an object', function() {
+      var vm = `
+        #set($foo = {})
+        #set($test = $foo.put('foo', 'bar'))
+        $foo["foo"]
+      `;
+      var expected = 'bar';
+      assert.equal(render(vm).trim(), expected)
+    });
+  });
+
   describe('Object|Array#toString', function() {
     it('simple object', function() {
       var vm = '$data';
