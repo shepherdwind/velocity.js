@@ -1,3 +1,8 @@
+## 1.1.0 2018-06-12
+
+- feat: Add support for .put, fix issue [#103](https://github.com/shepherdwind/velocity.js/issues/103) by @lightsofapollo
+- feat: add config.valueMapper support by @lightsofapollo [#105](https://github.com/shepherdwind/velocity.js/pull/105)
+
 ## 1.0.2 2018-06-06
 
 - fix: ignore path where build on broswer, fix issue [#102](https://github.com/shepherdwind/velocity.js/issues/102)

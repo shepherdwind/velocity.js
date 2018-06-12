@@ -36,8 +36,10 @@ interface VELOCITY_AST {
 }
 
 interface CompileConfig {
-  escape: boolean // escape variable
-  unescape: { [varName: string]: boolean } // unescape var config
+  escape?: boolean // escape variable
+  unescape?: { [varName: string]: boolean } // unescape var config
+  // @see https://github.com/shepherdwind/velocity.js/pull/105
+  valueMapper?: (value: any) => any
 }
 
 declare module 'velocityjs' {
