@@ -79,6 +79,12 @@ describe('Compile', function() {
       var vm2 = '#if($foo.bar.size()) ok #{else} nosize #end'
       assert.equal(' nosize ', render(vm2, {foo: {bar: 123}}))
       assert.equal(' nosize ', render(vm2, {foo: {}}))
+
+      var vm3 = '$foo.size()';
+      function fooSize() {
+        return 3;
+      }
+      assert.equal('3', render(vm3, { foo: { size: fooSize } }))
     })
 
     it('quiet reference', function() {
@@ -717,6 +723,19 @@ describe('Compile', function() {
       var expected = 'bar';
       assert.equal(render(vm).trim(), expected)
     });
+    it('should set a key to an object', function() {
+      var vm = `
+      $foo.put()
+      `;
+      var expected = 'bar';
+      assert.equal(render(vm, {
+        foo: {
+          put: function() {
+            return 'bar';
+          }
+        }
+      }).trim(), expected)
+    });
   });
 
   describe('Object|Array#toString', function() {
@@ -732,10 +751,32 @@ describe('Compile', function() {
       assert.equal(render(vm, {data: {k: "v", k2: "v2"}}), expected)
     });
 
+    it('object.keySet() with object that has keySet method', function() {
+      var vm = '$data.keySet()';
+      var expected = '[k, k2]';
+      function keySet() {
+        return ['k', 'k2'];
+      }
+      assert.equal(render(vm, {data: { keySet: keySet }}), expected)
+    });
+
     it('object.entrySet()', function() {
       var vm = '$data.entrySet()';
       var expected = '[{key=k, value=v}, {key=k2, value=v2}]';
       assert.equal(render(vm, {data: {k: "v", k2: "v2"}}), expected)
+    });
+
+    it('object.entrySet() with object that has entrySet method', function() {
+      var vm = '$data.entrySet()';
+      var expected = '{k=v, k2=v2}';
+
+      function entrySet() {
+        return {
+          k: "v", k2: "v2"
+        }
+      }
+
+      assert.equal(render(vm, {data: { entrySet: entrySet }}), expected)
     });
 
     it('nested object', function() {
