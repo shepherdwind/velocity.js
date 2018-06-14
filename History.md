@@ -1,3 +1,7 @@
+## 1.1.1 2018-06-14
+
+- fix: Allow own keySet, entrySet, put and size methods on objects by @lightsofapollo [!106](https://github.com/shepherdwind/velocity.js/pull/106)
+
 ## 1.1.0 2018-06-12
 
 - feat: Add support for .put, fix issue [#103](https://github.com/shepherdwind/velocity.js/issues/103) by @lightsofapollo
