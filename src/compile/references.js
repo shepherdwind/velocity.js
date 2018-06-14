@@ -249,11 +249,11 @@ module.exports = function(Velocity, utils) {
       } else if (id.indexOf('is') === 0 && !(id in baseRef)) {
 
         return getter(baseRef, id.slice(2));
-      } else if (id === 'keySet') {
+      } else if (id === 'keySet' && !baseRef[id]) {
 
         return utils.keys(baseRef);
 
-      } else if (id === 'entrySet') {
+      } else if (id === 'entrySet' && !baseRef[id]) {
 
         ret = [];
         utils.forEach(baseRef, function(value, key) {
@@ -262,10 +262,10 @@ module.exports = function(Velocity, utils) {
 
         return ret;
 
-      } else if (id === 'size') {
+      } else if (id === 'size' && !baseRef[id]) {
 
         return getSize(baseRef);
-      } else if (id === 'put') {
+      } else if (id === 'put' && !baseRef[id]) {
         return baseRef[this.getLiteral(property.args[0])] = this.getLiteral(property.args[1]);
       } else {
 
