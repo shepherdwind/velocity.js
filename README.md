@@ -36,11 +36,11 @@ via npm:
 $ npm install velocityjs
 ```
 
-## Broswer
+## Browser
 
-Compatible all modern broswer, You can try [test case](http://git.shepherdwind.com/velocity.js/runner/tests.html) on your browser to test it.
+Compatible with all modern browsers. You can try [test case](http://git.shepherdwind.com/velocity.js/runner/tests.html) in your browser to test it.
 
-For other lower version broswer, you need have those polyfill function.
+For other lower version browsers, you need have those polyfill function.
 
 1. Array.prototype map, forEach, some, filter, every, indexOf
 2. Date.now
