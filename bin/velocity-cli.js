@@ -5,7 +5,7 @@ var currentPath = process.cwd();
 
 var Velocity = require('../src/velocity');
 var utils = require('../src/utils');
-var Parser = Velocity.Parser;
+var parse = Velocity.parse;
 var Structure = Velocity.Helper.Structure;
 var Jsonify = Velocity.Helper.Jsonify;
 
@@ -35,19 +35,9 @@ function buildAst(files, prefix){
       var template = _template;
 
       var str = fs.readFileSync(currentPath + '/' + file).toString();
-      var asts = Parser._parse(str);
-      var requires = getAllLoad(asts);
-      asts = utils.makeLevel(asts);
+      var asts = parse(str);
 
       template = template.replace('{content}', JSON.stringify(asts, null, 2));
-      template = template.replace('{requires}', requires.join(','));
-      template = template.replace('"{del}', '');
-      template = template.replace('{del}"', '');
-      var name = '';
-      if (prefix) {
-        var name =  '"' + prefix + '/' + path.basename(file, '.vm') + '", ';
-      }
-      template = template.replace('{name}', name);
       template = escapeIt(template);
 
       console.log('read js ' + file);
@@ -56,28 +46,6 @@ function buildAst(files, prefix){
     }
 
   });
-}
-
-function getAllLoad(asts){
-
-  var requires = [];
-
-  asts.forEach(function(ast, i){
-
-    if (ast.type === 'macro_call' && ast.id === 'parse') {
-
-      var id = ast.args[0];
-      if (id.type !== 'string') {
-        throw Error('#parse arguments must be string');
-      }
-
-      requires.push('"' + id.value.replace('.vm', '') + '"');
-      asts[i] = '{del}arguments[' + requires.length + ']{del}';
-    }
-
-  });
-
-  return requires;
 }
 
 function parseVelocity(argv){

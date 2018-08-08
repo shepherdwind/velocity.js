@@ -1,3 +1,7 @@
+## 1.1.2 2018-08-09
+
+- fix Velocity cli error fix [#109](https://github.com/shepherdwind/velocity.js/issues/109)
+
 ## 1.1.1 2018-06-14
 
 - fix: Allow own keySet, entrySet, put and size methods on objects by @lightsofapollo [!106](https://github.com/shepherdwind/velocity.js/pull/106)
