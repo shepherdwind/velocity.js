@@ -738,6 +738,29 @@ describe('Compile', function() {
     });
   });
 
+  describe('Add into empty array', function () {
+    it('should add item to array', function() {
+      var vm = `
+        #set($foo = [])
+        #set($ignore = $foo.add('foo'))
+        $foo
+      `;
+      var expected = '[foo]';
+      assert.equal(render(vm).trim(), expected)
+    });
+
+    it('should add object to array', function() {
+      var vm = `
+        #set($foo = [])
+        #set($ignore = $foo.add({'foo':'bar'}))
+        $foo
+      `;
+      var expected = '[{foo=bar}]';
+      assert.equal(render(vm).trim(), expected)
+    });
+
+  });
+
   describe('Object|Array#toString', function() {
     it('simple object', function() {
       var vm = '$data';
