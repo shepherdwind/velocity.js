@@ -759,6 +759,15 @@ describe('Compile', function() {
       assert.equal(render(vm).trim(), expected)
     });
 
+    it('should not add when is object', function() {
+      var vm = `
+        #set($foo = {})
+        #set($ignore = $foo.add({'foo':'bar'}))
+        $foo
+      `;
+      var expected = '{}';
+      assert.equal(render(vm).trim(), expected)
+    });
   });
 
   describe('Object|Array#toString', function() {

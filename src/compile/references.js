@@ -267,7 +267,7 @@ module.exports = function(Velocity, utils) {
         return getSize(baseRef);
       } else if (id === 'put' && !baseRef[id]) {
         return baseRef[this.getLiteral(property.args[0])] = this.getLiteral(property.args[1]);
-      } else if (id === 'add' && !baseRef[id]) {
+      } else if (id === 'add' && !baseRef[id] && typeof baseRef.push === 'function') {
         return baseRef.push(this.getLiteral(property.args[0]));
       } else {
 

@@ -31,7 +31,7 @@
     "should": "^7.0.1"
   },
   "scripts": {
-    "test": "make test",
+    "test": "mocha tests --require should",
     "pub": "npm version patch && npm publish && git push origin master && git push origin --tag"
   },
   "spm": {

@@ -1,3 +1,7 @@
+## 1.1.3 2018-09-18
+
+- fixes issue#113 support for add method on arrays by @gauravlanjekar [#114](https://github.com/shepherdwind/velocity.js/pull/114/)
+
 ## 1.1.2 2018-08-09
 
 - fix Velocity cli error fix [#109](https://github.com/shepherdwind/velocity.js/issues/109)

@@ -9,24 +9,6 @@ parse:
 		node ../../$(BIN)/jison velocity.yy velocity.l \
 		&& mv velocity.js index.js
 
-test:
-	node $(BIN)/_mocha tests --require should
-
-spm:
-	spm build --skip fs,path -O build
-
-runner:
-	@node tests/script/syncRunner.js
-
-pages: spm runner
-	cp build/velocityjs/${version}/*.js tests/runner/
-	cp tests/runner/* ../gh-pages/velocity.js/runner/
-
-publish:
-	@git tag ${version}
-	@git push origin ${version}
-	@npm publish
-
 cov: $(SRC) $(TESTS)
 	@node $(BIN)/istanbul cover \
 		-x src/parse/index.js \
