@@ -770,6 +770,38 @@ describe('Compile', function() {
     });
   });
 
+  describe('extracting items via .subList', function() {
+    it('should return empty array if original array is empty', function() {
+      var vm = `
+        #set($foo = [])
+        #set($bar = $foo.subList(0, 1))
+        $bar
+      `;
+      var expected = '[]';
+      assert.equal(render(vm).trim(), expected)
+    });
+
+    it('should return a single item', function() {
+      var vm = `
+        #set($foo = [1, 2, 3])
+        #set($bar = $foo.subList(0, 1))
+        $bar
+      `;
+      var expected = '[1]';
+      assert.equal(render(vm).trim(), expected)
+    });
+
+    it('should return multiple items', function() {
+      var vm = `
+        #set($foo = [1, 2, 3])
+        #set($bar = $foo.subList(1, 3))
+        $bar
+      `;
+      var expected = '[2, 3]';
+      assert.equal(render(vm).trim(), expected)
+    });
+  });
+
   describe('Object|Array#toString', function() {
     it('simple object', function() {
       var vm = '$data';
