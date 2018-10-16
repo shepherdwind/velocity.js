@@ -269,6 +269,8 @@ module.exports = function(Velocity, utils) {
         return baseRef[this.getLiteral(property.args[0])] = this.getLiteral(property.args[1]);
       } else if (id === 'add' && !baseRef[id] && typeof baseRef.push === 'function') {
         return baseRef.push(this.getLiteral(property.args[0]));
+      } else if (id === 'subList' && !baseRef[id]) {
+        return baseRef.slice(this.getLiteral(property.args[0]), this.getLiteral(property.args[1]));
       } else {
 
         ret = baseRef[id];
