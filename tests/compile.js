@@ -738,6 +738,48 @@ describe('Compile', function() {
     });
   });
 
+  describe('deletion via .remove', function () {
+    it('should remove a key from an object', function() {
+      var vm = `
+        #set($test = {'foo': 'bar'})
+        #set($baz = $test.remove('foo'))
+        $test
+      `;
+      var expected = '{}';
+      assert.equal(render(vm).trim(), expected);
+    });
+
+    it('should return the value of the removed key', function () {
+      var vm = `
+        #set($test = {'foo': 'bar'})
+        #set($baz = $test.remove('foo'))
+        $baz
+      `;
+      var expected = 'bar';
+      assert.equal(render(vm).trim(), expected);
+    });
+
+    it('should remove a value from an array', function () {
+      var vm = `
+        #set($test = ['foo', 'bar'])
+        #set($baz = $test.remove('bar'))
+        $test
+      `;
+      var expected = '[foo]';
+      assert.equal(render(vm).trim(), expected);
+    });
+
+    it('should return the removed value', function () {
+      var vm = `
+        #set($test = ['foo', 'bar'])
+        #set($baz = $test.remove('bar'))
+        $baz
+      `;
+      var expected = 'bar';
+      assert.equal(render(vm).trim(), expected);
+    });
+  });
+
   describe('Add into empty array', function () {
     it('should add item to array', function() {
       var vm = `
