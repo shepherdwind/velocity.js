@@ -83,8 +83,8 @@
 <i,run,c,i>"{"                         { return 'MAP_BEGIN'; }
 <i,run,c,i>"}"                         { return 'MAP_END'; }
 <h,run,c,i>":"[\s]*                    { return 'MAP_SPLIT'; }
-<mu>"{"                              { yy.begin = true; return 'VAR_BEGIN'; }
-<mu>"}"                              { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
+<mu>"{"[\s]*                               { yy.begin = true; return 'VAR_BEGIN'; }
+<mu>[\s]*"}"                              { this.popState(); if (yy.begin === true) { yy.begin = false; return 'VAR_END';} else { return 'CONTENT'; } }
 <mu,h,run,c,i>"("[\s]*/[$'"\[\{\-0-9\w()!] { this.begin("c"); return 'PARENTHESIS'; }
 <mu,h,run,c,i>")"                 {
                                     if (this.popState() === "c") {

@@ -723,6 +723,14 @@ describe('Compile', function() {
       var expected = 'bar';
       assert.equal(render(vm).trim(), expected)
     });
+    it('fix issue #120, push only', function() {
+      var vm = `
+        #set($foo = {})
+        $!{ foo.put("a", 1) }
+      `;
+      var expected = '1';
+      assert.equal(render(vm).trim(), expected)
+    });
     it('should set a key to an object', function() {
       var vm = `
       $foo.put()

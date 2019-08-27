@@ -1,6 +1,7 @@
 ## 1.1.4 2019-08-27
 
 - Added support for remove in ArrayList and Map @mdrewt [#124](https://github.com/shepherdwind/velocity.js/pull/124)
+- Support format quiet syntax ${ ref }, fix [#120](https://github.com/shepherdwind/velocity.js/pull/120)
 
 ## 1.1.3 2018-09-18
 
