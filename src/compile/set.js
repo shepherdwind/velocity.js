@@ -1,10 +1,10 @@
 module.exports = function(Velocity, utils) {
   /**
-   * 变量设置
+   * #set value
    */
   utils.mixin(Velocity.prototype, {
     /**
-     * 获取执行环境，对于macro中定义的变量，为局部变量，不贮存在全局中，执行后销毁
+     * get variable from context, if run in block, return local context, else return global context
      */
     getContext: function() {
       var condition = this.condition;

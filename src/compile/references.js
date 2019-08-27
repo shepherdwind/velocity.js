@@ -14,7 +14,7 @@ module.exports = function(Velocity, utils) {
   }
 
   /**
-   * unicode转码
+   * unicode encode
    */
   function convert(str) {
 

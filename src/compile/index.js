@@ -4,7 +4,7 @@ function Velocity(asts, config) {
   this.asts = asts;
   this.config = utils.mixin(
     {
-      // 自动输出为经过html encode输出
+      // 自动输出为经过html e输出
       escape: true,
       // 不需要转义的白名单
       unescape: {},

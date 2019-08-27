@@ -1,6 +1,6 @@
 module.exports = function(Velocity, utils){
   /**
-   * expression运算
+   * expression support, include math, logic, compare expression
    */
   utils.mixin(Velocity.prototype, {
     /**

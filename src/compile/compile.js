@@ -23,7 +23,7 @@ module.exports = function(Velocity, utils) {
     },
 
     /**
-     * @param context {object} 上下文环境，数据对象
+     * @param context {object} context object
      * @param macro   {object} self defined #macro
      * @param silent {bool} 如果是true，$foo变量将原样输出
      * @return str

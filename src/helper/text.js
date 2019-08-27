@@ -1,6 +1,7 @@
 module.exports = function(Helper, utils){
   /**
    * 获取引用文本，当引用自身不存在的情况下，需要返回原来的模板字符串
+   * get variable text
    */
   function getRefText(ast){
 
@@ -20,7 +21,6 @@ module.exports = function(Helper, utils){
     }
 
     utils.forEach(ast.path, function(ref){
-      //不支持method并且传递参数
       if (ref.type == 'method') {
         ret += '.' + getMethodText(ref);
       } else if (ref.type == 'index') {

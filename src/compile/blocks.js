@@ -2,12 +2,10 @@
 module.exports = function(Velocity, utils) {
 
   /**
-   * blocks语法处理
+   * blocks such as if, foreach, macro syntax handler
    */
   utils.mixin(Velocity.prototype, {
-    /**
-     * 处理代码库: if foreach macro
-     */
+
     getBlock: function(block) {
 
       var ast = block[0];
@@ -93,6 +91,7 @@ module.exports = function(Velocity, utils) {
           var self = this;
 
           // bug修复：此处由于闭包特性，导致eval函数执行时的this对象是上一次函数执行时的this对象，渲染时上下文发生错误。
+          // js macros export evel function
           jsmacros.eval = function() {
             return self.eval.apply(self, arguments);
           };
@@ -136,9 +135,9 @@ module.exports = function(Velocity, utils) {
 
     /**
      * eval
-     * @param str {array|string} 需要解析的字符串
-     * @param local {object} 局部变量
-     * @param contextId {string}
+     * @param str {array|string} input string
+     * @param local {object} local variable
+     * @param contextId {=string} optional contextId, this contextId use to find local variable
      * @return {string}
      */
     eval: function(str, local, contextId) {
@@ -211,7 +210,7 @@ module.exports = function(Velocity, utils) {
           if (this._state.break) {
             return;
           }
-          // 构造临时变量
+          // for each local variable
           local[_to] = val;
           local.foreach = {
             count: i + 1,

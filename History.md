@@ -1,3 +1,7 @@
+## 1.1.4 2019-08-27
+
+- Added support for remove in ArrayList and Map @mdrewt [#124](https://github.com/shepherdwind/velocity.js/pull/124)
+
 ## 1.1.3 2018-09-18
 
 - fixes issue#113 support for add method on arrays by @gauravlanjekar [#114](https://github.com/shepherdwind/velocity.js/pull/114/)

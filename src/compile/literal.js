@@ -1,7 +1,7 @@
 'use strict';
 module.exports = function(Velocity, utils) {
   /**
-   * literal解释模块
+   * literal parse, include string, integer, array, map, bool data structure
    * @require {method} getReferences
    */
   utils.mixin(Velocity.prototype, {
@@ -9,7 +9,7 @@ module.exports = function(Velocity, utils) {
      * 字面量求值，主要包括string, integer, array, map四种数据结构
      * @param literal {object} 定义于velocity.yy文件，type描述数据类型，value属性
      * 是literal值描述
-     * @return {object|string|number|array}返回对应的js变量
+     * @return {object|string|number|array} js variable
      */
     getLiteral: function(literal) {
 

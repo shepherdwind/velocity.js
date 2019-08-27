@@ -59,7 +59,9 @@ function makeLevel(block, index) {
 
     var isBlockType = blockTypes[type];
 
-    // 自定义类型支持
+    // support custom block , for example
+    // const vm = '#cms(1)<div class="abs-right"> #H(1,"第一个链接") </div> #end'
+    // parse(vm, { cms: true });
     if (!isBlockType && ast.type === 'macro_call' && customBlocks[ast.id]) {
       isBlockType = true;
       ast.type = ast.id;
