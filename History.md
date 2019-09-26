@@ -1,3 +1,17 @@
+## 2.0.0 2019-09-26
+
+Break change
+
+First, default escape config set to false. For example
+
+```
+#set($foo = '<div>') $foo
+``` 
+
+At 1.x , result is `&lt;div&gt;`, for 2.x, output result `<div>`, no escapeHtml variable.
+
+- add quotes to escape when escape option set true [125](https://github.com/shepherdwind/velocity.js/pull/125)
+
 ## 1.1.4 2019-08-27
 
 - Added support for remove in ArrayList and Map @mdrewt [#124](https://github.com/shepherdwind/velocity.js/pull/124)

@@ -111,7 +111,7 @@ params:
 
 ##### config
 
-- escape {boolean} default `true`, default escape variable to html encode, you can set false to close it.
+- escape {boolean} default `false`, default not escape variable to html encode, you can set true to open it.
 - unescape {object} define the object, which key do not need escape. For example, set unescape equal `{control: true}`, so `$control.html` will not escape.
 - env {string} when env equal `development` will throw error when null values are used
 - valueMapper {function} this config allow us to redefine the `#set` value, @see https://github.com/shepherdwind/velocity.js/pull/105

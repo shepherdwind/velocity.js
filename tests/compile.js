@@ -134,7 +134,20 @@ describe('Compile', function() {
       assert.equal('hello world', render(vm, data))
     })
 
-    it('escape default', function() {
+    it('escape false default', function() {
+      var vm = '$name $name2 $cn $cn1'
+      var data = {
+        name: 'hello world',
+        name2: '<i>&a',
+        cn: '中文',
+        cn1: '<i>中文'
+      }
+
+      var ret  = 'hello world <i>&a 中文 <i>中文'
+      assert.equal(ret, render(vm, data))
+    })
+
+    it('escape true', function() {
       var vm = '$name $name2 $cn $cn1'
       var data = {
         name: 'hello world',
@@ -144,15 +157,17 @@ describe('Compile', function() {
       }
 
       var ret  = 'hello world &lt;i&gt;&amp;a 中文 &lt;i&gt;&#20013;&#25991;'
-      assert.equal(ret, render(vm, data))
+      assert.equal(ret, render(vm, data, undefined, { escape: true }))
     })
 
     it('add custom ignore escape function', function() {
       var vm = '$noIgnore($name), $ignore($name)'
       var expected = '&lt;i&gt;, <i>'
 
-      var compile = new Compile(parse(vm))
-      compile.addIgnoreEscpape('ignore')
+      var compile = new Compile(parse(vm), {
+        escape: true,
+        unescape: { ignore: true },
+      });
 
       var context = {
         name: '<i>',
@@ -184,11 +199,11 @@ describe('Compile', function() {
       var ret = compile.render(context)
       assert.equal(expected, ret)
 
-      compile = new Compile(parse(vm), { unescape: { foo: true } })
+      compile = new Compile(parse(vm), { escape: true, unescape: { foo: true } })
       ret = compile.render(context)
       assert.equal(expected, ret)
 
-      compile = new Compile(parse(vm))
+      compile = new Compile(parse(vm), { escape: true })
       ret = compile.render(context)
       assert.equal('&lt;i&gt;', ret)
     })

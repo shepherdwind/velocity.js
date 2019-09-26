@@ -14,7 +14,7 @@ module.exports = function(Velocity, utils) {
   }
 
   /**
-   * unicode encode
+   * escapeHTML
    */
   function convert(str) {
 
@@ -80,22 +80,11 @@ module.exports = function(Velocity, utils) {
   }
 
   utils.mixin(Velocity.prototype, {
-    // 增加某些函数，不需要执行html转义
-    addIgnoreEscpape: function(key) {
-
-      if (!utils.isArray(key)) key = [key]
-
-      utils.forEach(key, function(key) {
-        this.config.unescape[key] = true
-      }, this)
-
-    },
-
     /**
-     * 引用求值
-     * @param {object} ast 结构来自velocity.yy
-     * @param {bool} isVal 取值还是获取字符串，两者的区别在于，求值返回结果，求
-     * 字符串，如果没有返回变量自身，比如$foo
+     * get variable value 
+     * @param {object} ast ast data
+     * @param {bool} isVal for example `$foo`, isVal value should be true, other condition,
+     * `#set($foo = $bar)`, the $bar value get, isVal set to false
      */
     getReferences: function(ast, isVal) {
 

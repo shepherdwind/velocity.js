@@ -4,9 +4,12 @@ function Velocity(asts, config) {
   this.asts = asts;
   this.config = utils.mixin(
     {
-      // 自动输出为经过html e输出
-      escape: true,
-      // 不需要转义的白名单
+      /**
+       * if escapeHtml variable, is set true
+       * $foo value will handle by escapeHtml
+       */
+      escape: false,
+      // whiteList which no need escapeHtml
       unescape: {},
       valueMapper(value) {
         return value;
