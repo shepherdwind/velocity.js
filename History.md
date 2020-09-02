@@ -1,3 +1,7 @@
+## 2.0.1 2020-09-02
+
+- fix Bug with #set inside #foreach [129](https://github.com/shepherdwind/velocity.js/issues/129)
+
 ## 2.0.0 2019-09-26
 
 Break change
