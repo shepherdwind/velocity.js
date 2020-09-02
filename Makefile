@@ -1,6 +1,6 @@
 version = `cat package.json | grep version | awk -F'"' '{print $$4}'`
 SRC = $(wildcard src/*.js src/**/*.js)
-TESTS = $(wildcard tests/*.js)
+TESTS = $(wildcard test/*.js)
 BIN := ./node_modules/.bin
 REPORTER ?= spec
 

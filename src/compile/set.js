@@ -25,7 +25,8 @@ module.exports = function(Velocity, utils) {
       // @see #25
       if (this.condition && this.condition.indexOf('macro:') === 0) {
         context = this.context;
-      } else {
+        // fix #129
+      } else if (!context.hasOwnProperty(ref.id)) {
         // set var to global context, see #100
         context = this.context;
       }

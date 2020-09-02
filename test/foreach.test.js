@@ -139,4 +139,27 @@ describe('Loops', function() {
     const ret = render(vm, context);
     ret.replace(/\s+/g, '').should.equal('matched:"[2]"');
   });
+
+  it('set ok, fix #129', () => {
+    const context = {
+      records: [{ ID: '1' }, { ID: '2' }, { ID: '3' }],
+    };
+    
+    const template1 = `
+    #foreach($item in $records)
+        #set( $item.key = $item.ID )
+    #end
+    $records`;
+    const template2 = `
+    #foreach($x in $records)
+        #set( $item = $x )
+        #set( $item.key = $item.ID )
+    #end
+    $records`;
+
+    const ret = render(template1, context);
+    ret.trim().should.equal('[{ID=1, key=1}, {ID=2, key=2}, {ID=3, key=3}]');
+    const ret2 = render(template2, context);
+    ret2.trim().should.equal('[{ID=1, key=1}, {ID=2, key=2}, {ID=3, key=3}]');
+  });
 })
