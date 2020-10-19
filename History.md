@@ -1,3 +1,7 @@
+## 2.0.2 2020-10-19
+
+- add default set and get method for array and map object [133](https://github.com/shepherdwind/velocity.js/pull/133)
+
 ## 2.0.1 2020-09-02
 
 - fix Bug with #set inside #foreach [129](https://github.com/shepherdwind/velocity.js/issues/129)
