@@ -218,20 +218,23 @@ module.exports = function(Velocity, utils) {
       var id = property.id;
       var ret = '';
 
-      // getter 处理
-      if (id.indexOf('get') === 0 && !(id in baseRef)) {
-        if (id.length === 3) {
-          // get('address')
-          ret = getter(baseRef, this.getLiteral(property.args[0]));
-        } else {
-          // getAddress()
-          ret = getter(baseRef, id.slice(3));
-        }
+      // get(xxx)
+      if (id === 'get' && !(id in baseRef)) {
+        return getter(baseRef, this.getLiteral(property.args[0]));
+      }
 
-        return ret;
+      if (id === 'set' && !(id in baseRef)) {
+        baseRef[this.getLiteral(property.args[0])] = this.getLiteral(property.args[1]);
+        return '';
+      }
+
+      // getter for example: getAddress()
+      if (id.indexOf('get') === 0 && !(id in baseRef)) {
+        return getter(baseRef, id.slice(3));
+      }
 
       // setter 处理
-      } else if (id.indexOf('set') === 0 && !baseRef[id]) {
+      if (id.indexOf('set') === 0 && !baseRef[id]) {
 
         baseRef[id.slice(3)] = this.getLiteral(property.args[0]);
         // $page.setName(123)
