@@ -267,6 +267,11 @@ describe('Compile', function() {
         foo.should.throw(/xx is not method/);
       });
     });
+
+    it.only('replace ok', () => {
+      var vm = '#set($date = "2019-08-01")$date.replace("-","")'
+      assert.equal(render(vm.trim()), "20190801")
+    });
   })
 
 
