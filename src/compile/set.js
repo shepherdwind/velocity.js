@@ -10,7 +10,7 @@ module.exports = function(Velocity, utils) {
       var condition = this.condition;
       var local = this.local;
       if (condition) {
-        return local[condition];
+        return Object.assign(this.context, local[condition]);
       } else {
         return this.context;
       }

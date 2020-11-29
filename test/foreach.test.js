@@ -162,4 +162,42 @@ describe('Loops', function() {
     const ret2 = render(template2, context);
     ret2.trim().should.equal('[{ID=1, key=1}, {ID=2, key=2}, {ID=3, key=3}]');
   });
+
+  it('nested foreach subprop', function() {
+    var tpl = `
+      #set($list = [{"prop": "a"}])
+      #set($list2 = ["a", "b", "c"])
+      #foreach($i in $list)
+          #set($fc = $velocityCount - 1)
+          #foreach($j in $list2)
+              #set($i.prop = "$i.prop$j")
+          #end
+      #end
+      $list
+    `
+    var ret = render(tpl).trim()
+    assert.equal('[{prop=aabc}]', ret);
+  })
+
+  it('nested foreach set', function() {
+    var tpl = `
+      #set($obj = [{
+        "SubProp": [
+          { "SubSubProp": "a" }
+        ]
+      }])
+      #set($subSubPropRealValue = "b")
+      #foreach($sub in $obj)
+          #set($fc = $velocityCount - 1)
+          #foreach($subsub in $sub.SubProp)
+              #set($fcc = $velocityCount - 1)
+              #set($sub.SubProp[$fcc].SubSubProp = $subSubPropRealValue)
+          #end
+          #set($obj[$fc] = $sub)
+      #end
+      $obj
+    `
+    var ret = render(tpl).trim()
+    assert.equal('[{SubProp=[{SubSubProp=b}]}]', ret);
+  })
 })
