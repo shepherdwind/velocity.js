@@ -216,4 +216,42 @@ describe('Set && Expression', function() {
     const html = render(tpl).replace(/\n\s.|\s{2}/g, '').trim();
     html.should.eql('<h1>test1 test3</h1><h1>test1 test2 test3</h1><h1>test1 test3</h1><h1>test1 test2 test3</h1>');
   })
+
+  it('nested foreach subprop', function() {
+    var tpl = `
+      #set($list = [{"prop": "a"}])
+      #set($list2 = ["a", "b", "c"])
+      #foreach($i in $list)
+          #set($fc = $velocityCount - 1)
+          #foreach($j in $list2)
+              #set($i.prop = "$i.prop$j")
+          #end
+      #end
+      $list
+    `
+    var ret = render(tpl).trim()
+    assert.strictEqual('[{prop=aabc}]', ret);
+  })
+
+  it('nested foreach set', function() {
+    var tpl = `
+      #set($obj = [{
+        "SubProp": [
+          { "SubSubProp": "a" }
+        ]
+      }])
+      #set($subSubPropRealValue = "b")
+      #foreach($sub in $obj)
+          #set($fc = $velocityCount - 1)
+          #foreach($subsub in $sub.SubProp)
+              #set($fcc = $velocityCount - 1)
+              #set($sub.SubProp[$fcc].SubSubProp = $subSubPropRealValue)
+          #end
+          #set($obj[$fc] = $sub)
+      #end
+      $obj
+    `
+    var ret = render(tpl).trim()
+    assert.strictEqual('[{SubProp=[{SubSubProp=b}]}]', ret);
+  });
 })

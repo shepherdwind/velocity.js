@@ -6,29 +6,28 @@ module.exports = function(Velocity, utils) {
     /**
      * get variable from context, if run in block, return local context, else return global context
      */
-    getContext: function() {
-      var condition = this.condition;
+    getContext: function(idName) {
       var local = this.local;
-      if (condition) {
-        return local[condition];
-      } else {
-        return this.context;
+      // context find, from the conditions stack top to end
+      for (var condition of this.conditions) {
+        if (local[condition].hasOwnProperty(idName)) {
+          return local[condition];
+        }
       }
+      // not find local variable, return global context
+      return this.context;
     },
     /**
      * parse #set
      */
     setValue: function(ast) {
       var ref = ast.equal[0];
-      var context = this.getContext();
+      var context = this.getContext(ref.id);
 
       // @see #25
       if (this.condition && this.condition.indexOf('macro:') === 0) {
         context = this.context;
         // fix #129
-      } else if (!context.hasOwnProperty(ref.id)) {
-        // set var to global context, see #100
-        context = this.context;
       }
 
       var valAst = ast.equal[1];
