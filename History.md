@@ -1,3 +1,7 @@
+## 2.0.3 2020-12-02
+
+- fix: issue with loop variable access inside nested foreach statements [136](https://github.com/shepherdwind/velocity.js/pull/136)
+
 ## 2.0.2 2020-10-19
 
 - add default set and get method for array and map object [133](https://github.com/shepherdwind/velocity.js/pull/133)
