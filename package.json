@@ -41,7 +41,8 @@
   "auto-changelog": {
     "output": "History.md",
     "hideCredit": true,
-    "startingVersion": "v2.0.3"
+    "startingVersion": "v2.0.3",
+    "ignoreCommitPattern": "(chore: update history.md)|(Merge branch .+)"
   },
   "spm": {
     "main": "index.js",

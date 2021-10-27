@@ -2,8 +2,6 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v2.0.4](https://github.com/shepherdwind/velocity.js/compare/v2.0.4...v2.0.4)
-
 #### [v2.0.4](https://github.com/shepherdwind/velocity.js/compare/v2.0.3...v2.0.4)
 
 > 27 October 2021
