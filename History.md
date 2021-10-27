@@ -2,10 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.0.4](https://github.com/shepherdwind/velocity.js/compare/v2.0.4...v2.0.4)
+
 #### [v2.0.4](https://github.com/shepherdwind/velocity.js/compare/v2.0.3...v2.0.4)
+
+> 27 October 2021
 
 - fix: support null as var, fix #139 [`#139`](https://github.com/shepherdwind/velocity.js/issues/139)
 - chore: support auto changelog [`984fc38`](https://github.com/shepherdwind/velocity.js/commit/984fc387b9dd1b09887a622af49005b4bd27de93)
+- chore: update history.md [`600548e`](https://github.com/shepherdwind/velocity.js/commit/600548eaa8789d7f8b9c3762b8af7794bfbc9b71)
 
 #### [v2.0.3](https://github.com/shepherdwind/velocity.js/compare/v2.0.2...v2.0.3)
 
