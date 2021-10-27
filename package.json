@@ -23,6 +23,7 @@
     "path": false
   },
   "devDependencies": {
+    "auto-changelog": "^2.3.0",
     "coveralls": "~2.11.2",
     "istanbul": "~0.3.5",
     "jison": ">=0.3",
@@ -32,7 +33,15 @@
   },
   "scripts": {
     "test": "mocha test --require should",
-    "pub": "npm version patch && npm publish && git push origin master && git push origin --tag"
+    "prepublishOnly": "npm run version && PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\") npm run tag",
+    "version": "npm version patch && npm run changelog && git add . && git commit -m 'chore: update history.md' && git push origin",
+    "tag": "if [[ $PACKAGE_VERSION != *\"beta\"* ]];then git tag v$PACKAGE_VERSION && git push --tags; fi",
+    "changelog": "auto-changelog -p -u"
+  },
+  "auto-changelog": {
+    "output": "History.md",
+    "hideCredit": true,
+    "startingVersion": "v2.0.3"
   },
   "spm": {
     "main": "index.js",

@@ -1,3 +1,21 @@
+### Changelog
+
+All notable changes to this project will be documented in this file. Dates are displayed in UTC.
+
+#### [v2.0.4](https://github.com/shepherdwind/velocity.js/compare/v2.0.3...v2.0.4)
+
+- fix: support null as var, fix #139 [`#139`](https://github.com/shepherdwind/velocity.js/issues/139)
+
+#### [v2.0.3](https://github.com/shepherdwind/velocity.js/compare/v2.0.2...v2.0.3)
+
+> 2 December 2020
+
+- fix: issue with loop variable access inside nested foreach statements [`#136`](https://github.com/shepherdwind/velocity.js/pull/136)
+- fix: issue with loop variable access inside nested foreach statements [`#135`](https://github.com/shepherdwind/velocity.js/issues/135)
+- chore: 2.0.3 [`93245a5`](https://github.com/shepherdwind/velocity.js/commit/93245a5e539c829e707f32ae1bcae600bfb7280d)
+
+<!-- auto-changelog-above -->
+
 ## 2.0.3 2020-12-02
 
 - fix: issue with loop variable access inside nested foreach statements [136](https://github.com/shepherdwind/velocity.js/pull/136)
@@ -18,7 +36,7 @@ First, default escape config set to false. For example
 
 ```
 #set($foo = '<div>') $foo
-``` 
+```
 
 At 1.x , result is `&lt;div&gt;`, for 2.x, output result `<div>`, no escapeHtml variable.
 
@@ -98,7 +116,7 @@ At 1.x , result is `&lt;div&gt;`, for 2.x, output result `<div>`, no escapeHtml 
 ## 0.8.4 2016-07-04
 
 - fix bug when render `#foreach(${itemData} in ${defaultData})`, see
-[#69](https://github.com/shepherdwind/velocity.js/issues/69#issuecomment-230152986)
+  [#69](https://github.com/shepherdwind/velocity.js/issues/69#issuecomment-230152986)
 
 ## 0.8.3 2016-06-15
 
@@ -171,7 +189,7 @@ But now, in 0.8.0 version, a.c will not set as {}, so output is `$a.c.d`.
 ### 0.4.10 / 2015-01-08
 
 - fix: allow optional space after colon in map passed as parameter to macro
-      ([#38](https://github.com/shepherdwind/velocity.js/pull/38) by @jamescookie)
+  ([#38](https://github.com/shepherdwind/velocity.js/pull/38) by @jamescookie)
 
 ### 0.4.9 / 2014-12-29
 
