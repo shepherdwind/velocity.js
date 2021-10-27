@@ -254,4 +254,10 @@ describe('Set && Expression', function() {
     var ret = render(tpl).trim()
     assert.strictEqual('[{SubProp=[{SubSubProp=b}]}]', ret);
   });
+
+  it('support set null, fix #139', function() {
+    var tpl = '#set($null = "<span>-</span>")$null';
+    var ret = render(tpl).trim();
+    assert.strictEqual(ret, '<span>-</span>');
+  });
 })

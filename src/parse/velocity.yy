@@ -225,6 +225,10 @@ references
       { $$ = {type: "references", id: $3, path: $4, isWraped: true, leader: $1 }; }
   | DOLLAR ID attributes 
       { $$ = {type: "references", id: $2, path: $3, leader: $1 }; }
+  | DOLLAR BOOL attributes 
+      { $$ = {type: "references", id: $2, path: $3, leader: $1 }; }
+  | DOLLAR BOOL
+      { $$ = {type: "references", id: $2, leader: $1 }; }
   | DOLLAR brace_begin methodbd attributes brace_end
       { $$ = {type: "references", id: $3.id, path: $4, isWraped: true, leader: $1, args: $3.args }; }
   | DOLLAR methodbd attributes
