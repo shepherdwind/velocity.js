@@ -187,7 +187,9 @@ module.exports = function(Velocity, utils) {
     getBlockEach: function(block) {
 
       var ast = block[0];
-      var _from = this.getLiteral(ast.from);
+      var tFrom = {};
+      Object.assign(tFrom, ast.from, {pos: ast.pos});
+      var _from = this.getLiteral(tFrom);
       var _block = block.slice(1);
       var _to = ast.to;
       var local = {
