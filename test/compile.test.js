@@ -212,7 +212,7 @@ describe('Compile', function() {
   })
 
   describe('throw friendly error message', function() {
-    it('print right posiont when error throw', function() {
+    it('prints the right position when error thrown', function() {
       var vm = '111\nsdfs\n$foo($name)'
 
       var compile = new Compile(parse(vm), { escape: false })
@@ -229,6 +229,29 @@ describe('Compile', function() {
       assert.throws(function() {
         compile.render(context)
       }, /L\/N 3:0/)
+    })
+
+    it('prints the right position when error thrown in foreach', function() {
+      var vm = `
+      #foreach( $item in $func() )
+      #end
+      `
+
+      var compile = new Compile(parse(vm), { escape: false })
+      var context = {
+        name: '<i>',
+        func: function() {
+          throw new Error('Run error')
+        }
+      }
+
+      assert.throws(function() {
+        compile.render(context)
+      }, /\$func\(\)/)
+
+      assert.throws(function() {
+        compile.render(context)
+      }, /L\/N 2:6/)
     })
 
     it('print error stack of user-defined macro', function() {

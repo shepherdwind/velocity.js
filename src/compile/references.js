@@ -79,6 +79,8 @@ module.exports = function(Velocity, utils) {
     return base[property];
   }
 
+  var posUnknown = { first_line: "unknown", first_column: "unknown"};
+
   utils.mixin(Velocity.prototype, {
     /**
      * get variable value 
@@ -312,7 +314,7 @@ module.exports = function(Velocity, utils) {
           try {
             ret = ret.apply(baseRef, args);
           } catch (e) {
-            var pos = ast.pos;
+            var pos = ast.pos || posUnknown;
             var text = Velocity.Helper.getRefText(ast);
             var err = ' on ' + text + ' at L/N ' +
               pos.first_line + ':' + pos.first_column;
@@ -336,7 +338,7 @@ module.exports = function(Velocity, utils) {
       }
 
       var text = Velocity.Helper.getRefText(ast);
-      var pos = ast.pos;
+      var pos = ast.pos || posUnknown;
       var propertyName = property.type === 'index' ? property.id.value : property.id;
       var errorMsg = 'get property ' + propertyName + ' of undefined';
       if (errorName === 'TypeError') {
