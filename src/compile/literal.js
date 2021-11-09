@@ -52,7 +52,7 @@ module.exports = function(Velocity, utils) {
 
       } else {
 
-        return this.getReferences(literal);
+        ret = this.getReferences(literal);
 
       }
 

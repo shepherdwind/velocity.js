@@ -1,7 +1,7 @@
 {
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "2.0.4",
+  "version": "2.0.5-beta",
   "license": "MIT",
   "keywords": [
     "velocity template"
@@ -23,6 +23,7 @@
     "path": false
   },
   "devDependencies": {
+    "amplify-appsync-simulator": "^1.27.8",
     "auto-changelog": "^2.3.0",
     "coveralls": "~2.11.2",
     "istanbul": "~0.3.5",
@@ -33,7 +34,7 @@
   },
   "scripts": {
     "test": "mocha test --require should",
-    "prepublishOnly": "npm run version && PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\") npm run tag",
+    "prepublishOnly": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\") npm run tag",
     "version": "npm run changelog && git add . && git commit -m 'chore: update history.md' && git push origin",
     "tag": "if [[ $PACKAGE_VERSION != *\"beta\"* ]];then git tag v$PACKAGE_VERSION && git push --tags; fi",
     "changelog": "auto-changelog -p -u"

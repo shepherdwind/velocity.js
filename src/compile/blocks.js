@@ -106,7 +106,7 @@ module.exports = function(Velocity, utils) {
             var err = '\n      at ' + text + ' L/N ' + pos.first_line + ':' + pos.first_column;
             e.name = '';
             e.message += err;
-            throw new Error(e);
+            throw e;
           }
 
         }
