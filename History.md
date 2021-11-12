@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.0.5](https://github.com/shepherdwind/velocity.js/compare/v2.0.4...v2.0.5)
+
+- chore: better error handler [`#142`](https://github.com/shepherdwind/velocity.js/pull/142)
+- Addressing #140, also added a bit more defensive code in case pos is missing in error situations [`#141`](https://github.com/shepherdwind/velocity.js/pull/141)
+- Fixing #140, also added a bit more defensive code in case pos is missing in error situations [`eed1a16`](https://github.com/shepherdwind/velocity.js/commit/eed1a161a0ac050fc906201cd3f02f1e1f3c15d2)
+- chore: update history script [`585bdab`](https://github.com/shepherdwind/velocity.js/commit/585bdab69b67eb3b0178efc87c9db6898f0d45c8)
+
 #### [v2.0.4](https://github.com/shepherdwind/velocity.js/compare/v2.0.3...v2.0.4)
 
 > 27 October 2021
