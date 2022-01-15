@@ -1,17 +1,8 @@
+var debug = require('debug')('velocity');
+
 module.exports = function(Velocity, utils) {
 
   'use strict';
-
-  function getSize(obj) {
-
-    if (utils.isArray(obj)) {
-      return obj.length;
-    } else if (utils.isObject(obj)) {
-      return utils.keys(obj).length;
-    }
-
-    return undefined;
-  }
 
   /**
    * escapeHTML
@@ -50,33 +41,6 @@ module.exports = function(Velocity, utils) {
     }
 
     return escape ? result : str
-  }
-
-  function getter(base, property) {
-    // get(1)
-    if (typeof property === 'number') {
-      return base[property];
-    }
-
-    var letter = property.charCodeAt(0);
-    var isUpper = letter < 91;
-    var ret = base[property];
-
-    if (ret !== undefined) {
-      return ret;
-    }
-
-    if (isUpper) {
-      // Address => address
-      property = String.fromCharCode(letter).toLowerCase() + property.slice(1);
-    }
-
-    if (!isUpper) {
-      // address => Address
-      property = String.fromCharCode(letter).toUpperCase() + property.slice(1);
-    }
-
-    return base[property];
   }
 
   var posUnknown = { first_line: "unknown", first_column: "unknown"};
@@ -218,88 +182,24 @@ module.exports = function(Velocity, utils) {
     getPropMethod: function(property, baseRef, ast) {
 
       var id = property.id;
-      var ret = '';
+      var ret = baseRef[id];
+      var args = [];
+      utils.forEach(property.args, function(exp) {
+        args.push(this.getLiteral(exp));
+      }, this);
 
-      // get(xxx)
-      if (id === 'get' && !(id in baseRef)) {
-        return getter(baseRef, this.getLiteral(property.args[0]));
-      }
+      const payload = { property: id, params: args, context: baseRef };
+      var matched = this.customMethodHandlers.find(function(item) {
+        return item && item.match(payload);
+      });
 
-      if (id === 'set' && !(id in baseRef)) {
-        baseRef[this.getLiteral(property.args[0])] = this.getLiteral(property.args[1]);
-        return '';
-      }
-
-      // getter for example: getAddress()
-      if (id.indexOf('get') === 0 && !(id in baseRef)) {
-        return getter(baseRef, id.slice(3));
-      }
-
-      // setter 处理
-      if (id.indexOf('set') === 0 && !baseRef[id]) {
-
-        baseRef[id.slice(3)] = this.getLiteral(property.args[0]);
-        // $page.setName(123)
-        baseRef.toString = function() { return ''; };
-        return baseRef;
-
-      } else if (id.indexOf('is') === 0 && !(id in baseRef)) {
-
-        return getter(baseRef, id.slice(2));
-      } else if (id === 'keySet' && !baseRef[id]) {
-
-        return utils.keys(baseRef);
-
-      } else if (id === 'entrySet' && !baseRef[id]) {
-
-        ret = [];
-        utils.forEach(baseRef, function(value, key) {
-          ret.push({key: key, value: value});
-        });
-
-        return ret;
-
-      } else if (id === 'size' && !baseRef[id]) {
-
-        return getSize(baseRef);
-      } else if (id === 'put' && !baseRef[id]) {
-        return baseRef[this.getLiteral(property.args[0])] = this.getLiteral(property.args[1]);
-      } else if (id === 'add' && !baseRef[id] && typeof baseRef.push === 'function') {
-        return baseRef.push(this.getLiteral(property.args[0]));
-      } else if (id === 'remove') {
-
-        if (utils.isArray(baseRef)) {
-          
-          if (typeof index === 'number') {
-            var index = this.getLiteral(property.args[0]);
-          } else {
-            var index = baseRef.indexOf(this.getLiteral(property.args[0]));
-          }
-
-          ret = baseRef[index];
-          baseRef.splice(index, 1);
-          return ret;
-
-        } else if (utils.isObject(baseRef)) {
-
-          ret = baseRef[this.getLiteral(property.args[0])];
-          delete baseRef[this.getLiteral(property.args[0])];
-          return ret; 
-
-        }
-        
-        return undefined;
-
-      } else if (id === 'subList' && !baseRef[id]) {
-        return baseRef.slice(this.getLiteral(property.args[0]), this.getLiteral(property.args[1]));
+      if (matched) {
+        debug('match custom method handler, uid %s', matched.uid);
+        // run custom method handler, we can
+        // add some native method which Java can do, for example
+        // #set($foo = [1, 2]) $foo.size()
+        ret = matched.resolve(payload);
       } else {
-
-        ret = baseRef[id];
-        var args = [];
-
-        utils.forEach(property.args, function(exp) {
-          args.push(this.getLiteral(exp));
-        }, this);
 
         if (ret && ret.call) {
 

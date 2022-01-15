@@ -48,5 +48,8 @@
   "spm": {
     "main": "index.js",
     "buildArgs": "--skip fs,path"
+  },
+  "dependencies": {
+    "debug": "^4.3.3"
   }
 }
