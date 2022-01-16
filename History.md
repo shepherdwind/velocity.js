@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.0.6](https://github.com/shepherdwind/velocity.js/compare/v2.0.5...v2.0.6)
+
+- feat: add custom method handlers support, refactor references.js [`#146`](https://github.com/shepherdwind/velocity.js/pull/146)
+- chore: add npm ci support [`91baab1`](https://github.com/shepherdwind/velocity.js/commit/91baab1cbd3979f1cc4f1ad850433541fdf6566d)
+- chore: update readme.md [`eb8c93a`](https://github.com/shepherdwind/velocity.js/commit/eb8c93a4d0a3e98d2c0d345e3e37f5c7dd3c1918)
+
 #### [v2.0.5](https://github.com/shepherdwind/velocity.js/compare/v2.0.4...v2.0.5)
+
+> 12 November 2021
 
 - chore: better error handler [`#142`](https://github.com/shepherdwind/velocity.js/pull/142)
 - Addressing #140, also added a bit more defensive code in case pos is missing in error situations [`#141`](https://github.com/shepherdwind/velocity.js/pull/141)
