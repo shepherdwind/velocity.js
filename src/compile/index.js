@@ -1,5 +1,6 @@
 var utils = require('../utils');
 var Helper = require('../helper/index');
+var methods = require('./methods');
 function Velocity(asts, config) {
   this.asts = asts;
   this.config = utils.mixin(
@@ -18,6 +19,7 @@ function Velocity(asts, config) {
     config
   );
   this._state = { stop: false, break: false };
+  this.customMethodHandlers = methods.concat(config ? config.customMethodHandlers : []);
   this.init();
 }
 

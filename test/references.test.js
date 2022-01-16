@@ -219,6 +219,34 @@ describe('References', function() {
     assert.equal(ret.trim(), 'foo');
   });
 
+  it('support customMethodHandlers config', () => {
+    var vm = `#set($mystring="123")
+    #set($Integer=1)
+    #set($myint=$Integer.parseInt($mystring))
+    $myint
+    `;
+
+    const customMethodHandlers = [
+      {
+        uid: 'parseInt',
+        match: function({ property, context }) {
+          return (typeof context === 'number') && property === 'parseInt';
+        },
+        resolve({ params }) {
+          return parseInt(params[0]);
+        },
+      }
+    ];
+
+    var compile = new Compile(parse(vm), {
+      customMethodHandlers
+    });
+
+    var ret = compile.render(context)
+    assert.equal(compile.context.myint, 123)
+    assert.equal('123', ret.trim())
+  });
+
   describe('env', function() {
     it('should throw on property when parent is null', function() {
       var vm = '$foo.bar';
