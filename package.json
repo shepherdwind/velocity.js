@@ -23,21 +23,20 @@
     "path": false
   },
   "devDependencies": {
-    "amplify-appsync-simulator": "^1.27.8",
+    "amplify-appsync-simulator": "^2.3.5",
     "auto-changelog": "^2.3.0",
-    "coveralls": "~2.11.2",
-    "istanbul": "~0.3.5",
     "jison": ">=0.3",
-    "mocha": ">=1.7.2",
-    "mocha-lcov-reporter": "0.0.1",
-    "should": "^7.0.1"
+    "mocha": "^9.1.4",
+    "nyc": "^15.1.0",
+    "should": "^13.2.3"
   },
   "scripts": {
     "test": "mocha test --require should",
     "prepublishOnly": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\") npm run tag",
     "version": "npm run changelog && git add . && git commit -m 'chore: update history.md' && git push origin",
     "tag": "if [[ $PACKAGE_VERSION != *\"beta\"* ]];then git tag v$PACKAGE_VERSION && git push --tags; fi",
-    "changelog": "auto-changelog -p -u"
+    "changelog": "auto-changelog -p -u",
+    "ci": "nyc mocha --require should"
   },
   "auto-changelog": {
     "output": "History.md",
