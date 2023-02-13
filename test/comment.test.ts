@@ -1,7 +1,7 @@
-var Velocity = require('../src/velocity')
+import { render } from '../src/velocity';
 
 describe('comment render', function() {
-  it('fix #66', function() {
-    Velocity.render('##').should.eql('');
+  it('fix #66', () => {
+    expect(render('##')).toEqual('');
   });
 });

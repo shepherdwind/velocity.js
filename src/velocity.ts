@@ -1,21 +1,22 @@
-'use strict';
-var Compile = require('./compile/');
-var Helper = require('./helper/index');
-var parse = require('./parse');
+import Compile from './compile/';
+import { parse } from './parse';
+import { CompileConfig, Macros, RenderContext } from './type';
+import { getRefText } from './helper';
 
-Compile.parse = parse;
+// Compile.parse = parse;
 
-var Velocity = {
-  parse: parse,
-  Compile: Compile,
-  Helper: Helper
-};
-
-Velocity.render = function(template, context, macros, config) {
-
-  var asts = parse(template);
-  var compile = new Compile(asts, config);
+export const render = function (
+  template: string,
+  context?: RenderContext,
+  macros?: Macros,
+  config?: CompileConfig
+): string {
+  const asts = parse(template);
+  const compile = new Compile(asts, config);
   return compile.render(context, macros);
 };
 
-module.exports = Velocity;
+export const Helper = {
+  getRefText,
+};
+export { parse, Compile };

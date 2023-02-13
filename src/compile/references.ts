@@ -1,255 +1,198 @@
-var debug = require('debug')('velocity');
+import debugBase from 'debug';
+import { getRefText } from '../helper';
+import { Compile } from './compile';
+import { Attribute, Method, ReferencesAST, VELOCITY_AST } from '../type';
+import { applyMixins, convert } from '../utils';
 
-module.exports = function(Velocity, utils) {
+const debug = debugBase('velocity');
+const posUnknown = { first_line: 'unknown', first_column: 'unknown' };
 
-  'use strict';
-
+export class References extends Compile {
   /**
-   * escapeHTML
+   * get variable value
+   * @param {object} ast ast data
+   * @param {bool} isVal for example `$foo`, isVal value should be true, other condition,
+   * `#set($foo = $bar)`, the $bar value get, isVal set to false
    */
-  function convert(str) {
-
-    if (typeof str !== 'string') return str;
-
-    var result = ""
-    var escape = false
-    var i, c, cstr;
-
-    for (i = 0 ; i < str.length ; i++) {
-      c = str.charAt(i);
-      if ((' ' <= c && c <= '~') || (c === '\r') || (c === '\n')) {
-        if (c === '&') {
-          cstr = "&amp;"
-          escape = true
-        } else if (c === '"') {
-          cstr = "&quot;"
-          escape = true
-        } else if (c === '<') {
-          cstr = "&lt;"
-          escape = true
-        } else if (c === '>') {
-          cstr = "&gt;"
-          escape = true
-        } else {
-          cstr = c.toString()
-        }
-      } else {
-        cstr = "&#" + c.charCodeAt().toString() + ";"
+  getReferences(ast: ReferencesAST, isVal?: boolean) {
+    if (ast.prue) {
+      const define = this.defines[ast.id];
+      if (Array.isArray(define)) {
+        return this._render(define);
       }
 
-      result = result + cstr
+      if (this.config.unescape && ast.id in this.config.unescape) {
+        ast.prue = false;
+      }
     }
 
-    return escape ? result : str
+    const escape = this.config.escape;
+
+    const isSilent = this.silence || ast.leader === '$!';
+    const isFunction = ast.args !== undefined;
+    const context = this.context;
+    let ret = context[ast.id];
+    const local = this.getLocal(ast);
+
+    const text = getRefText(ast);
+
+    if (text in context) {
+      return ast.prue && escape ? convert(context[text]) : context[text];
+    }
+
+    if (ret !== undefined && isFunction) {
+      ret = this.getPropMethod(ast as unknown as Method, context, ast);
+    }
+
+    if (local.isLocal) ret = local['value'];
+
+    if (Array.isArray(ast.path)) {
+      ast.path.some((property) => {
+        if (ret === undefined) {
+          this._throw(ast, property);
+        }
+
+        // 第三个参数，返回后面的参数ast
+        ret = this.getAttributes(property, ret, ast);
+      });
+    }
+
+    if (isVal && ret === undefined) {
+      ret = isSilent ? '' : getRefText(ast);
+    }
+
+    ret = ast.prue && escape ? convert(ret) : ret;
+
+    return ret;
   }
 
-  var posUnknown = { first_line: "unknown", first_column: "unknown"};
+  /**
+   * 获取局部变量，在macro和foreach循环中使用
+   */
+  getLocal(ast: VELOCITY_AST) {
+    const id = ast.id;
+    const local = this.local;
+    let ret = false;
 
-  utils.mixin(Velocity.prototype, {
-    /**
-     * get variable value 
-     * @param {object} ast ast data
-     * @param {bool} isVal for example `$foo`, isVal value should be true, other condition,
-     * `#set($foo = $bar)`, the $bar value get, isVal set to false
-     */
-    getReferences: function(ast, isVal) {
-
-      if (ast.prue) {
-        var define = this.defines[ast.id];
-        if (utils.isArray(define)) {
-          return this._render(define);
-        }
-        if (ast.id in this.config.unescape) ast.prue = false;
-      }
-      var escape = this.config.escape;
-
-      var isSilent = this.silence || ast.leader === "$!";
-      var isfn     = ast.args !== undefined;
-      var context  = this.context;
-      var ret      = context[ast.id];
-      var local    = this.getLocal(ast);
-
-      var text = Velocity.Helper.getRefText(ast);
-
-      if (text in context) {
-        return (ast.prue && escape) ? convert(context[text]) : context[text];
+    const isLocal = this.conditions.some((contextId: string) => {
+      const hasData = id in local[contextId];
+      if (hasData) {
+        ret = local[contextId][id];
       }
 
+      return hasData;
+    });
 
-      if (ret !== undefined && isfn) {
-        ret = this.getPropMethod(ast, context, ast);
-      }
-
-      if (local.isLocaled) ret = local['value'];
-
-      if (ast.path) {
-
-        utils.some(ast.path, function(property, i, len) {
-
-          if (ret === undefined) {
-            this._throw(ast, property);
-          }
-
-          // 第三个参数，返回后面的参数ast
-          ret = this.getAttributes(property, ret, ast);
-
-        }, this);
-      }
-
-      if (isVal && ret === undefined) {
-        ret = isSilent ? '' : Velocity.Helper.getRefText(ast);
-      }
-
-      ret = (ast.prue && escape) ? convert(ret) : ret;
-
-      return ret;
-    },
+    return {
+      value: ret,
+      isLocal,
+    };
+  }
+  /**
+   * $foo.bar 属性求值，最后面两个参数在用户传递的函数中用到
+   * @param {object} property 属性描述，一个对象，主要包括id，type等定义
+   * @param {object} baseRef 当前执行链结果，比如$a.b.c，第一次baseRef是$a,
+   * 第二次是$a.b返回值
+   * @private
+   */
+  getAttributes(property: Attribute, baseRef: any, ast: ReferencesAST) {
+    // fix #54
+    if (baseRef === null || baseRef === undefined) {
+      return undefined;
+    }
 
     /**
-     * 获取局部变量，在macro和foreach循环中使用
+     * type对应着velocity.yy中的attribute，三种类型: method, index, property
      */
-    getLocal: function(ast) {
+    if (property.type === 'method') {
+      return this.getPropMethod(property, baseRef, ast);
+    }
 
-      var id = ast.id;
-      var local = this.local;
-      var ret = false;
+    if (property.type === 'property') {
+      return baseRef[property.id];
+    }
+    return this.getPropIndex(property, baseRef);
+  }
 
-      var isLocaled = utils.some(this.conditions, function(contextId) {
-        var _local = local[contextId];
-        if (id in _local) {
-          ret = _local[id];
-          return true;
-        }
+  /**
+   * $foo.bar[1] index求值
+   * @private
+   */
+  getPropIndex(property: any, baseRef: any) {
+    const ast = property.id;
+    const key = ast.type === 'references' ? this.getReferences(ast) : ast.value;
+    return baseRef[key];
+  }
 
-        return false;
-      }, this);
+  /**
+   * $foo.bar()求值
+   */
+  getPropMethod(property: Method, baseRef: any, ast: ReferencesAST) {
+    const id = property.id;
+    let ret = baseRef[id];
+    const args =
+      (property.args || []).map((exp) =>
+        this.getLiteral(exp as VELOCITY_AST)
+      ) || [];
 
-      return {
-        value: ret,
-        isLocaled: isLocaled
+    const payload = { property: id, params: args, context: baseRef };
+    const matched = this.config.customMethodHandlers?.find(
+      (item) => item && item.match(payload)
+    );
+
+    if (matched) {
+      debug('match custom method handler, uid %s', matched.uid);
+      // run custom method handler, we can
+      // add some native method which Java can do, for example
+      // #set($foo = [1, 2]) $foo.size()
+      return matched.resolve(payload);
+    }
+
+    if (!ret || !ret.call) {
+      this._throw(ast, property, 'TypeError');
+      return;
+    }
+
+    const that: any = this;
+    if (typeof baseRef === 'object' && baseRef) {
+      baseRef.eval = function () {
+        return that.eval.apply(that, arguments);
       };
-    },
-    /**
-     * $foo.bar 属性求值，最后面两个参数在用户传递的函数中用到
-     * @param {object} property 属性描述，一个对象，主要包括id，type等定义
-     * @param {object} baseRef 当前执行链结果，比如$a.b.c，第一次baseRef是$a,
-     * 第二次是$a.b返回值
-     * @private
-     */
-    getAttributes: function(property, baseRef, ast) {
-      // fix #54
-      if (baseRef === null || baseRef === undefined) {
-        return undefined;
-      }
+    }
 
-      /**
-       * type对应着velocity.yy中的attribute，三种类型: method, index, property
-       */
-      var type = property.type;
-      var ret;
-      var id = property.id;
-      if (type === 'method') {
-        ret = this.getPropMethod(property, baseRef, ast);
-      } else if (type === 'property') {
-        ret = baseRef[id];
-      } else {
-        ret = this.getPropIndex(property, baseRef);
-      }
-      return ret;
-    },
-
-    /**
-     * $foo.bar[1] index求值
-     * @private
-     */
-    getPropIndex: function(property, baseRef) {
-      var ast = property.id;
-      var key;
-      if (ast.type === 'references') {
-        key = this.getReferences(ast);
-      } else if (ast.type === 'integer') {
-        key = ast.value;
-      } else {
-        key = ast.value;
-      }
-
-      return baseRef[key];
-    },
-
-    /**
-     * $foo.bar()求值
-     */
-    getPropMethod: function(property, baseRef, ast) {
-
-      var id = property.id;
-      var ret = baseRef[id];
-      var args = [];
-      utils.forEach(property.args, function(exp) {
-        args.push(this.getLiteral(exp));
-      }, this);
-
-      const payload = { property: id, params: args, context: baseRef };
-      var matched = this.customMethodHandlers.find(function(item) {
-        return item && item.match(payload);
-      });
-
-      if (matched) {
-        debug('match custom method handler, uid %s', matched.uid);
-        // run custom method handler, we can
-        // add some native method which Java can do, for example
-        // #set($foo = [1, 2]) $foo.size()
-        ret = matched.resolve(payload);
-      } else {
-
-        if (ret && ret.call) {
-
-          var that = this;
-
-          if(typeof baseRef === 'object' && baseRef){
-            baseRef.eval = function() {
-              return that.eval.apply(that, arguments);
-            };
-          }
-
-          try {
-            ret = ret.apply(baseRef, args);
-          } catch (e) {
-            var pos = ast.pos || posUnknown;
-            var text = Velocity.Helper.getRefText(ast);
-            var err = ' on ' + text + ' at L/N ' +
-              pos.first_line + ':' + pos.first_column;
-            // e.name = '';
-            e.message += err;
-            throw e;
-          }
-
-        } else {
-          this._throw(ast, property, 'TypeError');
-          ret = undefined;
-        }
-      }
-
-      return ret;
-    },
-
-    _throw: function(ast, property, errorName) {
-      if (this.config.env !== 'development') {
-        return;
-      }
-
-      var text = Velocity.Helper.getRefText(ast);
-      var pos = ast.pos || posUnknown;
-      var propertyName = property.type === 'index' ? property.id.value : property.id;
-      var errorMsg = 'get property ' + propertyName + ' of undefined';
-      if (errorName === 'TypeError') {
-        errorMsg = propertyName + ' is not method';
-      }
-
-      errorMsg += '\n  at L/N ' + text + ' ' + pos.first_line + ':' + pos.first_column;
-      var e = new Error(errorMsg);
-      e.name = errorName || 'ReferenceError';
+    try {
+      ret = ret.apply(baseRef, args);
+    } catch (e) {
+      const pos = ast.pos || posUnknown;
+      const text = getRefText(ast);
+      const err = `on ${text} at L/N ${pos.first_line}:${pos.first_column}`;
+      e.message += err;
       throw e;
     }
-  })
 
+    return ret;
+  }
+
+  _throw(ast: any, property: any, errorName?: string) {
+    if (this.config.env !== 'development') {
+      return;
+    }
+
+    const text = getRefText(ast);
+    const pos = ast.pos || posUnknown;
+    const propertyName =
+      property.type === 'index' ? property.id.value : property.id;
+    let errorMsg = 'get property ' + propertyName + ' of undefined';
+    if (errorName === 'TypeError') {
+      errorMsg = propertyName + ' is not method';
+    }
+
+    errorMsg +=
+      '\n  at L/N ' + text + ' ' + pos.first_line + ':' + pos.first_column;
+    const e = new Error(errorMsg);
+    e.name = errorName || 'ReferenceError';
+    throw e;
+  }
 }
+
+applyMixins(Compile, [References]);

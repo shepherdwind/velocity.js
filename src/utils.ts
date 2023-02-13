@@ -1,52 +1,55 @@
-"use strict";
-var utils = {};
-
-['forEach', 'some', 'every', 'filter', 'map'].forEach(function(fnName) {
-  utils[fnName] = function(arr, fn, context) {
-    if (!arr || typeof arr === 'string') return arr;
-    context = context || this;
-    if (arr[fnName]) {
-      return arr[fnName](fn, context);
-    } else {
-      var keys = Object.keys(arr);
-      return keys[fnName](function(key) {
-        return fn.call(context, arr[key], key, arr);
-      }, context);
-    }
-  };
-});
-
-var number = 0;
-utils.guid = function() {
+let number = 0;
+export const guid = () => {
   return number++;
 };
 
-utils.mixin = function(to, from) {
-  utils.forEach(from, function(val, key) {
-    if (utils.isArray(val) || utils.isObject(val)) {
-      to[key] = utils.mixin(val, to[key] || {});
-    } else {
-      to[key] = val;
-    }
+export function applyMixins(derivedCtor: any, constructors: any[]) {
+  constructors.forEach((baseCtor) => {
+    Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
+      Object.defineProperty(
+        derivedCtor.prototype,
+        name,
+        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
+          Object.create(null)
+      );
+    });
   });
-  return to;
-};
+}
 
-utils.isArray = function(obj) {
-  return {}.toString.call(obj) === '[object Array]';
-};
+/**
+ * escapeHTML
+ */
+export function convert(str: string) {
+  if (typeof str !== 'string') return str;
 
-utils.isObject = function(obj) {
-  return {}.toString.call(obj) === '[object Object]';
-};
+  let result = '';
+  let escape = false;
+  let i, c, cstr;
 
-utils.indexOf = function(elem, arr) {
-  if (utils.isArray(arr)) {
-    return arr.indexOf(elem);
+  for (i = 0; i < str.length; i++) {
+    c = str.charAt(i);
+    if ((' ' <= c && c <= '~') || c === '\r' || c === '\n') {
+      if (c === '&') {
+        cstr = '&amp;';
+        escape = true;
+      } else if (c === '"') {
+        cstr = '&quot;';
+        escape = true;
+      } else if (c === '<') {
+        cstr = '&lt;';
+        escape = true;
+      } else if (c === '>') {
+        cstr = '&gt;';
+        escape = true;
+      } else {
+        cstr = c.toString();
+      }
+    } else {
+      cstr = '&#' + c.charCodeAt(0).toString() + ';';
+    }
+
+    result = result + cstr;
   }
-};
 
-utils.keys = Object.keys;
-utils.now  = Date.now;
-
-module.exports = utils;
+  return escape ? result : str;
+}

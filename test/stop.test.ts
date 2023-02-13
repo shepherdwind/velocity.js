@@ -1,16 +1,12 @@
-'use strict';
-
-var Velocity = require('../src/velocity');
-var render = Velocity.render;
-
-describe('stop', function() {
-  it('should support #stop', function() {
-    var str = `hello #stop('hello') world`;
-    render(str).trim().should.eql('hello');
+import { render } from '../src/velocity';
+describe('stop', function () {
+  it('should support #stop', function () {
+    const str = `hello #stop('hello') world`;
+    expect(render(str).trim()).toEqual('hello');
   });
 
-  it('should support #stop in loop', function() {
-    var str = `
+  it('should support #stop in loop', function () {
+    const str = `
       <ul>
         #foreach( $product in $items )
         #if ($product == 'world') #stop() #end
@@ -18,30 +14,31 @@ describe('stop', function() {
         #end
       </ul>
     `;
-    var ret = render(str, { items: ['hello', 'world']}).trim();
-    ret.should.containEql('<li>hello</li>');
-    ret.should.not.containEql('<li>world</li>');
+    const ret = render(str, { items: ['hello', 'world'] }).replace(/\s+/g, '');
+    expect(ret).toMatchInlineSnapshot('"<ul><li>hello</li>"');
   });
 
-  it('should support #stop in #parse', function() {
-    var str = `
+  it('should support #stop in #parse', function () {
+    const str = `
       <p>hello</p>
       #parse($a)
-      this should stop ouput
+      this should stop output
     `;
-    var ret = render(str, {
-      a: `
-        this is a
+    const ret = render(
+      str,
+      {
+        a: `
+        this_is_a
         #stop('stop a')
         this is stop end
-      `
-    }, {
-      parse: function(template) {
-        return this.eval(template);
+      `,
+      },
+      {
+        parse: function (template) {
+          return this.eval(template);
+        },
       }
-    }).trim();
-    ret.should.containEql('<p>hello</p>');
-    ret.should.containEql('this is a');
-    ret.should.not.containEql('stop');
+    ).replace(/\s+/g, '');
+    expect(ret).toMatchInlineSnapshot('"<p>hello</p>this_is_a"');
   });
 });

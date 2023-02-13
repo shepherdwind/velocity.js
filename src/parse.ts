@@ -1,9 +1,8 @@
-'use strict';
-var Parser  = require('./parse/index');
-var _parse = Parser.parse;
-var utils = require('./utils');
+import { RAW_AST_TYPE, VELOCITY_AST } from './type';
+const _parse = require('./parse/index').parse;
 
-var blockTypes = {
+type BlockConfig = Record<string, boolean>;
+const blockTypes: BlockConfig = {
   if: true,
   foreach: true,
   macro: true,
@@ -12,7 +11,8 @@ var blockTypes = {
   macro_body: true,
 };
 
-var customBlocks = [];
+let customBlocks: BlockConfig = {};
+const TRIM_REG = /^[ \t]*\n/;
 
 /**
  * @param {string} str string to parse
@@ -20,74 +20,77 @@ var customBlocks = [];
  * @param {boolean} ignoreSpace if set true, then ignore the newline trim.
  * @return {array} ast array
  */
-var parse = function(str, blocks, ignoreSpace) {
-  var asts = _parse(str);
+export const parse = function (
+  str: string,
+  blocks?: BlockConfig,
+  ignoreSpace?: boolean
+) {
+  const asts = _parse(str) as RAW_AST_TYPE[];
   customBlocks = blocks || {};
 
   /**
    * remove all newline after all direction such as `#set, #each`
    */
-  ignoreSpace || utils.forEach(asts, function trim(ast, i) {
-    var TRIM_REG = /^[ \t]*\n/;
-    // after raw and references, then keep the newline.
-    if (ast.type && ['references', 'raw'].indexOf(ast.type) === -1) {
-      var _ast = asts[i + 1];
-      if (typeof _ast === 'string' && TRIM_REG.test(_ast)) {
-        asts[i + 1] = _ast.replace(TRIM_REG, '');
+  ignoreSpace ||
+    asts.forEach((ast, i) => {
+      if (typeof ast === 'string') {
+        return;
       }
-    }
-  });
+      // after raw and references, then keep the newline.
+      if (['references', 'raw'].indexOf(ast.type) === -1) {
+        const _ast = asts[i + 1];
+        if (typeof _ast === 'string' && TRIM_REG.test(_ast)) {
+          asts[i + 1] = _ast.replace(TRIM_REG, '');
+        }
+      }
+    });
 
-  var ret = makeLevel(asts);
+  const [ret] = makeLevel(asts);
 
-  return utils.isArray(ret) ? ret : ret.arr;
+  return ret;
 };
 
-function makeLevel(block, index) {
-
-  var len = block.length;
+function makeLevel(
+  block: RAW_AST_TYPE[],
+  index?: number
+): [VELOCITY_AST[], number] {
+  const len = block.length;
   index = index || 0;
-  var ret = [];
-  var ignore = index - 1;
+  const ret: VELOCITY_AST[] = [];
+  let ignore = index - 1;
 
-  for (var i = index; i < len; i++) {
-
+  for (let i = index; i < len; i++) {
     if (i <= ignore) continue;
 
-    var ast = block[i];
-    var type = ast.type;
+    const ast = block[i];
+    const isString = typeof ast === 'string';
+    const type = !isString ? ast.type : '';
 
-    var isBlockType = blockTypes[type];
+    let isBlockType = blockTypes[type];
 
     // support custom block , for example
     // const vm = '#cms(1)<div class="abs-right"> #H(1,"第一个链接") </div> #end'
     // parse(vm, { cms: true });
-    if (!isBlockType && ast.type === 'macro_call' && customBlocks[ast.id]) {
+    if (!isString && type === 'macro_call' && customBlocks[ast.id]) {
       isBlockType = true;
-      ast.type = ast.id;
-      delete ast.id;
+      ast.type = ast.id as any;
+      ast.id = '';
     }
 
     if (!isBlockType && type !== 'end') {
-
-      ret.push(ast);
-
-    } else if (type === 'end') {
-
-      return {arr: ret, step: i};
-
-    } else {
-
-      var _ret = makeLevel(block, i + 1);
-      ignore = _ret.step;
-      _ret.arr.unshift(block[i]);
-      ret.push(_ret.arr);
-
+      ret.push(ast as VELOCITY_AST);
+      continue;
     }
 
+    if (type === 'end') {
+      return [ret, i];
+    }
+
+    const [nest, current] = makeLevel(block, i + 1);
+    ignore = current;
+    nest.unshift(block[i] as VELOCITY_AST);
+    ret.push(nest as unknown as VELOCITY_AST);
   }
 
-  return ret;
+  return [ret, 0];
 }
-
-module.exports = parse;
