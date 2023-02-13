@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2016",
+    "sourceMap": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "declarationDir": "dist/types",
+    "outDir": "dist/",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src",
+    "test"
+  ]
+}
