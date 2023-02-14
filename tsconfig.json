@@ -11,6 +11,7 @@
     "declarationDir": "dist/types",
     "outDir": "dist/",
     "strictNullChecks": true,
+    "rootDir": "./",
     "skipLibCheck": true
   },
   "include": [

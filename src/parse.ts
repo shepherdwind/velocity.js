@@ -1,6 +1,5 @@
-import { AST_TYPE, VELOCITY_AST_BASE, type RAW_AST_TYPE, type VELOCITY_AST } from './type';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const _parse = require('./parse/index').parse;
+import { AST_TYPE, CommonAST, type RAW_AST_TYPE, type VELOCITY_AST } from './type';
+import { parse as _parse } from './parse/index';
 
 type BlockConfig = Record<string, boolean>;
 const blockTypes: BlockConfig = {
@@ -55,7 +54,7 @@ function makeLevel(block: RAW_AST_TYPE[], index = 0): [VELOCITY_AST[], number] {
   for (let i = index; i < len; i++) {
     if (i <= ignore) continue;
 
-    const ast = block[i] as VELOCITY_AST_BASE;
+    const ast = block[i] as CommonAST;
     const isString = typeof ast === 'string';
     const type = !isString ? ast.type : '';
 

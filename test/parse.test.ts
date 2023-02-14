@@ -1,4 +1,4 @@
-import { parse } from '../src/velocity';
+import { parse } from '../src';
 import assert from 'assert';
 import { type ReferencesAST } from '../src/type';
 describe('Parser', () => {

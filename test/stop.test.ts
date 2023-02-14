@@ -1,4 +1,4 @@
-import { render } from '../src/velocity';
+import { render } from '../src';
 describe('stop', function () {
   it('should support #stop', function () {
     const str = "hello #stop('hello') world";

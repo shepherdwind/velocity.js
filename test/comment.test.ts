@@ -1,4 +1,4 @@
-import { render } from '../src/velocity';
+import { render } from '../src';
 
 describe('comment render', function () {
   it('fix #66', () => {

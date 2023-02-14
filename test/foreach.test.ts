@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { render } from '../src/velocity';
+import { render } from '../src';
 describe('Loops', () => {
   it('#foreach', () => {
     const vm = '#foreach( $product in $allProducts )<li>$product</li>#end';

@@ -1,4 +1,4 @@
-import Compile from './compile/';
+import Compile from './compile';
 import { parse } from './parse';
 import { type CompileConfig, type Macros, type RenderContext } from './type';
 import { getRefText } from './helper';

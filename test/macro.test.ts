@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { render } from '../src/velocity';
+import { render } from '../src';
 
 describe('macro_body', () => {
   it('#@foo()', () => {

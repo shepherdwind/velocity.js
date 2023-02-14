@@ -1,4 +1,4 @@
-import { render, Compile, parse } from '../src/velocity';
+import { render, Compile, parse } from '../src';
 import assert from 'assert';
 
 describe('References', function () {

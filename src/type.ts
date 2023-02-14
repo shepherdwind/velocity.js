@@ -20,43 +20,42 @@ export type AST_TYPE =
   | 'macro_body'
   | 'raw';
 
-export interface VELOCITY_AST_BASE {
-  type: AST_TYPE;
+export interface CommonAstType {
   value: any;
   id: string;
   pos: { first_line: number; first_column: number };
 }
 
-export interface MacroAST extends VELOCITY_AST_BASE {
+export interface MacroAST extends CommonAstType {
   type: 'macro';
   id: string;
   args: Param[];
 }
 
-export interface SetAST extends VELOCITY_AST_BASE {
+export type SetAST = CommonAstType & {
   type: 'set';
   equal: [ReferencesAST, VELOCITY_AST];
-}
+};
 
-export interface StringAST extends VELOCITY_AST_BASE {
+export interface StringAST extends CommonAstType {
   type: 'string';
   value: string;
   isEval: boolean;
 }
 
 export type ArrayAST = NormalArrayAST | RangeArrayAST;
-export interface NormalArrayAST extends VELOCITY_AST_BASE {
+export interface NormalArrayAST extends CommonAstType {
   type: 'array';
   value: Param[];
 }
 
-export interface RangeArrayAST extends VELOCITY_AST_BASE {
+export interface RangeArrayAST extends CommonAstType {
   type: 'array';
   value: [ReferencesAST | string | number];
   isRange: true;
 }
 
-export interface IfAST extends VELOCITY_AST_BASE {
+export interface IfAST extends CommonAstType {
   type: 'if' | 'elseif';
   condition: VELOCITY_AST;
 }
@@ -71,7 +70,7 @@ export type Attribute =
 
 export type IndexAttribute = {
   type: 'index';
-  id: Literal | ReferencesAST;
+  id: LiteralAST | ReferencesAST;
 };
 
 export interface Content {
@@ -86,9 +85,9 @@ export interface Method {
   args?: Param[];
 }
 
-export type Param = ReferencesAST | Literal;
+export type Param = ReferencesAST | LiteralAST;
 
-export type Literal =
+export type LiteralAST =
   | ArrayAST
   | {
       type: 'map';
@@ -108,7 +107,7 @@ export type Literal =
       value: string;
     };
 
-export interface ReferencesAST extends VELOCITY_AST_BASE {
+export interface ReferencesAST extends CommonAstType {
   type: 'references';
   prue: boolean;
   isWraped: boolean;
@@ -118,25 +117,29 @@ export interface ReferencesAST extends VELOCITY_AST_BASE {
   args?: Param[];
 }
 
-export interface MacroCallAST extends VELOCITY_AST_BASE {
+export interface MacroCallAST extends CommonAstType {
   type: 'macro_call';
   args: Param[];
 }
 
-export interface EachAST extends VELOCITY_AST_BASE {
+export interface EachAST extends CommonAstType {
   type: 'foreach';
   from: ReferencesAST;
   to: string;
 }
 
-export interface MathAST extends VELOCITY_AST_BASE {
+export interface MathAST extends CommonAstType {
   type: 'math';
-  expression: Array<MacroAST, Literal, ReferencesAST>;
+  expression: Array<MacroAST | LiteralAST | ReferencesAST>;
   operator: string;
 }
 
+export interface CommonAST extends CommonAstType {
+  type: AST_TYPE;
+}
+
 export type VELOCITY_AST =
-  | VELOCITY_AST_BASE
+  | CommonAST
   | ReferencesAST
   | MacroCallAST
   | EachAST
@@ -144,7 +147,7 @@ export type VELOCITY_AST =
   | MacroAST
   | MathAST
   | SetAST
-  | Literal;
+  | LiteralAST;
 export type RAW_AST_TYPE = VELOCITY_AST | string;
 
 export interface CompileConfig {

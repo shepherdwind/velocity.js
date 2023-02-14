@@ -1,4 +1,4 @@
-import { ArrayAST, Literal, NormalArrayAST, ReferencesAST, StringAST } from '../type';
+import { ArrayAST, LiteralAST, NormalArrayAST, ReferencesAST, StringAST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './compile';
 
@@ -14,7 +14,7 @@ export class LiteralCompiler extends Compile {
    * @return js variable
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getLiteral(literal: Literal | ReferencesAST): any {
+  getLiteral(literal: LiteralAST | ReferencesAST): any {
     const type = literal.type;
 
     if (type === 'string') {

@@ -1,7 +1,7 @@
 {
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "2.0.6",
+  "version": "2.1.0-beta",
   "license": "MIT",
   "keywords": [
     "velocity template"
@@ -14,7 +14,15 @@
   "engines": {
     "node": ">=0.8.0"
   },
-  "main": "src/velocity.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
+  },
   "browser": {
     "fs": false,
     "path": false
@@ -37,6 +45,10 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint 'src/**/*.ts' 'test/**/*.ts'",
+    "cp": "cat src/parse/index.js | sed 's/exports./export const /g' > dist/esm/parse/index.js",
+    "build": "rm -rf dist && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc --module es2015 --target es5 --outDir dist/esm --project tsconfig.build.json && npm run cp",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs --project tsconfig.build.json",
     "prepublishOnly": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\") npm run tag",
     "version": "npm run changelog && git add . && git commit -m 'chore: update history.md' && git push origin",
     "tag": "if [[ $PACKAGE_VERSION != *\"beta\"* ]];then git tag v$PACKAGE_VERSION && git push --tags; fi",

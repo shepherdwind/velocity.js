@@ -1,4 +1,4 @@
-import type { EachAST, MacroAST, MacroCallAST, VELOCITY_AST, VELOCITY_AST_BASE } from '../type';
+import type { EachAST, MacroAST, MacroCallAST, VELOCITY_AST, CommonAstType } from '../type';
 import { Compile } from './compile';
 import { parse } from '../parse';
 import { getRefText } from '../helper';
@@ -42,7 +42,7 @@ export class BlockCommand extends Compile {
    * define
    */
   setBlockDefine(block: VELOCITY_AST[]) {
-    const ast = block[0] as VELOCITY_AST_BASE;
+    const ast = block[0] as CommonAstType;
     this.defines[ast.id] = block.slice(1);
   }
 
