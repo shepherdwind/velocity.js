@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { ReferencesAST } from '../src/type';
+import { type ReferencesAST } from '../src/type';
 import { parse, Helper } from '../src/velocity';
 const { getRefText } = Helper;
 

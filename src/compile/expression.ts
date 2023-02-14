@@ -1,4 +1,4 @@
-import { VELOCITY_AST } from '../type';
+import type { VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './compile';
 
@@ -11,12 +11,13 @@ export class Expression extends Compile {
    * 基本数据类型，使用 getLiteral求值，getLiteral遇到是引用的时候，使用
    * getReferences求值
    */
-  getExpression(ast: VELOCITY_AST): any {
+  getExpression(ast: VELOCITY_AST) {
     if (ast.type !== 'math') {
       return this.getLiteral(ast);
     }
 
     const exp = ast.expression;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let ret: any;
     switch (ast.operator) {
       case '+':
@@ -56,6 +57,7 @@ export class Expression extends Compile {
         break;
 
       case '==':
+        // eslint-disable-next-line eqeqeq
         ret = this.getExpression(exp[0]) == this.getExpression(exp[1]);
         break;
 
@@ -68,6 +70,7 @@ export class Expression extends Compile {
         break;
 
       case '!=':
+        // eslint-disable-next-line eqeqeq
         ret = this.getExpression(exp[0]) != this.getExpression(exp[1]);
         break;
 

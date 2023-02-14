@@ -1,4 +1,5 @@
-import { RAW_AST_TYPE, VELOCITY_AST } from './type';
+import { AST_TYPE, VELOCITY_AST_BASE, type RAW_AST_TYPE, type VELOCITY_AST } from './type';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const _parse = require('./parse/index').parse;
 
 type BlockConfig = Record<string, boolean>;
@@ -15,54 +16,46 @@ let customBlocks: BlockConfig = {};
 const TRIM_REG = /^[ \t]*\n/;
 
 /**
- * @param {string} str string to parse
- * @param {object} blocks self define blocks, such as `#cms(1) hello #end`
- * @param {boolean} ignoreSpace if set true, then ignore the newline trim.
- * @return {array} ast array
+ * @param str string to parse
+ * @param blocks self define blocks, such as `#cms(1) hello #end`
+ * @param ignoreSpace if set true, then ignore the newline trim.
  */
-export const parse = function (
-  str: string,
-  blocks?: BlockConfig,
-  ignoreSpace?: boolean
-) {
+export const parse = (str: string, blocks?: BlockConfig, ignoreSpace = true): VELOCITY_AST[] => {
   const asts = _parse(str) as RAW_AST_TYPE[];
-  customBlocks = blocks || {};
+  customBlocks = blocks ?? {};
 
   /**
    * remove all newline after all direction such as `#set, #each`
    */
-  ignoreSpace ||
+  if (ignoreSpace) {
     asts.forEach((ast, i) => {
       if (typeof ast === 'string') {
         return;
       }
       // after raw and references, then keep the newline.
-      if (['references', 'raw'].indexOf(ast.type) === -1) {
+      if (!['references', 'raw'].includes(ast.type)) {
         const _ast = asts[i + 1];
         if (typeof _ast === 'string' && TRIM_REG.test(_ast)) {
           asts[i + 1] = _ast.replace(TRIM_REG, '');
         }
       }
     });
+  }
 
   const [ret] = makeLevel(asts);
 
   return ret;
 };
 
-function makeLevel(
-  block: RAW_AST_TYPE[],
-  index?: number
-): [VELOCITY_AST[], number] {
+function makeLevel(block: RAW_AST_TYPE[], index = 0): [VELOCITY_AST[], number] {
   const len = block.length;
-  index = index || 0;
   const ret: VELOCITY_AST[] = [];
   let ignore = index - 1;
 
   for (let i = index; i < len; i++) {
     if (i <= ignore) continue;
 
-    const ast = block[i];
+    const ast = block[i] as VELOCITY_AST_BASE;
     const isString = typeof ast === 'string';
     const type = !isString ? ast.type : '';
 
@@ -73,7 +66,7 @@ function makeLevel(
     // parse(vm, { cms: true });
     if (!isString && type === 'macro_call' && customBlocks[ast.id]) {
       isBlockType = true;
-      ast.type = ast.id as any;
+      ast.type = ast.id as AST_TYPE;
       ast.id = '';
     }
 

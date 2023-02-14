@@ -21,12 +21,12 @@ export function getRefText(ast: ReferencesAST | MacroCallAST) {
   }
 
   ast.path?.forEach((ref) => {
-    if (ref.type == 'method') {
+    if (ref.type === 'method') {
       ret += '.' + getMethodText(ref);
       return;
     }
 
-    if (ref.type == 'index') {
+    if (ref.type === 'index') {
       let text = '';
       const id = ref.id;
 
@@ -42,7 +42,7 @@ export function getRefText(ast: ReferencesAST | MacroCallAST) {
       ret += '[' + text + ']';
     }
 
-    if (ref.type == 'property') {
+    if (ref.type === 'property') {
       ret += '.' + ref.id;
     }
   });
@@ -76,7 +76,7 @@ function getLiteral(ast: Param) {
 
     case 'array': {
       ret = '[';
-      ret += (ast.value.map((arg) => getLiteral(arg)).join(', '));
+      ret += ast.value.map((arg) => getLiteral(arg)).join(', ');
       ret += ']';
       break;
     }

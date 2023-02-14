@@ -4,14 +4,8 @@ import assert from 'assert';
 describe('References', function () {
   it('get && set support', () => {
     const data = ['value1'];
-    assert.strictEqual(
-      render('$data.set(0, "value2")$data[0]', { data }),
-      'value2'
-    );
-    assert.strictEqual(
-      render('$data.set("foo", "value1")$data.foo', { data: {} }),
-      'value1'
-    );
+    assert.strictEqual(render('$data.set(0, "value2")$data[0]', { data }), 'value2');
+    assert.strictEqual(render('$data.set("foo", "value1")$data.foo', { data: {} }), 'value1');
     assert.strictEqual(render('$data.get(0)', { data: [1, 2] }), '1');
   });
 
@@ -68,16 +62,11 @@ describe('References', function () {
 
   it('index notation', function () {
     const vm = '$foo[0] $foo[$i] $foo.get(1) $xx["oo"]';
-    assert.equal(
-      'bar haha haha oo',
-      render(vm, { foo: ['bar', 'haha'], i: 1, xx: { oo: 'oo' } })
-    );
+    assert.equal('bar haha haha oo', render(vm, { foo: ['bar', 'haha'], i: 1, xx: { oo: 'oo' } }));
   });
 
   it('set method', function () {
-    const vm =
-      '$page.setTitle("My Home Page").setname("haha")' +
-      '$page.Title $page.name';
+    const vm = '$page.setTitle("My Home Page").setname("haha")' + '$page.Title $page.name';
     assert.equal('My Home Page haha', render(vm, { page: {} }));
   });
 
@@ -113,17 +102,18 @@ describe('References', function () {
     const vm = 'my email is $email';
 
     const compile = new Compile(parse(vm));
-    assert.equal('my email is ', compile.render(null, null, true));
+    assert.equal('my email is ', compile.render(undefined, undefined, true));
   });
 
   it('this context keep correct, see #16', function () {
     const data = 'a = $a.get()';
-    function B(c) {
+    function B(c: number) {
       this.c = c;
     }
 
     B.prototype.get = function () {
       const t = this.eval(' hello $name', { name: 'hanwen' });
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       return this.c + t;
     };
 
@@ -224,14 +214,14 @@ describe('References', function () {
   });
 
   it('valueMapper support', () => {
-    const values = [];
+    const values: string[] = [];
     const vm = '#set($foo = "bar")\n$foo';
     const ret = render(
       vm,
       {},
       {},
       {
-        valueMapper: (value) => {
+        valueMapper: (value: string) => {
           values.push(value);
           return 'foo';
         },

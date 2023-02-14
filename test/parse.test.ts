@@ -1,10 +1,10 @@
 import { parse } from '../src/velocity';
 import assert from 'assert';
+import { type ReferencesAST } from '../src/type';
 describe('Parser', () => {
   describe('simple references', () => {
     it('self define block', () => {
-      const vm =
-        '#cms(1)<div class="abs-right"> #H(1,"第一个链接") </div> #end';
+      const vm = '#cms(1)<div class="abs-right"> #H(1,"第一个链接") </div> #end';
       const ast = parse(vm, { cms: true });
       assert.equal(ast.length, 1);
       assert.equal(ast[0][0].type, 'cms');
@@ -17,12 +17,15 @@ describe('Parser', () => {
       assert.ok(ret instanceof Array);
       assert.equal(2, ret.length);
       assert.equal('hello world: ', ret[0]);
+      assert(ret[1].type === 'references');
       assert.equal('foo', ret[1].id);
     });
 
     it('valid variable references', () => {
       const vm = '$mud-Slinger_1';
-      assert.equal('mud-Slinger_1', parse(vm)[0].id);
+      const ast = parse(vm)[0];
+      assert(ast.type === 'references');
+      assert.equal('mud-Slinger_1', ast.id);
     });
 
     it('wrapped references', () => {
@@ -36,6 +39,7 @@ describe('Parser', () => {
     it('function call references', () => {
       const ast = parse('$foo()')[0];
       assert(ast.type === 'references');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       assert.equal(false, (ast as any).args);
       assert.equal('references', ast.type);
     });
@@ -59,9 +63,9 @@ describe('Parser', () => {
   describe('Methods ', () => {
     it('with no arguments', () => {
       const vm = '$foo.bar()';
-      const ast = parse(vm)[0];
+      const ast = parse(vm)[0] as ReferencesAST;
 
-      assert.deepEqual(ast['path'], [
+      assert.deepEqual(ast.path, [
         {
           type: 'method',
           id: 'bar',
@@ -72,9 +76,9 @@ describe('Parser', () => {
 
     it('with arguments integer', () => {
       const vm = '$foo.bar(10)';
-      const ast = parse(vm)[0];
+      const ast = parse(vm)[0] as ReferencesAST;
 
-      assert.deepEqual(ast['path'], [
+      assert.deepEqual(ast.path, [
         {
           type: 'method',
           id: 'bar',
@@ -94,6 +98,7 @@ describe('Parser', () => {
 
       assert(ast.type === 'references');
       assert.equal(ast.prue, true);
+      assert(ast.path);
 
       assert(ast.path[0].type === 'method');
       assert.deepEqual(ast.path[0].args, [
@@ -114,6 +119,7 @@ describe('Parser', () => {
       assert.equal(5, asts.length);
 
       assert(asts[0].type === 'references');
+      assert(asts[0].path);
       expect(asts[0].path[0]).toMatchObject({
         type: 'index',
         id: { type: 'integer', value: '0' },
@@ -122,6 +128,7 @@ describe('Parser', () => {
       // asts[2].path[0] => $foo[$i]
       // {type: 'references', id: {type:'references', id: 'i', leader: '$'}}
       assert(asts[2].type === 'references');
+      assert(asts[2].path);
       expect(asts[2].path[0]).toMatchObject({
         type: 'index',
         id: { type: 'references', id: 'i', leader: '$' },
@@ -130,6 +137,7 @@ describe('Parser', () => {
       // asts[4].path[0] => $foo["bar"]
       // {type: 'index', id: {type: 'string', value: 'bar', isEval: true}
       assert(asts[4].type === 'references');
+      assert(asts[4].path);
       expect(asts[4].path[0]).toMatchObject({
         type: 'index',
         id: { type: 'string', value: 'bar', isEval: true },
@@ -142,8 +150,10 @@ describe('Parser', () => {
       const vm = '$foo.bar[1].junk';
       const ast = parse(vm)[0];
 
+      assert(ast.type === 'references');
       assert.equal('foo', ast.id);
       assert(ast.type === 'references');
+      assert(ast.path);
       assert.equal(3, ast.path.length);
 
       const paths = ast.path;
@@ -158,6 +168,7 @@ describe('Parser', () => {
       const ast = parse(vm)[0];
 
       assert(ast.type === 'references');
+      assert(ast.path);
       assert.equal(2, ast.path.length);
 
       assert.equal('method', ast.path[0].type);
@@ -174,11 +185,13 @@ describe('Parser', () => {
       const ast2 = parse('$foo.-24')[0];
 
       assert.equal(3, asts.length);
+      assert(asts[0].type === 'references');
       assert.equal('foo', asts[0].id);
       assert(asts[0].type === 'references');
       assert.equal(undefined, asts[0].path);
 
-      assert.equal(undefined, (ast2 as any).path);
+      assert(ast2.type === 'references');
+      expect(ast2).not.toHaveProperty('path');
     });
 
     it('index should end with close bracket', () => {

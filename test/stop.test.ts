@@ -1,7 +1,7 @@
 import { render } from '../src/velocity';
 describe('stop', function () {
   it('should support #stop', function () {
-    const str = `hello #stop('hello') world`;
+    const str = "hello #stop('hello') world";
     expect(render(str).trim()).toEqual('hello');
   });
 

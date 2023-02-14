@@ -1,8 +1,6 @@
 function hasProperty(context: object, field: string) {
   if (typeof context === 'number' || typeof context === 'string') {
-    return (
-      context[field] || Object.prototype.hasOwnProperty.call(context, field)
-    );
+    return context[field] || Object.prototype.hasOwnProperty.call(context, field);
   }
   if (!context) {
     return false;
@@ -13,16 +11,14 @@ function hasProperty(context: object, field: string) {
 const matchProperty =
   (value: string, notInContext: boolean) =>
   ({ property, context }: IHandlerParams) =>
-    value === property &&
-    (notInContext ? !hasProperty(context, property) : true);
+    value === property && (notInContext ? !hasProperty(context, property) : true);
 
 const matchStartWith =
   (value: string) =>
   ({ property, context }: IHandlerParams) =>
-    property.indexOf(value) === 0 &&
-    !(property in context) &&
-    property.length > value.length;
+    property.indexOf(value) === 0 && !(property in context) && property.length > value.length;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getter(base: any, property: number | string) {
   // get(1)
   if (typeof property === 'number') {
@@ -50,7 +46,7 @@ function getter(base: any, property: number | string) {
   return base[property];
 }
 
-function getSize(obj: any) {
+function getSize(obj: unknown) {
   if (Array.isArray(obj)) {
     return obj.length;
   }
@@ -63,7 +59,9 @@ function getSize(obj: any) {
 }
 
 interface IHandlerParams {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: any[];
   property: string;
 }
@@ -72,8 +70,7 @@ const handlers = {
   // $foo.get('bar')
   get: {
     match: matchProperty('get', true),
-    resolve: ({ context, params }: IHandlerParams) =>
-      getter(context, params[0]),
+    resolve: ({ context, params }: IHandlerParams) => getter(context, params[0]),
   },
   // $foo.set('a', 'b')
   set: {
@@ -86,13 +83,11 @@ const handlers = {
   // getAddress()
   getValue: {
     match: matchStartWith('get'),
-    resolve: ({ context, property }: IHandlerParams) =>
-      getter(context, property.slice(3)),
+    resolve: ({ context, property }: IHandlerParams) => getter(context, property.slice(3)),
   },
   isValue: {
     match: matchStartWith('is'),
-    resolve: ({ context, property }: IHandlerParams) =>
-      getter(context, property.slice(2)),
+    resolve: ({ context, property }: IHandlerParams) => getter(context, property.slice(2)),
   },
   // $page.setName(123)
   setValue: {
@@ -124,8 +119,7 @@ const handlers = {
   },
   put: {
     match: matchProperty('put', true),
-    resolve: ({ context, params }: IHandlerParams) =>
-      (context[params[0]] = params[1]),
+    resolve: ({ context, params }: IHandlerParams) => (context[params[0]] = params[1]),
   },
   add: {
     match: matchProperty('add', true),
@@ -140,10 +134,8 @@ const handlers = {
     match: matchProperty('remove', true),
     resolve: ({ context, params }: IHandlerParams) => {
       if (Array.isArray(context)) {
-        let index;
-        if (typeof index === 'number') {
-          index = params[0];
-        } else {
+        let index = params[0];
+        if (typeof index !== 'number') {
           index = context.indexOf(params[0]);
         }
 
@@ -163,8 +155,7 @@ const handlers = {
   },
   subList: {
     match: matchProperty('subList', true),
-    resolve: ({ context, params }: IHandlerParams) =>
-      context.slice(params[0], params[1]),
+    resolve: ({ context, params }: IHandlerParams) => context.slice(params[0], params[1]),
   },
 };
 

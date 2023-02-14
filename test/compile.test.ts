@@ -2,7 +2,8 @@ import { render, Compile, parse } from '../src/velocity';
 import assert from 'assert';
 
 describe('Compile', () => {
-  function getContext(str: string, context?: any, macros?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function getContext(str: string, context?: any, macros?: any): any {
     const compile = new Compile(parse(str));
     compile.render(context, macros);
     return compile.context;
@@ -40,13 +41,7 @@ describe('Compile', () => {
     });
 
     it('map and array nest', () => {
-      const vm1 =
-        '' +
-        '#set($a = [\n' +
-        '  {"name": 1},\n' +
-        '  {"name": 2}\n' +
-        '])\n' +
-        ' ';
+      const vm1 = '' + '#set($a = [\n' + '  {"name": 1},\n' + '  {"name": 2}\n' + '])\n' + ' ';
 
       const vm2 =
         '' +
@@ -81,9 +76,7 @@ describe('Compile', () => {
     });
 
     it('#elseif & #else', () => {
-      const vm =
-        '#if($foo < 5)Go North#elseif($foo == 8)' +
-        'Go East#{else}Go South#end';
+      const vm = '#if($foo < 5)Go North#elseif($foo == 8)' + 'Go East#{else}Go South#end';
       assert.equal('Go North', render(vm, { foo: 4 }));
       assert.equal('Go East', render(vm, { foo: 8 }));
       assert.equal('Go South', render(vm, { foo: 9 }));
@@ -92,12 +85,12 @@ describe('Compile', () => {
     it('#if with arguments', () => {
       const vm = '#if($foo.isTrue(true))true#{end}';
       const foo = {
-        isTrue: function (str) {
+        isTrue: function (str: boolean) {
           return !!str;
         },
       };
 
-      assert.equal('true', render(vm, { foo: foo }));
+      assert.equal('true', render(vm, { foo }));
     });
   });
 
@@ -149,7 +142,7 @@ describe('Compile', () => {
     });
   });
 
-  describe('Error condiction', () => {
+  describe('Error condition', () => {
     it('css color render', () => {
       const vm = 'color: #666 height: 39px';
       assert.equal(vm, render(vm));
@@ -166,9 +159,7 @@ describe('Compile', () => {
     });
 
     it('issue #15', () => {
-      const vm =
-        '#macro(a $b $list)' +
-        '#foreach($a in $list)${a}#end $b #end #a("hello", [1, 2])';
+      const vm = '#macro(a $b $list)' + '#foreach($a in $list)${a}#end $b #end #a("hello", [1, 2])';
       assert.equal(' 12 hello ', render(vm));
     });
 
@@ -183,7 +174,7 @@ describe('Compile', () => {
       assert.equal(ret, render(vm));
     });
 
-    it('issue #18, condiction 2', () => {
+    it('issue #18, condition 2', () => {
       const vm = '$!a(**** **** **** $stringUtil.right($!b,4))';
       const ret = '(**** **** **** $stringUtil.right($!b,4))';
       assert.equal(ret, render(vm));
@@ -194,12 +185,12 @@ describe('Compile', () => {
       assert.equal(vm, render(vm));
     });
 
-    it('const end must in condiction const begin', () => {
+    it('const end must in condition const begin', () => {
       const vm = 'stepFareNo:{$!result.getStepFareNo()}';
       assert.equal('stepFareNo:{}', render(vm));
     });
 
-    it('empty string condiction', () => {
+    it('empty string condition', () => {
       assert.equal('', render(''));
       assert.equal('', render('##hello'));
       assert.equal('hello', render('hello'));
@@ -281,9 +272,8 @@ describe('Compile', () => {
   describe('user-defined macro, such as #include, #parse', () => {
     it('basic', () => {
       const macros = {
-        haha: function (a, b) {
-          a = a || '';
-          b = b || '';
+        haha: function (a = '', b = '') {
+          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
           return a + ' hello to ' + b;
         },
       };
@@ -314,7 +304,8 @@ describe('Compile', () => {
 
     it('use eval with local variable', () => {
       const macros = {
-        cmsparse: function(...args: any[]) {
+        cmsparse: function (...args: unknown[]) {
+          // eslint-disable-next-line prefer-spread
           return this.include.apply(this, args);
         },
 
@@ -352,9 +343,7 @@ describe('Compile', () => {
 
       const vm = '#cmsparse($str)';
       const o = {
-        str:
-          '#set($foo = ["hello"," ", "world"])' +
-          '#foreach($word in $foo)$word#end',
+        str: '#set($foo = ["hello"," ", "world"])' + '#foreach($word in $foo)$word#end',
       };
 
       assert.equal('hello world', render(vm, o, macros));
@@ -370,15 +359,14 @@ describe('Compile', () => {
       Control.prototype = {
         constructor: Control,
 
-        setTemplate: function (vm) {
+        setTemplate: function (vm: string) {
           this.vm = vm;
           return this;
         },
         toString: function () {
-          debugger;
           return this.eval(this.vm, this.__temp);
         },
-        setParameter: function (key, value) {
+        setParameter: function (key: string, value: string) {
           this.__temp[key] = value;
           return this;
         },
@@ -390,15 +378,14 @@ describe('Compile', () => {
         '$control.setTemplate($str).setParameter("who", "Blob")' +
         '.setParameter("where", "China")';
       const expected = 'hello Blob, welcome to China';
-      assert.equal(render(vm, { str: str, control: new Control() }), expected);
+      assert.equal(render(vm, { str, control: new Control() }), expected);
     });
   });
 
   describe('issues', () => {
     it('#29', () => {
       const vm =
-        '#set($total = 0) #foreach($i in [1,2,3])' +
-        ' #set($total = $total + $i) #end $total';
+        '#set($total = 0) #foreach($i in [1,2,3])' + ' #set($total = $total + $i) #end $total';
       assert.equal(render(vm).trim(), '6');
     });
     it('#30', () => {
@@ -417,7 +404,7 @@ describe('Compile', () => {
   describe('multiline', () => {
     it('#set multiline', () => {
       const vm = '$bar.foo()\n#set($foo=$bar)\n...';
-      assert.equal('$bar.foo()\n...', render(vm));
+      expect('$bar.foo()\n...').toEqual(render(vm));
     });
 
     it('#if multiline', () => {
@@ -451,9 +438,7 @@ describe('Compile', () => {
         '#end',
         'c',
       ].join('\n');
-      const expected = ['a', 'b', 'e 1', 'b', 'e 2', 'b', 'e 3', 'c'].join(
-        '\n'
-      );
+      const expected = ['a', 'b', 'e 1', 'b', 'e 2', 'b', 'e 3', 'c'].join('\n');
 
       const data = { nums: [{ alm: 1 }, { alm: 2 }, { alm: 3 }], bar: '' };
       assert.equal(expected, render(vm, data));
@@ -467,8 +452,7 @@ describe('Compile', () => {
 
   describe('define support', () => {
     it('basic', () => {
-      const vm =
-        '#define($block)\nHello $who#end\n#set($who = "World!")\n$block';
+      const vm = '#define($block)\nHello $who#end\n#set($who = "World!")\n$block';
       assert.equal('Hello World!', render(vm));
     });
   });
@@ -656,7 +640,7 @@ describe('Compile', () => {
       function keySet() {
         return ['k', 'k2'];
       }
-      assert.equal(render(vm, { data: { keySet: keySet } }), expected);
+      assert.equal(render(vm, { data: { keySet } }), expected);
     });
 
     it('object.entrySet()', () => {
@@ -676,16 +660,13 @@ describe('Compile', () => {
         };
       }
 
-      assert.equal(render(vm, { data: { entrySet: entrySet } }), expected);
+      assert.equal(render(vm, { data: { entrySet } }), expected);
     });
 
     it('nested object', () => {
       const vm = '$data';
       const expected = '{k={k2=v2}, kk={k3=v3}}';
-      assert.equal(
-        render(vm, { data: { k: { k2: 'v2' }, kk: { k3: 'v3' } } }),
-        expected
-      );
+      assert.equal(render(vm, { data: { k: { k2: 'v2' }, kk: { k3: 'v3' } } }), expected);
     });
 
     it('object that has toString as own property', () => {

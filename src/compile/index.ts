@@ -1,15 +1,16 @@
-import { CompileConfig, Macros, Param, RenderContext, VELOCITY_AST } from '../type';
+import type { CompileConfig, Macros, Param, RenderContext, SetAST, VELOCITY_AST } from '../type';
 import defaultMethodHandlers from './methods';
 
 export default class Velocity {
   context: RenderContext = {};
+  // eslint-disable-next-line @typescript-eslint/ban-types
   protected macros: Record<string, Function> = {};
   protected defines: Record<string, VELOCITY_AST[]> = {};
   protected conditions: string[] = [];
-  protected local: any = {};
+  protected local: Record<string, unknown> = {};
   protected silence = false;
   protected unescape = {};
-  protected contextId: string = '';
+  protected contextId = '';
 
   protected config: CompileConfig = {
     /**
@@ -19,7 +20,7 @@ export default class Velocity {
     escape: false,
     // whiteList which no need escapeHtml
     unescape: {},
-    valueMapper(value: any) {
+    valueMapper<T>(value: T) {
       return value;
     },
   };
@@ -32,19 +33,16 @@ export default class Velocity {
     }
   > = {};
 
-
   protected asts: VELOCITY_AST[];
   protected runState = { stop: false, break: false };
 
   constructor(asts: VELOCITY_AST[], config?: CompileConfig) {
     this.asts = asts;
-    const customMethodHandlers = (config?.customMethodHandlers || []).concat(
-      defaultMethodHandlers
-    );
+    const customMethodHandlers = (config?.customMethodHandlers ?? []).concat(defaultMethodHandlers);
     Object.assign(this.config, config, { customMethodHandlers });
   }
 
-  render(context?: RenderContext, macros?: Macros, silence?: boolean) {
+  render(_context?: RenderContext, _macros?: Macros, _silence?: boolean) {
     return '';
   }
 
@@ -60,7 +58,9 @@ export default class Velocity {
     return '';
   }
 
-  protected setValue(_ast: VELOCITY_AST) {}
+  protected setValue(_ast: SetAST) {
+    return;
+  }
 
   protected getBlock(_ast: VELOCITY_AST[]) {
     return '';
@@ -74,10 +74,9 @@ export default class Velocity {
     return '';
   }
 
-  protected eval(str: string, contextId?: string) {
-    return [str, contextId].join(',');
+  protected eval(str: string, _local?: object) {
+    return str;
   }
-
 }
 
 import './compile';

@@ -1,4 +1,4 @@
-import { ArrayAST, NormalArrayAST, StringAST, VELOCITY_AST } from '../type';
+import { ArrayAST, Literal, NormalArrayAST, ReferencesAST, StringAST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './compile';
 
@@ -11,9 +11,10 @@ export class LiteralCompiler extends Compile {
    * 字面量求值，主要包括string, integer, array, map四种数据结构
    * @param literal {object} 定义于velocity.yy文件，type描述数据类型，value属性
    * 是literal值描述
-   * @return {object|string|number|array} js variable
+   * @return js variable
    */
-  getLiteral(literal: VELOCITY_AST): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getLiteral(literal: Literal | ReferencesAST): any {
     const type = literal.type;
 
     if (type === 'string') {
@@ -33,11 +34,11 @@ export class LiteralCompiler extends Compile {
     }
 
     if (type === 'map') {
-      const ret: any = {};
+      const ret = {};
       const map = literal.value || {};
 
       Object.keys(map).forEach((key: string) => {
-        ret[key] = this.getLiteral(map[key] as VELOCITY_AST);
+        ret[key] = this.getLiteral(map[key]);
       });
       return ret;
     }
@@ -47,7 +48,7 @@ export class LiteralCompiler extends Compile {
         true: true,
         false: false,
         null: null,
-      }[literal.value as string];
+      }[literal.value];
     }
 
     return this.getReferences(literal);
@@ -59,10 +60,7 @@ export class LiteralCompiler extends Compile {
   getString(literal: StringAST) {
     const val = literal.value;
 
-    if (
-      literal.isEval &&
-      (val.indexOf('#') !== -1 || val.indexOf('$') !== -1)
-    ) {
+    if (literal.isEval && (val.indexOf('#') !== -1 || val.indexOf('$') !== -1)) {
       return this.evalStr(val);
     }
 
@@ -75,9 +73,9 @@ export class LiteralCompiler extends Compile {
    * ，和js基本一致
    * @return {array} 求值得到的数组
    */
-  getArray(literal: ArrayAST): any[] {
+  getArray(literal: ArrayAST): unknown[] {
     if (!('isRange' in literal && literal.isRange === true)) {
-      return (literal as NormalArrayAST).value.map((exp) => this.getLiteral(exp as VELOCITY_AST));
+      return (literal as NormalArrayAST).value.map((exp) => this.getLiteral(exp));
     }
 
     const [begin, end] = literal.value.map((exp) => {

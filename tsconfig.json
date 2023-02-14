@@ -10,6 +10,7 @@
     "esModuleInterop": true,
     "declarationDir": "dist/types",
     "outDir": "dist/",
+    "strictNullChecks": true,
     "skipLibCheck": true
   },
   "include": [

@@ -1,6 +1,6 @@
 import Compile from './compile/';
 import { parse } from './parse';
-import { CompileConfig, Macros, RenderContext } from './type';
+import { type CompileConfig, type Macros, type RenderContext } from './type';
 import { getRefText } from './helper';
 
 // Compile.parse = parse;

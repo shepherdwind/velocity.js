@@ -2,6 +2,7 @@ import { render, Compile, parse } from '../src/velocity';
 import assert from 'assert';
 
 describe('Set && Expression', function () {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function getContext(str: string, context?: any, macros?: any) {
     const compile = new Compile(parse(str));
     compile.render(context, macros);
@@ -125,10 +126,7 @@ describe('Set && Expression', function () {
     assert.equal(true, getContext('#set($foo = 10 > 11 || 3 > 1)').foo);
     assert.equal(true, getContext('#set($foo = !(10 > 11) && 3 > 1)').foo);
     assert.equal(false, getContext('#set($foo = $a > $b)', { a: 1, b: 2 }).foo);
-    assert.equal(
-      false,
-      getContext('#set($foo = $a && $b)', { a: 1, b: 0 }).foo
-    );
+    assert.equal(false, getContext('#set($foo = $a && $b)', { a: 1, b: 0 }).foo);
     assert.equal(true, getContext('#set($foo = $a || $b)', { a: 1, b: 0 }).foo);
   });
 
@@ -137,20 +135,13 @@ describe('Set && Expression', function () {
     assert.equal(true, getContext('#set($foo = 10 lt 11 and 3 gt 1)').foo);
     assert.equal(true, getContext('#set($foo = 10 gt 11 or 3 gt 1)').foo);
     assert.equal(true, getContext('#set($foo = not(10 gt 11) and 3 gt 1)').foo);
-    assert.equal(
-      false,
-      getContext('#set($foo = $a gt $b)', { a: 1, b: 2 }).foo
-    );
-    assert.equal(
-      false,
-      getContext('#set($foo = $a and $b)', { a: 1, b: 0 }).foo
-    );
+    assert.equal(false, getContext('#set($foo = $a gt $b)', { a: 1, b: 2 }).foo);
+    assert.equal(false, getContext('#set($foo = $a and $b)', { a: 1, b: 0 }).foo);
     assert.equal(true, getContext('#set($foo = $a or $b)', { a: 1, b: 0 }).foo);
   });
 
   it('const in key', function () {
-    const vm =
-      '#set($o = {}) #set($key = "k") #set($o[$key] = "c") #set($o.f = "d") $o $o[$key]';
+    const vm = '#set($o = {}) #set($key = "k") #set($o[$key] = "c") #set($o.f = "d") $o $o[$key]';
     const ret = render(vm).replace(/\s+/g, '');
     assert.equal('{k=c,f=d}c', ret);
 
@@ -207,7 +198,7 @@ describe('Set && Expression', function () {
   <h1>$bTest</h1>
 #end`;
     const html = render(tpl).replace(/\s+/g, '');
-    expect(html).toEqual(`<h1>false</h1><h1>true</h1>`);
+    expect(html).toEqual('<h1>false</h1><h1>true</h1>');
   });
 
   it('set error #78', function () {

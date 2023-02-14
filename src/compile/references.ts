@@ -1,7 +1,7 @@
 import debugBase from 'debug';
 import { getRefText } from '../helper';
 import { Compile } from './compile';
-import { Attribute, Method, ReferencesAST, VELOCITY_AST } from '../type';
+import { Attribute, IndexAttribute, Method, ReferencesAST, VELOCITY_AST } from '../type';
 import { applyMixins, convert } from '../utils';
 
 const debug = debugBase('velocity');
@@ -18,7 +18,7 @@ export class References extends Compile {
     if (ast.prue) {
       const define = this.defines[ast.id];
       if (Array.isArray(define)) {
-        return this._render(define);
+        return this.renderAstList(define);
       }
 
       if (this.config.unescape && ast.id in this.config.unescape) {
@@ -69,15 +69,15 @@ export class References extends Compile {
   /**
    * 获取局部变量，在macro和foreach循环中使用
    */
-  getLocal(ast: VELOCITY_AST) {
+  getLocal(ast: ReferencesAST) {
     const id = ast.id;
     const local = this.local;
     let ret = false;
 
     const isLocal = this.conditions.some((contextId: string) => {
-      const hasData = id in local[contextId];
+      const hasData = id in (local[contextId] as object);
       if (hasData) {
-        ret = local[contextId][id];
+        ret = (local[contextId] as object)[id];
       }
 
       return hasData;
@@ -95,7 +95,7 @@ export class References extends Compile {
    * 第二次是$a.b返回值
    * @private
    */
-  getAttributes(property: Attribute, baseRef: any, ast: ReferencesAST) {
+  getAttributes(property: Attribute, baseRef: unknown, ast: ReferencesAST) {
     // fix #54
     if (baseRef === null || baseRef === undefined) {
       return undefined;
@@ -118,7 +118,7 @@ export class References extends Compile {
    * $foo.bar[1] index求值
    * @private
    */
-  getPropIndex(property: any, baseRef: any) {
+  getPropIndex(property: IndexAttribute, baseRef: object) {
     const ast = property.id;
     const key = ast.type === 'references' ? this.getReferences(ast) : ast.value;
     return baseRef[key];
@@ -127,18 +127,14 @@ export class References extends Compile {
   /**
    * $foo.bar()求值
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getPropMethod(property: Method, baseRef: any, ast: ReferencesAST) {
     const id = property.id;
     let ret = baseRef[id];
-    const args =
-      (property.args || []).map((exp) =>
-        this.getLiteral(exp as VELOCITY_AST)
-      ) || [];
+    const args = (property.args || []).map((exp) => this.getLiteral(exp as VELOCITY_AST)) || [];
 
     const payload = { property: id, params: args, context: baseRef };
-    const matched = this.config.customMethodHandlers?.find(
-      (item) => item && item.match(payload)
-    );
+    const matched = this.config.customMethodHandlers?.find((item) => item && item.match(payload));
 
     if (matched) {
       debug('match custom method handler, uid %s', matched.uid);
@@ -153,10 +149,12 @@ export class References extends Compile {
       return;
     }
 
-    const that: any = this;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const that = this;
     if (typeof baseRef === 'object' && baseRef) {
-      baseRef.eval = function () {
-        return that.eval.apply(that, arguments);
+      baseRef.eval = function (...args: unknown[]) {
+        // eslint-disable-next-line prefer-spread
+        return that.eval.apply(that, args);
       };
     }
 
@@ -173,22 +171,20 @@ export class References extends Compile {
     return ret;
   }
 
-  _throw(ast: any, property: any, errorName?: string) {
+  _throw(ast: ReferencesAST, property: Attribute, errorName?: string) {
     if (this.config.env !== 'development') {
       return;
     }
 
     const text = getRefText(ast);
     const pos = ast.pos || posUnknown;
-    const propertyName =
-      property.type === 'index' ? property.id.value : property.id;
+    const propertyName = property.type === 'index' ? property.id.value : property.id;
     let errorMsg = 'get property ' + propertyName + ' of undefined';
     if (errorName === 'TypeError') {
       errorMsg = propertyName + ' is not method';
     }
 
-    errorMsg +=
-      '\n  at L/N ' + text + ' ' + pos.first_line + ':' + pos.first_column;
+    errorMsg += '\n  at L/N ' + text + ' ' + pos.first_line + ':' + pos.first_column;
     const e = new Error(errorMsg);
     e.name = errorName || 'ReferenceError';
     throw e;

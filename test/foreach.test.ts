@@ -14,8 +14,7 @@ describe('Loops', () => {
   });
 
   it('#foreach with map hasNext', () => {
-    const vm =
-      '#foreach($product in $products)$product.name#if($foreach.hasNext),#end#end';
+    const vm = '#foreach($product in $products)$product.name#if($foreach.hasNext),#end#end';
     const data = {
       products: {
         product1: { name: 'hanwen1' },
@@ -27,16 +26,16 @@ describe('Loops', () => {
   });
 
   it('#foreach with map keySet', () => {
-    const vm =
-      '#foreach($key in $products.keySet())' +
-      ' $key => $products.get($key) #end';
+    const vm = '#foreach($key in $products.keySet())' + ' $key => $products.get($key) #end';
     const data = { products: { name: 'hanwen' } };
     assert.equal(' name => hanwen ', render(vm, data));
   });
 
   it('#foreach with nest foreach', () => {
     let vm =
+      // eslint-disable-next-line no-template-curly-in-string
       '#foreach($i in [1..2])${velocityCount}' +
+      // eslint-disable-next-line no-template-curly-in-string
       '#foreach($j in [2..3])${velocityCount}#end#end';
     assert.equal('112212', render(vm));
     vm = '#foreach($i in [5..2])$i#end';
@@ -60,56 +59,51 @@ describe('Loops', () => {
   });
 
   it('#foreach with map entrySet', () => {
-    const vm =
-      '' +
-      '#set($js_file = {\n' +
-      '  "js_arale":"build/js/arale.js?t=20110608",\n' +
-      '  "js_ma_template":"build/js/ma/template.js?t=20110608",\n' +
-      '  "js_pa_pa":"build/js/pa/pa.js?t=20110608",\n' +
-      '  "js_swiff":"build/js/app/swiff.js?t=20110608",\n' +
-      '  "js_alieditControl":"build/js/pa/alieditcontrol-update.js?"\n' +
-      '})\n' +
-      '#foreach($_item in $js_file.entrySet())' +
-      '$_item.key = $staticServer.getURI("/${_item.value}")\n' +
-      '#end';
+    const vm = `
+      #set($js_file = {
+        "js_arale":"build/js/arale.js?t=20110608",
+        "js_ma_template":"build/js/ma/template.js?t=20110608",
+        "js_pa_pa":"build/js/pa/pa.js?t=20110608",
+        "js_swiff":"build/js/app/swiff.js?t=20110608",
+        "js_alieditControl":"build/js/pa/alieditcontrol-update.js?"
+      })
+      #foreach($_item in $js_file.entrySet())
+        $_item.key = $staticServer.getURI("/\${_item.value}")
+      #end
+    `;
 
-    const ret =
-      'js_arale = /path/build/js/arale.js?t=20110608\n' +
-      'js_ma_template = /path/build/js/ma/template.js?t=20110608\n' +
-      'js_pa_pa = /path/build/js/pa/pa.js?t=20110608\n' +
-      'js_swiff = /path/build/js/app/swiff.js?t=20110608\n' +
-      'js_alieditControl = /path/build/js/pa/alieditcontrol-update.js?\n';
+    const ret = `
+      js_arale = /path/build/js/arale.js?t=20110608
+      js_ma_template = /path/build/js/ma/template.js?t=20110608
+      js_pa_pa = /path/build/js/pa/pa.js?t=20110608
+      js_swiff = /path/build/js/app/swiff.js?t=20110608
+      js_alieditControl = /path/build/js/pa/alieditcontrol-update.js?
+    `;
 
     const data = {
       staticServer: {
-        getURI: function (url) {
+        getURI: function (url: string) {
           return '/path' + url;
         },
       },
     };
 
-    assert.equal(ret.trim(), render(vm, data).trim());
+    expect(ret.replace(/\s+/g, '')).toEqual(render(vm, data).replace(/\s+/g, ''));
   });
 
   it('#foreach with #macro, $velocityCount should work, #25', () => {
-    const vm =
-      '#macro(local) #end ' +
-      '#foreach ($one in [1,2,4]) #local() $velocityCount #end';
+    const vm = '#macro(local) #end ' + '#foreach ($one in [1,2,4]) #local() $velocityCount #end';
     const ret = render(vm).replace(/\s+/g, '');
     assert.equal('123', ret);
   });
 
   it('#break', () => {
-    const vm =
-      '#foreach($num in [1..6])' +
-      ' #if($foreach.count > 3) #break #end $num #end';
+    const vm = '#foreach($num in [1..6])' + ' #if($foreach.count > 3) #break #end $num #end';
     assert.equal('  1   2   3     4 ', render(vm));
   });
 
   it('#break for map', () => {
-    const vm =
-      '#foreach($item in $map)' +
-      ' #if($foreach.count > 2) #break #end $item #end';
+    const vm = '#foreach($item in $map)' + ' #if($foreach.count > 2) #break #end $item #end';
     const data = { map: { item1: '1', item2: '2', item3: '3', item4: '4' } };
     assert.equal('  1   2     3 ', render(vm, data));
   });
@@ -119,7 +113,7 @@ describe('Loops', () => {
     assert.equal('', render(vm));
   });
 
-  it('support #foreach(${itemData} in ${defaultData})', () => {
+  it('support #foreach($itemData in $defaultData)', () => {
     const vm = `#set($allProducts = [1, 2, 3])
         #foreach(\${product} in \${allProducts}) <li>$product</li> #end`;
     const html = render(vm).replace(/\s+/g, '');

@@ -1,4 +1,4 @@
-import { EachAST, MacroAST, MacroCallAST, Param, VELOCITY_AST } from '../type';
+import type { EachAST, MacroAST, MacroCallAST, VELOCITY_AST, VELOCITY_AST_BASE } from '../type';
 import { Compile } from './compile';
 import { parse } from '../parse';
 import { getRefText } from '../helper';
@@ -23,7 +23,7 @@ export class BlockCommand extends Compile {
         this.setBlockMacro(block);
         break;
       case 'noescape':
-        ret = this._render(block.slice(1));
+        ret = this.renderAstList(block.slice(1));
         break;
       case 'define':
         this.setBlockDefine(block);
@@ -32,7 +32,7 @@ export class BlockCommand extends Compile {
         ret = this.getMacroBody(block);
         break;
       default:
-        ret = this._render(block);
+        ret = this.renderAstList(block);
     }
 
     return ret || '';
@@ -42,7 +42,7 @@ export class BlockCommand extends Compile {
    * define
    */
   setBlockDefine(block: VELOCITY_AST[]) {
-    const ast = block[0];
+    const ast = block[0] as VELOCITY_AST_BASE;
     this.defines[ast.id] = block.slice(1);
   }
 
@@ -67,26 +67,25 @@ export class BlockCommand extends Compile {
   /**
    * parse macro call
    */
-  getMacro(ast: MacroCallAST, bodyContent?: any) {
+  getMacro(ast: MacroCallAST, bodyContent?: string) {
     const macro = this.macrosStore[ast.id];
 
     if (!macro) {
-      const fn: any = this.macros[ast.id];
+      const fn: unknown = this.macros[ast.id];
       if (!fn || typeof fn !== 'function') {
         return '';
       }
 
-      const jsArgs: any[] = (ast.args || []).map((arg) =>
-        this.getLiteral(arg as VELOCITY_AST)
-      );
+      const jsArgs: unknown[] = (ast.args || []).map((arg) => this.getLiteral(arg as VELOCITY_AST));
 
       try {
         return fn.apply(this.macros, jsArgs);
-      } catch (e: any) {
+      } catch (e) {
         const pos = ast.pos;
         const text = getRefText(ast);
         const err = `\n      at ${text} L/N ${pos.first_line}:${pos.first_column}`;
         e.name = '';
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
         e.message += err;
         throw e;
       }
@@ -94,7 +93,7 @@ export class BlockCommand extends Compile {
 
     const { args, asts } = macro;
     const callArgs = ast.args;
-    const local: any = { bodyContent };
+    const local = { bodyContent };
     const contextId = `macro:${ast.id}:${guid()}`;
 
     (args || []).forEach((ref, i) => {
@@ -102,9 +101,7 @@ export class BlockCommand extends Compile {
         return;
       }
 
-      local[ref.id] = callArgs[i]
-        ? this.getLiteral(callArgs[i] as VELOCITY_AST)
-        : undefined;
+      local[ref.id] = callArgs[i] ? this.getLiteral(callArgs[i] as VELOCITY_AST) : undefined;
     });
 
     return this.eval(asts, local, contextId);
@@ -117,23 +114,23 @@ export class BlockCommand extends Compile {
    * @param contextId {=string} optional contextId, this contextId use to find local variable
    * @return {string}
    */
-  eval(str: string | VELOCITY_AST[], local: any, contextId?: string): string {
+  eval(str: string | VELOCITY_AST[], local: object, contextId?: string): string {
     if (!local) {
       if (Array.isArray(str)) {
-        return this._render(str);
+        return this.renderAstList(str);
       }
       return this.evalStr(str);
     }
 
-    let asts = Array.isArray(str) ? str : parse(str);
-    contextId = contextId || 'eval:' + guid();
+    const asts = Array.isArray(str) ? str : parse(str);
+    contextId = contextId ?? `eval:${guid()}`;
 
     if (!asts.length) {
       return '';
     }
 
     this.local[contextId] = local;
-    const ret = this._render(asts, contextId);
+    const ret = this.renderAstList(asts, contextId);
     this.local[contextId] = {};
     this.conditions.shift();
     this.contextId = this.conditions[0] || '';
@@ -146,7 +143,7 @@ export class BlockCommand extends Compile {
    */
   evalStr(str: string) {
     const asts = parse(str);
-    return this._render(asts, this.contextId);
+    return this.renderAstList(asts, this.contextId);
   }
 
   /**
@@ -160,15 +157,18 @@ export class BlockCommand extends Compile {
     });
     const _block = block.slice(1);
     const _to = ast.to;
-    const local: any = {
+    const local = {
       foreach: {
         count: 0,
+        index: 0,
+        hasNext: false,
       },
+      velocityCount: 0,
     };
 
     let ret = '';
     const uid = guid();
-    const contextId = 'foreach:' + uid;
+    const contextId = `foreach:${uid}`;
 
     const type = {}.toString.call(_from);
     if (!_from || (type !== '[object Array]' && type !== '[object Object]')) {
@@ -177,7 +177,7 @@ export class BlockCommand extends Compile {
 
     const items = Array.isArray(_from) ? _from : Object.values(_from);
     const len = items.length;
-    items.forEach((val: any, i) => {
+    items.forEach((val, i) => {
       if (this.runState.break) {
         return;
       }
@@ -190,12 +190,12 @@ export class BlockCommand extends Compile {
       local.velocityCount = i + 1;
 
       this.local[contextId] = local;
-      ret += this._render(_block, contextId);
+      ret += this.renderAstList(_block, contextId);
     });
 
     // if foreach items be an empty array, then this code will shift current
     // conditions, but not this._render call, so this will shift parent context
-    if (_from && _from.length) {
+    if (_from?.length) {
       this.runState.break = false;
       // empty current local context object
       this.local[contextId] = {};
@@ -231,7 +231,7 @@ export class BlockCommand extends Compile {
     });
 
     // keep current condition fix #77
-    return this._render(asts, this.contextId);
+    return this.renderAstList(asts, this.contextId);
   }
 }
 
