@@ -42,38 +42,47 @@ export default class Velocity {
     Object.assign(this.config, config, { customMethodHandlers });
   }
 
+  /* istanbul ignore next */
   render(_context?: RenderContext, _macros?: Macros, _silence?: boolean) {
     return '';
   }
 
+  /* istanbul ignore next */
   protected getReferences(_ast: VELOCITY_AST, _isVal?: boolean) {
     return '';
   }
 
+  /* istanbul ignore next */
   protected getLiteral(_ast: VELOCITY_AST) {
     return '';
   }
 
+  /* istanbul ignore next */
   protected getExpression(_ast: VELOCITY_AST) {
     return '';
   }
 
+  /* istanbul ignore next */
   protected setValue(_ast: SetAST) {
     return;
   }
 
+  /* istanbul ignore next */
   protected getBlock(_ast: VELOCITY_AST[]) {
     return '';
   }
 
+  /* istanbul ignore next */
   protected getMacro(_ast: VELOCITY_AST) {
     return '';
   }
 
+  /* istanbul ignore next */
   protected evalStr(_str: string) {
     return '';
   }
 
+  /* istanbul ignore next */
   protected eval(str: string, _local?: object) {
     return str;
   }

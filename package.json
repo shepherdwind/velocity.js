@@ -15,9 +15,6 @@
     "node": ">=0.8.0"
   },
   "main": "src/velocity.js",
-  "bin": {
-    "velocity": "bin/velocity"
-  },
   "browser": {
     "fs": false,
     "path": false
@@ -25,7 +22,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/jest": "^29.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
     "auto-changelog": "^2.4.0",
     "eslint": "^8.34.0",
@@ -52,24 +49,21 @@
     "startingVersion": "v2.0.3",
     "ignoreCommitPattern": "(chore: update history.md)|(Merge branch .+)"
   },
-  "spm": {
-    "main": "index.js",
-    "buildArgs": "--skip fs,path"
-  },
   "dependencies": {
     "debug": "^4.3.4"
   },
   "jest": {
     "transform": {
-      ".(ts|tsx)": "ts-jest/preprocessor.js"
+      ".ts": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts)$",
     "moduleFileExtensions": [
       "ts",
       "js"
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
+      "/src/parse/",
       "/test/"
     ],
     "coverageThreshold": {
