@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "allowJs": true
+  },
+  // 👇️ this may vary depending on how you
+  // name your test files
+  "include": [
+    "src"
+  ]
+}
