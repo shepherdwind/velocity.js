@@ -6,7 +6,7 @@ export class Compile extends Velocity {
   /**
    * @param context {object} context object
    * @param macro   {object} self defined #macro
-   * @param silent {bool} 如果是true，$foo变量将原样输出
+   * @param silent {bool} if true, $foo variable will be output as is
    * @return str
    */
   render(context?: RenderContext, macros?: Macros, silence?: boolean) {
@@ -45,7 +45,7 @@ export class Compile extends Velocity {
     }
 
     asts.forEach((ast: VELOCITY_AST) => {
-      // 进入stop，直接退出
+      // Exit immediately if stop state is entered
       if (this.runState.stop === true) {
         return false;
       }

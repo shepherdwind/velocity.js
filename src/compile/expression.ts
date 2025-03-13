@@ -7,9 +7,9 @@ import { Compile } from './compile';
  */
 export class Expression extends Compile {
   /**
-   * 表达式求值，表达式主要是数学表达式，逻辑运算和比较运算，到最底层数据结构，
-   * 基本数据类型，使用 getLiteral求值，getLiteral遇到是引用的时候，使用
-   * getReferences求值
+   * Expression evaluation, mainly for mathematical expressions, logical operations and comparison operations.
+   * For basic data types at the lowest level, getLiteral is used for evaluation.
+   * When getLiteral encounters references, getReferences is used for evaluation.
    */
   getExpression(ast: VELOCITY_AST) {
     if (ast.type !== 'math') {

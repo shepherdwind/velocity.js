@@ -1,4 +1,4 @@
-import { SetAST } from '../type';
+import { SetAST, VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './compile';
 /**
@@ -44,37 +44,45 @@ export class SetValue extends Compile {
     }
 
     if (!ref.path) {
-      context[ref.id] = val;
+      (context as Record<string, unknown>)[ref.id] = val;
       return;
     }
 
-    let baseRef = context[ref.id];
+    let baseRef = (context as Record<string, unknown>)[ref.id];
     if (typeof baseRef !== 'object') {
       baseRef = {};
     }
 
-    context[ref.id] = baseRef;
+    (context as Record<string, unknown>)[ref.id] = baseRef;
     const len = ref.path ? ref.path.length : 0;
 
     ref.path.some((exp, i) => {
       const isEnd = len === i + 1;
-      let key = exp.type === 'property' ? exp.id : '';
-      if (exp.type === 'index' && exp.id) {
-        key = this.getLiteral(exp.id);
+      let key: string;
+
+      if (exp.type === 'property') {
+        key = exp.id;
+      } else if (exp.type === 'index' && exp.id) {
+        key = String(this.getLiteral(exp.id as VELOCITY_AST));
+      } else {
+        key = '';
       }
 
       if (isEnd) {
-        return (baseRef[key] = val);
+        (baseRef as Record<string, unknown>)[key] = val;
+        return true;
       }
 
-      baseRef = baseRef[key];
+      baseRef = (baseRef as Record<string, unknown>)[key] as Record<string, unknown>;
 
       // such as
       // #set($a.d.c2 = 2)
-      // but $a.d is undefined , value set fail
+      // but $a.d is undefined, value set fail
       if (baseRef === undefined) {
         return true;
       }
+
+      return false;
     });
   }
 }

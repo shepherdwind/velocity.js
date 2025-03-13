@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
-    "target": "es2016",
+    "target": "es2018",
+    "module": "esnext",
     "sourceMap": true,
     "declaration": true,
     "allowSyntheticDefaultImports": true,
@@ -12,10 +13,11 @@
     "outDir": "dist/",
     "strictNullChecks": true,
     "rootDir": "./",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
-  "include": [
-    "src",
-    "test"
-  ]
+  "include": ["src", "test"],
+  "exclude": ["src/parse/index.js"]
 }

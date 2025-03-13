@@ -1,10 +1,10 @@
 let number = 0;
-export const guid = () => {
+export const guid = (): number => {
   return number++;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function applyMixins(derivedCtor: any, constructors: any[]) {
+export const applyMixins = (derivedCtor: any, constructors: any[]): void => {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
       if (name === 'constructor') return;
@@ -15,12 +15,12 @@ export function applyMixins(derivedCtor: any, constructors: any[]) {
       );
     });
   });
-}
+};
 
 /**
  * escapeHTML
  */
-export function convert(str: string) {
+export const convert = (str: string): string => {
   if (typeof str !== 'string') return str;
 
   let result = '';
@@ -53,11 +53,11 @@ export function convert(str: string) {
   }
 
   return escape ? result : str;
-}
+};
 
 export const format = (value: unknown): string => {
   if (Array.isArray(value)) {
-    return '[' + value.map(format.bind(this)).join(', ') + ']';
+    return '[' + value.map((v) => format(v)).join(', ') + ']';
   }
 
   if (typeof value === 'object' && value !== null) {
@@ -65,7 +65,7 @@ export const format = (value: unknown): string => {
       return value as unknown as string;
     }
 
-    const kvJoin = (k: string) => `${k}=${format(value[k])}`;
+    const kvJoin = (k: string) => `${k}=${format((value as Record<string, unknown>)[k])}`;
     return '{' + Object.keys(value).map(kvJoin).join(', ') + '}';
   }
 

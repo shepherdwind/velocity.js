@@ -8,9 +8,9 @@ import { Compile } from './compile';
  */
 export class LiteralCompiler extends Compile {
   /**
-   * 字面量求值，主要包括string, integer, array, map四种数据结构
-   * @param literal {object} 定义于velocity.yy文件，type描述数据类型，value属性
-   * 是literal值描述
+   * Evaluate literals, mainly including four data structures: string, integer, array, map
+   * @param literal {object} Defined in the velocity.yy file, type describes the data type,
+   * value property is the literal value description
    * @return js variable
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,7 +34,7 @@ export class LiteralCompiler extends Compile {
     }
 
     if (type === 'map') {
-      const ret = {};
+      const ret: Record<string, unknown> = {};
       const map = literal.value || {};
 
       Object.keys(map).forEach((key: string) => {
@@ -55,7 +55,7 @@ export class LiteralCompiler extends Compile {
   }
 
   /**
-   * 对字符串求值，对已双引号字符串，需要做变量替换
+   * Evaluate strings, for double-quoted strings, variable replacement needs to be done
    */
   getString(literal: StringAST) {
     const val = literal.value;
@@ -68,10 +68,9 @@ export class LiteralCompiler extends Compile {
   }
 
   /**
-   * 对array字面量求值，比如[1, 2]=> [1,2]，[1..5] => [1,2,3,4,5]
-   * @param literal {object} array字面量的描述对象，分为普通数组和range数组两种
-   * ，和js基本一致
-   * @return {array} 求值得到的数组
+   * Evaluate array literals, e.g. [1, 2] => [1,2], [1..5] => [1,2,3,4,5]
+   * @param literal {object} Description object of array literal, divided into two types:
+   * normal array and range array
    */
   getArray(literal: ArrayAST): unknown[] {
     if (!('isRange' in literal && literal.isRange === true)) {

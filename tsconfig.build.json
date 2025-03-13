@@ -2,11 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    "allowJs": true
+    "allowJs": true,
+    "declaration": true,
+    "declarationMap": true
   },
   // 👇️ this may vary depending on how you
   // name your test files
-  "include": [
-    "src"
-  ]
+  "include": ["src"],
+  "exclude": ["src/parse/index.js"]
 }

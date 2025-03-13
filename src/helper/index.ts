@@ -1,7 +1,8 @@
 import { MacroCallAST, Param, ReferencesAST } from '../type';
 
 /**
- * 获取引用文本，当引用自身不存在的情况下，需要返回原来的模板字符串
+ * Get reference text. When the reference itself does not exist,
+ * the original template string needs to be returned.
  * get variable text
  */
 export function getRefText(ast: ReferencesAST | MacroCallAST) {
@@ -76,7 +77,14 @@ function getLiteral(ast: Param) {
 
     case 'array': {
       ret = '[';
-      ret += ast.value.map((arg) => getLiteral(arg)).join(', ');
+      ret += ast.value
+        .map((arg) => {
+          if (typeof arg === 'string' || typeof arg === 'number') {
+            return String(arg);
+          }
+          return getLiteral(arg);
+        })
+        .join(', ');
       ret += ']';
       break;
     }

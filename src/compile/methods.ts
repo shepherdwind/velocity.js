@@ -95,9 +95,7 @@ const handlers = {
     resolve: ({ context, property, params }: IHandlerParams) => {
       context[property.slice(3)] = params[0];
       // set value will not output anything
-      context.toString = function () {
-        return '';
-      };
+      context.toString = () => '';
       return context;
     },
   },

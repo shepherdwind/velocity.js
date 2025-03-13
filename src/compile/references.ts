@@ -52,7 +52,7 @@ export class References extends Compile {
           this._throw(ast, property);
         }
 
-        // 第三个参数，返回后面的参数ast
+        // Third parameter, returns the subsequent parameter ast
         ret = this.getAttributes(property, ret, ast);
       });
     }
@@ -67,17 +67,18 @@ export class References extends Compile {
   }
 
   /**
-   * 获取局部变量，在macro和foreach循环中使用
+   * Get local variables used in macro and foreach loops
    */
   getLocal(ast: ReferencesAST) {
     const id = ast.id;
     const local = this.local;
-    let ret = false;
+    let ret: unknown = false;
 
     const isLocal = this.conditions.some((contextId: string) => {
       const hasData = id in (local[contextId] as object);
       if (hasData) {
-        ret = (local[contextId] as object)[id];
+        const contextObj = local[contextId] as Record<string, unknown>;
+        ret = contextObj[id];
       }
 
       return hasData;
@@ -89,10 +90,10 @@ export class References extends Compile {
     };
   }
   /**
-   * $foo.bar 属性求值，最后面两个参数在用户传递的函数中用到
-   * @param {object} property 属性描述，一个对象，主要包括id，type等定义
-   * @param {object} baseRef 当前执行链结果，比如$a.b.c，第一次baseRef是$a,
-   * 第二次是$a.b返回值
+   * $foo.bar property evaluation, the last two parameters are used in user-passed functions
+   * @param {object} property Property description, an object that mainly includes id, type and other definitions
+   * @param {object} baseRef Current execution chain result, e.g. for $a.b.c, the first baseRef is $a,
+   * the second is the return value of $a.b
    * @private
    */
   getAttributes(property: Attribute, baseRef: unknown, ast: ReferencesAST) {
@@ -102,30 +103,30 @@ export class References extends Compile {
     }
 
     /**
-     * type对应着velocity.yy中的attribute，三种类型: method, index, property
+     * type corresponds to attribute in velocity.yy, three types: method, index, property
      */
     if (property.type === 'method') {
       return this.getPropMethod(property, baseRef, ast);
     }
 
     if (property.type === 'property') {
-      return baseRef[property.id];
+      return (baseRef as Record<string, unknown>)[property.id];
     }
-    return this.getPropIndex(property, baseRef);
+    return this.getPropIndex(property, baseRef as object);
   }
 
   /**
-   * $foo.bar[1] index求值
+   * $foo.bar[1] index evaluation
    * @private
    */
   getPropIndex(property: IndexAttribute, baseRef: object) {
     const ast = property.id;
     const key = ast.type === 'references' ? this.getReferences(ast) : ast.value;
-    return baseRef[key];
+    return (baseRef as Record<string, unknown>)[key as string];
   }
 
   /**
-   * $foo.bar()求值
+   * $foo.bar() method evaluation
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getPropMethod(property: Method, baseRef: any, ast: ReferencesAST) {
@@ -152,9 +153,12 @@ export class References extends Compile {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this;
     if (typeof baseRef === 'object' && baseRef) {
-      baseRef.eval = function (...args: unknown[]) {
-        // eslint-disable-next-line prefer-spread
-        return that.eval.apply(that, args);
+      baseRef.eval = (...args: unknown[]) => {
+        // Fix type error
+        if (args.length > 0 && typeof args[0] === 'string') {
+          return that.eval(...(args as [string, object?]));
+        }
+        return '';
       };
     }
 
@@ -164,7 +168,9 @@ export class References extends Compile {
       const pos = ast.pos || posUnknown;
       const text = getRefText(ast);
       const err = `on ${text} at L/N ${pos.first_line}:${pos.first_column}`;
-      e.message += err;
+      if (e instanceof Error) {
+        e.message += err;
+      }
       throw e;
     }
 

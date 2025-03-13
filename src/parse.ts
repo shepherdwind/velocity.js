@@ -61,7 +61,7 @@ function makeLevel(block: RAW_AST_TYPE[], index = 0): [VELOCITY_AST[], number] {
     let isBlockType = blockTypes[type];
 
     // support custom block , for example
-    // const vm = '#cms(1)<div class="abs-right"> #H(1,"第一个链接") </div> #end'
+    // const vm = '#cms(1)<div class="abs-right"> #H(1,"first link") </div> #end'
     // parse(vm, { cms: true });
     if (!isString && type === 'macro_call' && customBlocks[ast.id]) {
       isBlockType = true;

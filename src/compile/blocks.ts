@@ -1,7 +1,7 @@
 import type { EachAST, MacroAST, MacroCallAST, VELOCITY_AST, CommonAstType } from '../type';
 import { Compile } from './compile';
 import { parse } from '../parse';
-import { getRefText } from '../helper';
+import { getRefText } from '../helper/index';
 import { applyMixins, guid } from '../utils';
 
 /**
@@ -84,9 +84,10 @@ export class BlockCommand extends Compile {
         const pos = ast.pos;
         const text = getRefText(ast);
         const err = `\n      at ${text} L/N ${pos.first_line}:${pos.first_column}`;
-        e.name = '';
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        e.message += err;
+        if (e instanceof Error) {
+          e.name = '';
+          e.message += err;
+        }
         throw e;
       }
     }
@@ -101,7 +102,8 @@ export class BlockCommand extends Compile {
         return;
       }
 
-      local[ref.id] = callArgs[i] ? this.getLiteral(callArgs[i] as VELOCITY_AST) : undefined;
+      const localObj = local as Record<string, unknown>;
+      localObj[ref.id] = callArgs[i] ? this.getLiteral(callArgs[i] as VELOCITY_AST) : undefined;
     });
 
     return this.eval(asts, local, contextId);
@@ -139,7 +141,7 @@ export class BlockCommand extends Compile {
   }
 
   /**
-   * 对双引号字符串进行eval求值，替换其中的变量，只支持最基本的变量类型替换
+   * Evaluate double-quoted strings, replace variables within them, only supporting the most basic variable type replacement
    */
   evalStr(str: string) {
     const asts = parse(str);
@@ -181,13 +183,14 @@ export class BlockCommand extends Compile {
       if (this.runState.break) {
         return;
       }
-      local[_to] = val;
-      local.foreach = {
+      const localObj = local as Record<string, unknown>;
+      localObj[_to] = val;
+      localObj.foreach = {
         count: i + 1,
         index: i,
         hasNext: i + 1 < len,
       };
-      local.velocityCount = i + 1;
+      localObj.velocityCount = i + 1;
 
       this.local[contextId] = local;
       ret += this.renderAstList(_block, contextId);
