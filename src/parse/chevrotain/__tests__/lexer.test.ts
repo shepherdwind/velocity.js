@@ -176,7 +176,7 @@ describe('Velocity Lexer', () => {
       expect(result.tokens[7].tokenType.name).toBe('StringLiteral');
     });
 
-    test.skip('should tokenize #foreach directive', () => {
+    test('should tokenize #foreach directive', () => {
       const result = tokenizeVelocityTemplate('#foreach($item in $items)', lexer);
 
       expect(result.errors).toHaveLength(0);
@@ -193,7 +193,7 @@ describe('Velocity Lexer', () => {
       expect(result.tokens[7].image).toBe('items');
     });
 
-    test.skip('should tokenize #end directive', () => {
+    test('should tokenize #end directive', () => {
       const result = tokenizeVelocityTemplate('#end', lexer);
 
       expect(result.errors).toHaveLength(0);
@@ -205,7 +205,7 @@ describe('Velocity Lexer', () => {
 
   // Combined Tests
   describe('Combined Tokenization', () => {
-    test.skip('should tokenize a complex template with multiple constructs', () => {
+    test('should tokenize a complex template with multiple constructs', () => {
       const template = `
         #if($user)
           Hello, $user.name!
@@ -239,7 +239,7 @@ describe('Velocity Lexer', () => {
       expect(tokenNames).toContain('Content');
     });
 
-    test.skip('should tokenize adjacent variable references', () => {
+    test('should tokenize adjacent variable references', () => {
       const result = tokenizeVelocityTemplate('$first$second', lexer);
 
       expect(result.errors).toHaveLength(0);
@@ -252,7 +252,7 @@ describe('Velocity Lexer', () => {
       expect(result.tokens[3].image).toBe('second');
     });
 
-    test.skip('should tokenize mixed content and variables', () => {
+    test('should tokenize mixed content and variables', () => {
       const result = tokenizeVelocityTemplate('Hello $name, your score is $score!', lexer);
 
       expect(result.errors).toHaveLength(0);
