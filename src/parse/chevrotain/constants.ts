@@ -15,6 +15,18 @@ export enum LexerTokenTypes {
   COLON = 'Colon',
   BANG = 'Bang',
   EQUAL = 'Equal',
+  NOT_EQUAL = 'NotEqual',
+  GREATER_THAN = 'GreaterThan',
+  LESS_THAN = 'LessThan',
+  GREATER_THAN_EQUAL = 'GreaterThanEqual',
+  LESS_THAN_EQUAL = 'LessThanEqual',
+  AND = 'And',
+  OR = 'Or',
+  PLUS = 'Plus',
+  MINUS = 'Minus',
+  MULTIPLY = 'Multiply',
+  DIVIDE = 'Divide',
+  MODULO = 'Modulo',
   SET = 'Set',
   IF = 'If',
   ELSE_IF = 'ElseIf',
@@ -63,6 +75,15 @@ export enum SpecialChars {
   COMMA = ',',
   BANG = '!',
   QUOTE = '"',
+  GREATER_THAN = '>',
+  LESS_THAN = '<',
+  PLUS = '+',
+  MINUS = '-',
+  MULTIPLY = '*',
+  DIVIDE = '/',
+  MODULO = '%',
+  AMPERSAND = '&',
+  PIPE = '|',
 }
 
 /**
@@ -70,10 +91,30 @@ export enum SpecialChars {
  */
 export const CONTENT = {
   // Characters that should be treated as separate tokens
-  SPECIAL_CHARS: '$#{}().:=,!"',
+  SPECIAL_CHARS: '$#{}().:=,!"<>+-*/%&|',
   // Regex for whitespace
   WHITESPACE_PATTERN: /\s/,
 };
+
+/**
+ * Operator types for operation nodes
+ */
+export enum OperatorTypes {
+  EQUAL = '==',
+  NOT_EQUAL = '!=',
+  GREATER_THAN = '>',
+  LESS_THAN = '<',
+  GREATER_THAN_EQUAL = '>=',
+  LESS_THAN_EQUAL = '<=',
+  AND = '&&',
+  OR = '||',
+  PLUS = '+',
+  MINUS = '-',
+  MULTIPLY = '*',
+  DIVIDE = '/',
+  MODULO = '%',
+  NOT = '!',
+}
 
 /**
  * Error messages

@@ -92,6 +92,81 @@ export const Equal = createToken({
   line_breaks: false,
 });
 
+// New comparison operators
+export const NotEqual = createToken({
+  name: LexerTokenTypes.NOT_EQUAL,
+  pattern: /!=/,
+  line_breaks: false,
+});
+
+export const GreaterThan = createToken({
+  name: LexerTokenTypes.GREATER_THAN,
+  pattern: />/,
+  line_breaks: false,
+});
+
+export const LessThan = createToken({
+  name: LexerTokenTypes.LESS_THAN,
+  pattern: /</,
+  line_breaks: false,
+});
+
+export const GreaterThanEqual = createToken({
+  name: LexerTokenTypes.GREATER_THAN_EQUAL,
+  pattern: />=/,
+  line_breaks: false,
+});
+
+export const LessThanEqual = createToken({
+  name: LexerTokenTypes.LESS_THAN_EQUAL,
+  pattern: /<=/,
+  line_breaks: false,
+});
+
+// New logical operators
+export const And = createToken({
+  name: LexerTokenTypes.AND,
+  pattern: /&&/,
+  line_breaks: false,
+});
+
+export const Or = createToken({
+  name: LexerTokenTypes.OR,
+  pattern: /\|\|/,
+  line_breaks: false,
+});
+
+// New arithmetic operators
+export const Plus = createToken({
+  name: LexerTokenTypes.PLUS,
+  pattern: /\+/,
+  line_breaks: false,
+});
+
+export const Minus = createToken({
+  name: LexerTokenTypes.MINUS,
+  pattern: /-/,
+  line_breaks: false,
+});
+
+export const Multiply = createToken({
+  name: LexerTokenTypes.MULTIPLY,
+  pattern: /\*/,
+  line_breaks: false,
+});
+
+export const Divide = createToken({
+  name: LexerTokenTypes.DIVIDE,
+  pattern: /\//,
+  line_breaks: false,
+});
+
+export const Modulo = createToken({
+  name: LexerTokenTypes.MODULO,
+  pattern: /%/,
+  line_breaks: false,
+});
+
 // String literals
 export const StringLiteral = createToken({
   name: LexerTokenTypes.STRING_LITERAL,

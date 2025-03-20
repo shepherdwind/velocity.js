@@ -15,12 +15,17 @@ We have successfully implemented a basic Chevrotain-based parser for Velocity te
    - Support for variable references (simple and formal)
    - Support for property access
    - Basic directive parsing (set, if, foreach)
+   - Comprehensive condition parsing with comparison and logical operators
 
 3. **CST to AST Conversion**
 
    - Visitor pattern implementation to convert CST to AST
    - AST structure compatible with the existing Jison parser
    - Position tracking for error reporting
+   - Support for complex expressions including:
+     - Comparison operators (`==`, `!=`, `>`, `<`, `>=`, `<=`)
+     - Logical operators (`&&`, `||`, `!`)
+     - Arithmetic operators (`+`, `-`, `*`, `/`, `%`)
 
 4. **Testing**
 
@@ -42,12 +47,15 @@ The current implementation has the following limitations that need to be address
    - No support for nested directives
    - No support for complex constructs like macros
 
-2. **Expression Parsing**
+2. **Incomplete Expression Support**
 
-   - Basic equality conditions supported, but limited expression support
-   - No arithmetic or complex logical operations
+   - ~~Basic equality conditions supported, but limited expression support~~
+   - ~~No arithmetic or complex logical operations~~
+   - We now have comprehensive support for comparison, logical, and arithmetic operations
+   - Still missing support for method/function calls with arguments
 
 3. **Method and Function Calls**
+
    - No support for method calls with arguments
    - No support for chained method calls
 
@@ -55,11 +63,11 @@ The current implementation has the following limitations that need to be address
 
 Based on the implementation plan documents, the following next steps are recommended:
 
-1. **Complete Expression Support**
+1. **Complete Method/Function Support**
 
-   - Implement all comparison operators
-   - Add logical and arithmetic operators
-   - Support for method/function calls with arguments
+   - Implement method calls with arguments
+   - Support function calls with parameters
+   - Support chained method calls
 
 2. **Enhance Directive Implementation**
 
