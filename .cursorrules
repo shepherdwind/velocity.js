@@ -1,0 +1,212 @@
+# 模板引擎 Parse 逻辑重构指南
+
+## 核心原则
+
+1. **渐进式实现** - 由于完整代码较长，请分模块逐步实现，而非一次性重写全部
+2. **功能驱动开发** - 根据功能需求编写代码，而非为通过测试而编写
+3. **测试驱动验证** - 每个功能模块必须有测试覆盖，每一步实现都要通过测试验证
+4. **禁止 Hack 行为** - 严禁编写特定针对测试用例的分支或硬编码逻辑
+5. **保持纯净实现** - 不要模拟(mock)或绕过真实逻辑实现
+6. **统一英文注释** - 所有代码注释和解释必须使用英文，不使用中文
+7. **结构化任务管理** - 使用文档记录开发计划和进度，通过 Markdown todo 标记追踪已完成功能
+8. **函数合理设计** - 控制函数规模(不超过150行)并避免过短函数(1-2行)，保持适当抽象级别
+9. **字符串常量管理** - 所有字符串常量应集中在constants文件中管理，相关字符串应使用enum分组
+10. **简化条件结构** - 优先使用提前退出、语义变量和模式匹配简化条件逻辑，避免深层嵌套
+
+## 具体要求
+
+### 1. 分阶段开发策略
+- 首先分析并理解整个 parse 逻辑的核心组件和流程
+- 将重构分解为多个独立的、可测试的模块
+- 按顺序实现各模块，确保每个模块都能独立工作
+- 最后整合各模块形成完整实现
+
+### 2. 代码质量规范
+- 注重代码清晰度和可维护性
+- 添加必要的注释解释复杂逻辑（**必须使用英文**）
+- 遵循现有项目的代码风格和命名惯例
+- 确保边界情况和错误处理得到适当处理
+- 所有文档字符串、内联注释及变量命名解释均使用英文
+
+- **函数设计**：
+  - 控制函数长度：单个函数不应超过150行，超过需要重构拆分
+  - 避免创建过短函数（1-2行），内联简单逻辑
+  - 函数抽象应有明确价值，如复用、封装复杂性或提高可测试性
+  - 按照功能职责拆分大型函数，提高可维护性
+
+- **字符串常量管理**：
+  - 避免直接使用字符串字面量，将所有字符串常量集中在constants文件中
+  - 对相关字符串常量使用enum进行分组管理，提高可维护性和重用性
+
+- **条件逻辑处理**：
+  - 优先使用提前退出模式，避免深层嵌套的if语句
+  - 使用语义变量为复杂条件表达式命名（如 `const isValid = condition1 && condition2`）
+  - 对于多分支条件，使用switch语句或配置对象模式替代长串if-else链
+
+### 3. 测试规范
+- 测试是验证功能正确性的关键手段
+- 每个功能模块都必须有对应的测试用例
+- 每一步实现完成后必须通过相关测试验证
+- 同时，坚持以功能需求为核心，而非以测试为导向编码
+- 通过理解功能需求来通过测试，而非通过分析测试代码修改实现
+- 禁止编写仅为满足特定测试用例的条件分支
+- 不允许在实现中引用或依赖测试代码
+- 测试应验证功能的正确性，而不应影响功能的设计和实现
+
+### 4. 禁止的做法
+- **禁止硬编码测试用例的结果**
+- **禁止添加专门为通过测试而设计的条件语句**
+- **禁止基于测试输入创建特殊分支**
+- **禁止使用 mock 替代真实逻辑实现**
+- **禁止直接返回预期结果而不实现实际处理逻辑**
+
+### 5. 有效的沟通方式
+- 如遇到任务复杂度超出能力范围，请明确指出并寻求进一步指导
+- 当需要澄清需求或功能细节时，提出具体问题
+- 在实现过程中，提供清晰的进度更新
+- 如果测试用例与功能需求不一致，请指出并寻求确认
+
+## 实施流程建议
+
+1. **分析阶段**：
+   - 理解原有代码的结构和工作方式
+   - 确定核心组件和它们之间的关系
+   - 识别重构的重点领域
+
+2. **设计阶段**：
+   - 为新实现创建清晰的架构
+   - 定义模块接口和责任边界
+   - 设计适当的数据结构
+   - 创建开发计划文档，列出所有需要完成的任务
+
+3. **实现阶段**：
+   - 按模块逐步实现功能
+   - 为每个功能模块编写相应的测试用例
+   - 确保每个模块完成后通过所有相关单元测试
+   - 测试失败时，回到功能需求理解问题，而非直接修改代码以适应测试
+   - 定期检查与整体需求的一致性
+   - 在开发计划文档中使用 `- [x]` 标记已完成的任务
+   - 使用 `- [ ]` 标记待完成的任务
+
+4. **测试与整合阶段**：
+   - 整合所有模块
+   - 运行集成测试验证整体功能
+   - 确保没有引入新的边界问题
+   - 更新开发计划文档，确认所有任务完成状态
+
+## 示例与反面示例
+
+### 良好实践示例：
+
+```javascript
+// 使用常量和提前退出模式
+import { TokenTypes, Delimiters, ErrorMessages } from './constants';
+
+function processToken(token) {
+  // 提前退出模式，避免嵌套
+  if (!token) {
+    return null;
+  }
+  
+  // 使用语义变量简化复杂条件
+  const isVariableToken = token.startsWith(Delimiters.VARIABLE_START) && 
+                        token.endsWith(Delimiters.VARIABLE_END);
+  
+  if (isVariableToken) {
+    return createVariableNode(token);
+  }
+  
+  // 使用对象映射替代多个if-else
+  const tokenProcessors = {
+    [TokenTypes.TEXT]: processTextToken,
+    [TokenTypes.DIRECTIVE]: processDirectiveToken,
+    [TokenTypes.COMMENT]: () => null // 忽略注释
+  };
+  
+  const processor = tokenProcessors[token.type] || processUnknownToken;
+  return processor(token);
+}
+
+// 合理粒度的函数 - 不会太短也不会太长
+function parseTemplate(template) {
+  if (!template) {
+    return [];
+  }
+  
+  const tokens = tokenize(template);
+  return tokens.map(processToken).filter(Boolean);
+}
+```
+
+### 不良实践示例：
+
+```javascript
+// 不良实践 - 深层嵌套、字符串字面量和过短函数
+function processToken(token) {
+  if (token) {
+    if (token.startsWith('${')) {
+      if (token.endsWith('}')) {
+        // 深层嵌套的条件判断
+        const variableName = extractVariableName(token);
+        if (variableName) {
+          return { type: 'VARIABLE', name: variableName };
+        } else {
+          return null;
+        }
+      }
+    } else if (token.startsWith('#')) {
+      // 更多嵌套...
+    }
+  }
+  return null;
+}
+
+// 过短函数，应该内联
+function isComment(token) {
+  return token.startsWith('##');
+}
+
+// 过长的if-else链
+function getTokenType(token) {
+  if (token.startsWith('${')) return 'VARIABLE';
+  else if (token.startsWith('#if')) return 'IF';
+  else if (token.startsWith('#foreach')) return 'FOREACH';
+  else if (token.startsWith('#set')) return 'SET';
+  else if (token.startsWith('##')) return 'COMMENT';
+  else return 'TEXT';
+}
+```
+
+### 文档与任务管理示例：
+```markdown
+# Template Engine Refactoring Plan
+
+## Parsing Module Tasks
+- [x] Design token structure
+- [x] Implement basic token extraction
+- [ ] Add support for nested expressions
+- [ ] Implement error handling for malformed templates
+
+## Variable Resolution Tasks
+- [ ] Design variable lookup mechanism
+- [ ] Implement context-based variable resolution
+- [ ] Add support for filters and modifiers
+```
+
+### 不良实践示例：
+```javascript
+// Bad example: Implementation specifically designed for tests
+function parseTokens(template) {
+  // Check if this is a specific input from test cases
+  if (template === "Hello, {{ name }}") {
+    return [
+      { type: "text", value: "Hello, " },
+      { type: "variable", value: "name" }
+    ];
+  }
+  // Only run actual parsing logic for other cases
+  // ...
+}
+```
+
+请按照以上规则进行模板引擎的解析逻辑重写，确保实现符合真实功能需求，而非仅为通过测试而设计。

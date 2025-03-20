@@ -37,3 +37,50 @@ export enum DirectiveTypes {
   END = 'end',
   FOR_EACH = 'foreach',
 }
+
+/**
+ * Lexer modes
+ */
+export enum LexerModes {
+  INITIAL = 'INITIAL',
+  VARIABLE = 'variable',
+  DIRECTIVE = 'directive',
+}
+
+/**
+ * Special characters used in content parsing
+ */
+export enum SpecialChars {
+  DOLLAR = '$',
+  HASH = '#',
+  OPEN_CURLY = '{',
+  CLOSE_CURLY = '}',
+  OPEN_PAREN = '(',
+  CLOSE_PAREN = ')',
+  DOT = '.',
+  COLON = ':',
+  EQUAL = '=',
+  COMMA = ',',
+  BANG = '!',
+  QUOTE = '"',
+}
+
+/**
+ * Content parsing constants
+ */
+export const CONTENT = {
+  // Characters that should be treated as separate tokens
+  SPECIAL_CHARS: '$#{}().:=,!"',
+  // Regex for whitespace
+  WHITESPACE_PATTERN: /\s/,
+};
+
+/**
+ * Error messages
+ */
+export enum ErrorMessages {
+  INVALID_TOKEN = 'Invalid token',
+  UNEXPECTED_TOKEN = 'Unexpected token',
+  MISSING_CLOSING_BRACE = 'Missing closing brace',
+  MISSING_CLOSING_PAREN = 'Missing closing parenthesis',
+}

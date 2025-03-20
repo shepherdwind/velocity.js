@@ -5,6 +5,7 @@
  */
 import { createToken, TokenType } from 'chevrotain';
 import { getLexerState, LexerWithState, VelocityLexerState } from './state';
+import { LexerModes, LexerTokenTypes, CONTENT } from './constants';
 
 // Token categories as string constants for reference (not used in token definitions)
 export const TokenCategories = {
@@ -19,137 +20,137 @@ export const TokenCategories = {
 
 // Define token groups
 export const WhiteSpace = createToken({
-  name: 'WhiteSpace',
+  name: LexerTokenTypes.WHITESPACE,
   pattern: /[ \t\n\r]+/,
   line_breaks: true,
 });
 
 // Operators
 export const Dollar = createToken({
-  name: 'Dollar',
+  name: LexerTokenTypes.DOLLAR,
   pattern: /\$/,
   line_breaks: false,
 });
 
 export const Hash = createToken({
-  name: 'Hash',
+  name: LexerTokenTypes.HASH,
   pattern: /#/,
   line_breaks: false,
 });
 
 export const OpenCurly = createToken({
-  name: 'OpenCurly',
+  name: LexerTokenTypes.OPEN_CURLY,
   pattern: /{/,
   line_breaks: false,
 });
 
 export const CloseCurly = createToken({
-  name: 'CloseCurly',
+  name: LexerTokenTypes.CLOSE_CURLY,
   pattern: /}/,
   line_breaks: false,
 });
 
 export const OpenParen = createToken({
-  name: 'OpenParen',
+  name: LexerTokenTypes.OPEN_PAREN,
   pattern: /\(/,
   line_breaks: false,
 });
 
 export const CloseParen = createToken({
-  name: 'CloseParen',
+  name: LexerTokenTypes.CLOSE_PAREN,
   pattern: /\)/,
   line_breaks: false,
 });
 
 export const Dot = createToken({
-  name: 'Dot',
+  name: LexerTokenTypes.DOT,
   pattern: /\./,
   line_breaks: false,
 });
 
 export const Comma = createToken({
-  name: 'Comma',
+  name: LexerTokenTypes.COMMA,
   pattern: /,/,
   line_breaks: false,
 });
 
 export const Colon = createToken({
-  name: 'Colon',
+  name: LexerTokenTypes.COLON,
   pattern: /:/,
   line_breaks: false,
 });
 
 export const Bang = createToken({
-  name: 'Bang',
+  name: LexerTokenTypes.BANG,
   pattern: /!/,
   line_breaks: false,
 });
 
 export const Equal = createToken({
-  name: 'Equal',
+  name: LexerTokenTypes.EQUAL,
   pattern: /=/,
   line_breaks: false,
 });
 
 // String literals
 export const StringLiteral = createToken({
-  name: 'StringLiteral',
+  name: LexerTokenTypes.STRING_LITERAL,
   pattern: /"(?:[^"\\]|\\.)*"/,
   line_breaks: false,
 });
 
 // Identifiers
 export const Id = createToken({
-  name: 'Id',
+  name: LexerTokenTypes.ID,
   pattern: /[a-zA-Z][a-zA-Z0-9_]*/,
   line_breaks: false,
 });
 
 // Directive keywords
 export const Set = createToken({
-  name: 'Set',
+  name: LexerTokenTypes.SET,
   pattern: /set/,
   longer_alt: Id,
   line_breaks: false,
 });
 
 export const If = createToken({
-  name: 'If',
+  name: LexerTokenTypes.IF,
   pattern: /if/,
   longer_alt: Id,
   line_breaks: false,
 });
 
 export const ElseIf = createToken({
-  name: 'ElseIf',
+  name: LexerTokenTypes.ELSE_IF,
   pattern: /elseif/,
   longer_alt: Id,
   line_breaks: false,
 });
 
 export const Else = createToken({
-  name: 'Else',
+  name: LexerTokenTypes.ELSE,
   pattern: /else/,
   longer_alt: Id,
   line_breaks: false,
 });
 
 export const End = createToken({
-  name: 'End',
+  name: LexerTokenTypes.END,
   pattern: /end/,
   longer_alt: Id,
   line_breaks: false,
 });
 
 export const ForEach = createToken({
-  name: 'ForEach',
+  name: LexerTokenTypes.FOR_EACH,
   pattern: /foreach/,
   longer_alt: Id,
   line_breaks: false,
 });
 
 export const In = createToken({
-  name: 'In',
+  name: LexerTokenTypes.IN,
   pattern: /in/,
   longer_alt: Id,
   line_breaks: false,
@@ -157,33 +158,35 @@ export const In = createToken({
 
 // Content - must come after other tokens to properly handle text content
 export const Content = createToken({
-  name: 'Content',
+  name: LexerTokenTypes.CONTENT,
   pattern: {
     exec: (text: string, offset: number) => {
-      // Skip if we're at the end of the text
+      // Early return if at the end of text
       if (offset >= text.length) {
         return null;
       }
 
-      // Get the current character
       const char = text[offset];
 
-      // Skip special characters that have their own tokens
-      if ('$#{}().:=,!"'.indexOf(char) >= 0) {
+      // Early return for special characters
+      if (CONTENT.SPECIAL_CHARS.includes(char)) {
         return null;
       }
 
-      // Find the next special character, whitespace, or the end of the text
+      // Find the next special character, whitespace, or end of text
       let endOffset = offset + 1;
       while (endOffset < text.length) {
         const nextChar = text[endOffset];
-        if ('$#{}().:=,!"'.indexOf(nextChar) >= 0 || /\s/.test(nextChar)) {
+        const isSpecialOrWhitespace =
+          CONTENT.SPECIAL_CHARS.includes(nextChar) || CONTENT.WHITESPACE_PATTERN.test(nextChar);
+
+        if (isSpecialOrWhitespace) {
           break;
         }
         endOffset++;
       }
 
-      // Create the match
+      // Create the match result
       const match = text.substring(offset, endOffset);
       const result = [match] as unknown as RegExpExecArray;
       result.index = offset;
@@ -194,6 +197,17 @@ export const Content = createToken({
   },
   line_breaks: true,
 });
+
+// Type for state handler function
+type StateHandler = (state: VelocityLexerState) => void;
+
+// Token state transition mapping for better readability and maintainability
+const TOKEN_STATE_HANDLERS: Record<string, StateHandler> = {
+  [LexerTokenTypes.DOLLAR]: handleDollarToken,
+  [LexerTokenTypes.HASH]: handleHashToken,
+  [LexerTokenTypes.OPEN_CURLY]: handleOpenCurlyToken,
+  [LexerTokenTypes.CLOSE_CURLY]: handleCloseCurlyToken,
+};
 
 /**
  * Create a token factory function with state handling capabilities
@@ -207,17 +221,11 @@ export function createVelocityToken(tokenType: TokenType) {
   ): { tokenType: TokenType; payload?: unknown } {
     const state = getLexerState(lexer as LexerWithState);
 
-    // Handle specific token types with state transitions
-    if (tokenType === Dollar) {
-      handleDollarToken(state);
-    } else if (tokenType === Hash) {
-      handleHashToken(state);
-    } else if (tokenType === OpenCurly) {
-      handleOpenCurlyToken(state);
-    } else if (tokenType === CloseCurly) {
-      handleCloseCurlyToken(state);
+    // Use the mapping to find and call the appropriate handler
+    const handler = TOKEN_STATE_HANDLERS[tokenType.name];
+    if (handler) {
+      handler(state);
     }
-    // No special state handling for other tokens
 
     return { tokenType };
   };
@@ -227,51 +235,49 @@ export function createVelocityToken(tokenType: TokenType) {
  * State transitions for Dollar token
  */
 function handleDollarToken(state: VelocityLexerState): void {
-  const currentMode = state.currentMode();
-
-  if (currentMode === 'INITIAL') {
-    // $ in initial mode starts a variable reference
-    state.pushMode('mu');
+  if (state.currentMode() !== LexerModes.INITIAL) {
+    return;
   }
+
+  // $ in initial mode starts a variable reference
+  state.pushMode(LexerModes.VARIABLE);
 }
 
 /**
  * State transitions for Hash token
  */
 function handleHashToken(state: VelocityLexerState): void {
-  const currentMode = state.currentMode();
-
-  if (currentMode === 'INITIAL') {
-    // # in initial mode starts a directive
-    state.pushMode('h');
+  if (state.currentMode() !== LexerModes.INITIAL) {
+    return;
   }
+
+  // # in initial mode starts a directive
+  state.pushMode(LexerModes.DIRECTIVE);
 }
 
 /**
  * State transitions for OpenCurly token
  */
 function handleOpenCurlyToken(state: VelocityLexerState): void {
-  const currentMode = state.currentMode();
-
-  if (currentMode === 'mu') {
-    // ${...} formal reference style
-    state.pushMode('i');
+  // Only process if we're in variable mode
+  if (state.currentMode() !== LexerModes.VARIABLE) {
+    return;
   }
+
+  // Mark this as the start of a formal reference
+  state.setVar('inFormalReference', true);
 }
 
 /**
  * State transitions for CloseCurly token
  */
 function handleCloseCurlyToken(state: VelocityLexerState): void {
-  const currentMode = state.currentMode();
-
-  if (currentMode === 'i') {
-    // End of ${...} formal reference
-    state.popMode(); // Pop "i" mode
-
-    // If in "mu" mode, pop it as well to return to INITIAL
-    if (state.currentMode() === 'mu') {
-      state.popMode();
-    }
+  // Only process if we're in variable mode and in a formal reference
+  if (state.currentMode() !== LexerModes.VARIABLE || !state.getVar('inFormalReference')) {
+    return;
   }
+
+  // End the formal reference and pop back to the initial mode
+  state.setVar('inFormalReference', false);
+  state.popMode();
 }
