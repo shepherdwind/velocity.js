@@ -586,14 +586,8 @@ export class VelocityLexerImpl implements VelocityLexer {
 
     // Process closing parenthesis
     if (tokenType === LexerTokenTypes.CLOSE_PAREN) {
-      const isSetWithSixTokens = directiveType === DirectiveTypes.SET && result.length === 6;
-
-      if (isSetWithSixTokens && prevToken) {
-        // Special case for test compatibility
-        result.push(prevToken);
-      } else {
-        result.push(token);
-      }
+      // Always add the closing parenthesis to the result for all directives
+      result.push(token);
 
       return {
         inDirective: false,

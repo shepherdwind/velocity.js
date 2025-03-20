@@ -95,7 +95,7 @@ export const Equal = createToken({
 // String literals
 export const StringLiteral = createToken({
   name: LexerTokenTypes.STRING_LITERAL,
-  pattern: /"(?:[^"\\]|\\.)*"/,
+  pattern: /(["'])(?:(?=(\\?))\2.)*?\1/,
   line_breaks: false,
 });
 

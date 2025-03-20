@@ -30,6 +30,7 @@ export {
   OpenParen,
   Set,
   WhiteSpace,
+  StringLiteral,
 } from './tokens';
 
 // Export lexer
@@ -41,19 +42,31 @@ export {
   tokenizeVelocityTemplate,
 } from './lexer';
 
+// Export parser
+export {
+  VelocityTemplateParser,
+  parseVelocityTemplate,
+  parseVelocityTemplateToCST,
+  createVelocityParser,
+  VelocityAstVisitor,
+  AstNode,
+} from './parser';
+
 /**
- * Current migration status (Phase 1):
+ * Current migration status (Phase 2.5):
  *
  * - Implemented state machine to mimic Jison's state stack behavior
  * - Created token definitions for Velocity template language
- * - Implemented basic lexer
+ * - Implemented lexer with proper token handling and state tracking
+ * - Started implementing parser grammar rules
+ * - Defined AST node structure compatible with the original parser
  *
- * To complete the migration:
+ * TODO to complete the migration:
  *
- * - Implement the full token definitions for each lexer mode
- * - Update token patterns to handle special cases (like escaping)
- * - Implement the parser grammar
- * - Create the AST builder
- * - Add extensive test coverage
- * - Apply finishing touches like performance optimizations
+ * - Implement the full parser grammar rules
+ * - Create the CST-to-AST visitor
+ * - Connect lexer and parser to produce fully compatible AST
+ * - Ensure all edge cases and escaping are handled correctly
+ * - Add comprehensive test coverage
+ * - Optimize for performance
  */
