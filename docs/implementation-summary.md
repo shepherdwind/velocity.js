@@ -6,55 +6,79 @@ We have successfully implemented a basic Chevrotain-based parser for Velocity te
 
 1. **Lexical Analysis**
 
-   - A robust lexer that can tokenize Velocity syntax elements
-   - Support for basic tokens like variable references, directives, and content
+   - A robust lexer that can tokenize all Velocity syntax elements
+   - Support for basic tokens (variable references, directives, content)
+   - Support for all comparison operators (==, !=, >, <, >=, <=)
+   - Support for logical operators (&&, ||, !)
+   - Support for arithmetic operators (+, -, \*, /, %)
+   - Implemented token filtering to handle overlapping tokens (like NotEqual and Equal)
 
 2. **Parsing Rules**
 
-   - Grammar rules for the Velocity template language
+   - Grammar rules for basic Velocity template language constructs
    - Support for variable references (simple and formal)
    - Support for property access
    - Basic directive parsing (set, if, foreach)
-   - Comprehensive condition parsing with comparison and logical operators
+   - Implemented equality (==) and inequality (!=) comparisons in if conditions
 
 3. **CST to AST Conversion**
 
    - Visitor pattern implementation to convert CST to AST
    - AST structure compatible with the existing Jison parser
    - Position tracking for error reporting
-   - Support for complex expressions including:
-     - Comparison operators (`==`, `!=`, `>`, `<`, `>=`, `<=`)
-     - Logical operators (`&&`, `||`, `!`)
-     - Arithmetic operators (`+`, `-`, `*`, `/`, `%`)
+   - Support for equality (==) and inequality (!=) comparisons in expressions
 
 4. **Testing**
 
    - Comprehensive test cases for basic parsing functionality
+   - Tokenization tests for all operators
    - Validation against Jison parser output
-   - All tests passing, ensuring compatibility
+   - Framework for comparing AST outputs between parsers (ignoring position info)
 
-5. **Integration Strategy**
-   - Entry point that allows for gradual transition from Jison to Chevrotain
-   - Documentation of the implementation plan
+5. **Documentation**
+   - Detailed implementation plan for remaining tasks
+   - Documentation of current capabilities and limitations
+   - Test-driven development approach with verification against Jison
+
+## Current Status Table
+
+| Feature              | Lexer | Parser     | Visitor    | Tests             |
+| -------------------- | ----- | ---------- | ---------- | ----------------- |
+| Content              | ✅    | ✅         | ✅         | ✅                |
+| Variable references  | ✅    | ✅         | ✅         | ✅                |
+| Property access      | ✅    | ✅         | ✅         | ✅                |
+| Equality (==)        | ✅    | ✅         | ✅         | ✅                |
+| Inequality (!=)      | ✅    | ✅         | ✅         | ✅                |
+| Other comparisons    | ✅    | ❌         | ❌         | ✅ (tokenization) |
+| Logical operators    | ✅    | ❌         | ❌         | ✅ (tokenization) |
+| Arithmetic operators | ✅    | ❌         | ❌         | ✅ (tokenization) |
+| Set directive        | ✅    | ✅ (basic) | ✅ (basic) | ✅ (tokenization) |
+| If directive         | ✅    | ✅ (basic) | ✅ (basic) | ✅ (basic ==, !=) |
+| Foreach directive    | ✅    | ✅ (basic) | ✅ (basic) | ✅ (tokenization) |
 
 ## Current Limitations
 
 The current implementation has the following limitations that need to be addressed in future work:
 
-1. **Limited Directive Support**
+1. **Partial Expression Support**
+
+   - Only equality (==) and inequality (!=) comparisons are fully implemented in the parser and visitor
+   - Other comparison operators (>, <, >=, <=) are tokenized but not parsed
+   - Logical and arithmetic operators are recognized by the lexer but not handled by the parser
+
+2. **String Literal Handling**
+
+   - Chevrotain AST preserves quotes in string literals ("test")
+   - Jison AST removes quotes (test)
+   - This difference is handled in tests but needs a consistent approach
+
+3. **Limited Directive Support**
 
    - Only basic structure for directives, without full semantic handling
    - No support for nested directives
    - No support for complex constructs like macros
 
-2. **Incomplete Expression Support**
-
-   - ~~Basic equality conditions supported, but limited expression support~~
-   - ~~No arithmetic or complex logical operations~~
-   - We now have comprehensive support for comparison, logical, and arithmetic operations
-   - Still missing support for method/function calls with arguments
-
-3. **Method and Function Calls**
+4. **Method and Function Calls**
 
    - No support for method calls with arguments
    - No support for chained method calls
@@ -63,29 +87,55 @@ The current implementation has the following limitations that need to be address
 
 Based on the implementation plan documents, the following next steps are recommended:
 
-1. **Complete Method/Function Support**
+1. **Complete Comparison Operator Support**
 
-   - Implement method calls with arguments
-   - Support function calls with parameters
-   - Support chained method calls
+   - Implement parser rules for remaining comparison operators (>, <, >=, <=)
+   - Update the visitor to handle these operators
+   - Add tests with Jison comparison for each operator
 
-2. **Enhance Directive Implementation**
+2. **Implement Logical Operator Support**
+
+   - Add parser rules for logical operations (!, &&, ||)
+   - Implement visitor methods for logical expressions
+   - Ensure proper operator precedence
+
+3. **Implement Arithmetic Expression Support**
+
+   - Add parser rules for arithmetic operations (\*, /, %, +, -)
+   - Create visitor methods for arithmetic expressions
+   - Test with various numeric expressions
+
+4. **Enhance Directive Implementation**
 
    - Complete set directive with support for complex expressions
    - Implement conditional directives with proper nesting
    - Add foreach directive with iteration context
    - Implement macro directives
 
-3. **Advanced Features**
+5. **String Literal Handling**
+   - Standardize string literal format to match Jison output
+   - Either strip quotes in visitor or update runtime code
 
-   - Support for comments, includes, and other advanced directives
-   - Error recovery and reporting
-   - Performance optimization
+## Development Methodology
 
-4. **Switchover Strategy**
-   - Gradually increase test coverage of Chevrotain parser
-   - Once all features are implemented and tested, switch from Jison to Chevrotain
-   - Ensure backward compatibility during transition
+The development follows a structured approach:
+
+1. **Incremental Implementation**
+
+   - Add support for one feature at a time
+   - Start with tokenization, then parser rules, then visitor methods
+   - Test each component thoroughly before moving on
+
+2. **Test-Driven Verification**
+
+   - Create test cases that compare with Jison parser output
+   - Verify AST structure compatibility
+   - Document discrepancies that need to be addressed
+
+3. **Documentation Updates**
+   - Keep documentation in sync with implementation
+   - Maintain clear records of current capabilities and limitations
+   - Provide detailed plans for next steps
 
 ## Conclusion
 

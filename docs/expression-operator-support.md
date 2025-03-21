@@ -1,29 +1,38 @@
 # Expression and Operator Support in Velocity.js
 
-## Current Implementation Status
+## Current Status Summary
 
-This document outlines the current status of expression and operator support in the Chevrotain-based Velocity template parser.
+| Feature                                 | Lexical Support | Parser Support | Visitor Support | Test Coverage          |
+| --------------------------------------- | --------------- | -------------- | --------------- | ---------------------- | --- | ---------------------- |
+| Content parsing                         | ✅              | ✅             | ✅              | ✅                     |
+| Variable references                     | ✅              | ✅             | ✅              | ✅                     |
+| Property access                         | ✅              | ✅             | ✅              | ✅                     |
+| Equality operator (==)                  | ✅              | ✅             | ✅              | ✅                     |
+| Comparison operators (!=, >, <, >=, <=) | ✅              | ❌             | ❌              | ✅ (tokenization only) |
+| Logical operators (&&,                  |                 | , !)           | ✅              | ❌                     | ❌  | ✅ (tokenization only) |
+| Arithmetic operators (+, -, \*, /, %)   | ✅              | ❌             | ❌              | ✅ (tokenization only) |
+| Method calls                            | ❌              | ❌             | ❌              | ❌                     |
 
-### Lexical Support (Tokenization)
+## Lexical Support (Tokenization)
 
 The following operators are now recognized by the lexer:
 
-#### Comparison Operators
+### Comparison Operators
 
-- [x] Equal (`==`) - Recognized as two separate Equal tokens
+- [x] Equal (`==`) - Recognized as two separate Equal tokens (fully supported in parser)
 - [x] NotEqual (`!=`)
 - [x] GreaterThan (`>`)
 - [x] LessThan (`<`)
 - [x] GreaterThanEqual (`>=`)
 - [x] LessThanEqual (`<=`)
 
-#### Logical Operators
+### Logical Operators
 
 - [x] And (`&&`)
 - [x] Or (`||`)
 - [x] Bang (`!`) - Recognized but with limitations in certain contexts
 
-#### Arithmetic Operators
+### Arithmetic Operators
 
 - [x] Plus (`+`)
 - [x] Minus (`-`)
@@ -31,7 +40,25 @@ The following operators are now recognized by the lexer:
 - [x] Divide (`/`)
 - [x] Modulo (`%`)
 
-### Known Limitations
+## Parser Support
+
+The parser currently only supports the following operations fully:
+
+- [x] Content parsing and recognition
+- [x] Variable references (simple and formal)
+- [x] Property access
+- [x] Equality comparison (==) in if conditions
+
+## String Literal Handling
+
+A notable difference between Jison and Chevrotain implementations:
+
+- **Jison AST:** String literals are stored without quotes (e.g., `test`)
+- **Chevrotain AST:** String literals currently retain their quotes (e.g., `"test"`)
+
+This difference is acknowledged in tests but will need to be addressed for complete compatibility.
+
+## Known Limitations
 
 1. **Token Order Issues**:
 
@@ -50,57 +77,49 @@ The following operators are now recognized by the lexer:
 
 ## Next Steps for Implementation
 
-### Parser Rules Enhancement
+### 1. Complete Parser Rules for Comparison Operators
 
-1. **Expression Grammar**:
+The immediate next task is to implement parser rules for the remaining comparison operators:
 
-   - Define proper grammar rules for binary expressions
-   - Implement precedence and associativity for operators
-   - Support for parenthesized expressions
+1. Not equal (`!=`)
+2. Greater than (`>`)
+3. Less than (`<`)
+4. Greater than or equal (`>=`)
+5. Less than or equal (`<=`)
 
-2. **Operator-Specific Rules**:
-   - Create specific rules for comparison expressions
-   - Create specific rules for logical expressions
-   - Create specific rules for arithmetic expressions
+For each operator:
 
-### Visitor Methods Implementation
+- Update the `comparisonCondition` rule in the parser to handle the operator
+- Modify the visitor method to correctly translate the CST to AST
+- Update tests to verify correct parsing
 
-1. **Convert CST to AST**:
+### 2. Implement Logical Operator Support
 
-   - Implement visitor methods for each expression type
-   - Ensure correct AST node creation for each operator
-   - Preserve operator precedence in the AST structure
+Once comparison operators are implemented, we'll add support for logical operators:
 
-2. **Position Tracking**:
-   - Ensure accurate position information for all expression nodes
+- NOT (`!`) - Unary logical operator
+- AND (`&&`) - Binary logical operator with higher precedence
+- OR (`||`) - Binary logical operator with lower precedence
 
-### Testing and Validation
+### 3. Implement Arithmetic Operator Support
 
-1. **Comprehensive Test Cases**:
+After logical operators, we'll implement arithmetic operators in order of precedence:
 
-   - Test each operator individually
-   - Test combinations of operators
-   - Test operator precedence
-   - Test complex expressions with multiple operator types
+- Multiplicative operators (`*`, `/`, `%`) - Higher precedence
+- Additive operators (`+`, `-`) - Lower precedence
 
-2. **Error Handling**:
-   - Improve error reporting for invalid expressions
-   - Add recovery strategies for common syntax errors
+### 4. String Literal Handling
 
-## Implementation Plan
+Address the string literal formatting difference:
 
-1. **Fix Lexer Issues**:
+- Either strip quotes in the Chevrotain visitor
+- Or update runtime code to handle both formats
 
-   - Create a single `DoubleEqual` token for `==`
-   - Improve handling of closing parenthesis
-   - Fix context-sensitive recognition of Bang operator
+## Testing Strategy
 
-2. **Enhance Parser Grammar**:
+For each operator implementation:
 
-   - Implement expression grammar with proper precedence
-   - Add support for nested expressions
-
-3. **Complete Visitor Implementation**:
-   - Create visitor methods for all expression types
-   - Implement AST conversion for operators
-   - Ensure compatibility with existing AST structure
+1. Verify lexical recognition (already done)
+2. Test parser grammar rule functionality
+3. Compare generated AST with Jison parser output
+4. Ensure the visitor correctly converts CST to AST

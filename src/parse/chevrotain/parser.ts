@@ -239,7 +239,12 @@ export class VelocityTemplateParser extends CstParser {
       {
         // Not equal condition (!=)
         ALT: () => {
+          // Consume the NotEqual token
           this.CONSUME(NotEqual);
+          // Also consume the Equal token that is erroneously created for the same pattern
+          this.OPTION(() => {
+            this.CONSUME3(Equal);
+          });
           this.OR2([
             { ALT: () => this.CONSUME1(StringLiteral, { LABEL: 'rightLiteral' }) },
             { ALT: () => this.SUBRULE3(this.variableReference, { LABEL: 'rightVariable' }) },

@@ -1,108 +1,90 @@
-# Velocity.js Chevrotain Parser
+# Chevrotain Parser for Velocity.js
 
-This module implements a parser for Velocity templates using Chevrotain. It is a direct replacement for the existing Jison-based parser.
+This directory contains the implementation of a Chevrotain-based parser for Velocity templates, aiming to replace the existing Jison-based parser.
 
-## Implementation Status
+## Current Status
 
-- ✅ State machine implementation
-- ✅ Basic token definitions
-- ✅ Lexer infrastructure
-- ✅ State transition handling
-- ✅ Basic tests for state machine and lexer
-- 🔲 Complete token definitions for all modes
-- 🔲 Parser grammar implementation
-- 🔲 AST builder
-- 🔲 Full test coverage
-- 🔲 Performance optimizations
+The parser is currently under development, with the following components implemented:
 
-## Architecture
+- **Lexer**: Complete implementation with support for all basic tokens, including comparison operators, arithmetic operators, and logical operators.
+- **Parser Rules**: Basic rules for simple templates, variable references, property access, and some directives.
+- **AST Visitor**: Initial implementation for converting CST to AST, supporting basic nodes.
+- **Test Framework**: Comprehensive unit tests for the implemented features.
 
-### State Machine
+### Expression Support
 
-The Velocity template syntax requires complex state transitions that were previously handled by Jison's lexer states. To replicate this functionality, we've implemented a custom state machine that tracks:
+The current implementation supports:
 
-- Current lexer mode (INITIAL, mu, i, h, c, esc, run)
-- State stack for nested expressions
-- Context variables for special handling
+- ✅ Basic content parsing
+- ✅ Variable references with property access
+- ✅ Simple equality comparison (`==`) in `#if` directives
+- ✅ Token recognition for other operators (but not full parsing)
 
-### Lexer
+## Expression Parsing Roadmap
 
-The lexer is responsible for:
+The following steps are planned for implementing full expression support:
 
-1. Tokenizing template input into discrete tokens
-2. Tracking state transitions based on token patterns
-3. Handling special cases like escape sequences
-4. Providing position information for error reporting
+1. **Comparison Operators**
 
-### Parser (Planned)
+   - ✅ Token support for `==`, `!=`, `>`, `<`, `>=`, `<=`
+   - ✅ Parser rules for equality operator (`==`)
+   - ⏳ Parser rules for inequality operators
+   - ⏳ AST visitor implementation for all comparison operators
 
-The parser will:
+2. **Arithmetic Operators**
 
-1. Consume tokens from the lexer
-2. Build a concrete syntax tree (CST)
-3. Transform the CST into an abstract syntax tree (AST)
-4. Handle error recovery and reporting
+   - ✅ Token support for `+`, `-`, `*`, `/`, `%`
+   - ⏳ Parser rules for arithmetic expressions
+   - ⏳ Operator precedence handling
+   - ⏳ AST visitor implementation
 
-## Usage
+3. **Logical Operators**
 
-```typescript
-import { createVelocityLexer, tokenizeVelocityTemplate } from './parse/chevrotain';
+   - ✅ Token support for `&&`, `||`, `!`
+   - ⏳ Parser rules for logical expressions
+   - ⏳ AST visitor implementation
 
-// Create a lexer
-const lexer = createVelocityLexer();
+4. **Complex Expressions**
+   - ⏳ Nested expressions with correct precedence
+   - ⏳ Parenthesized expressions
+   - ⏳ Combined operations (e.g., `$value > 5 && $value < 20`)
 
-// Tokenize a template
-const result = tokenizeVelocityTemplate('Hello, $name!', lexer);
+## Known Issues
 
-// Check for errors
-if (result.errors.length > 0) {
-  console.error('Tokenization errors:', result.errors);
-} else {
-  console.log('Tokens:', result.tokens);
-}
+1. **Token Order**: The order of token definitions is critical for proper recognition. Currently, some operators are recognized but might conflict with others.
+2. **Closing Parentheses**: In complex expressions, there might be issues with recognizing closing parentheses.
+3. **Expression Context**: Some operators are only recognized in specific contexts.
+
+## Running Tests
+
+To run the parser tests:
+
+```bash
+npm test -- src/parse/chevrotain/__tests__/
 ```
 
-## Development Plan
+This will run all tests related to the Chevrotain parser implementation.
 
-### Phase 1: State Machine and Basic Lexer ✅
+## Comparison with Jison Parser
 
-- Implement the state machine to handle complex state transitions
-- Define basic token types
-- Create the lexer infrastructure
-- Add tests for the state machine and basic lexing
+The current implementation aims to be compatible with the existing Jison parser, with a few differences:
 
-### Phase 2: Complete Lexer
+1. **AST Structure**: The structure of the AST nodes is similar but not identical.
+2. **Position Information**: Position data in the AST differs slightly between implementations.
+3. **Expression Handling**: The Jison parser uses a different approach for handling expressions.
 
-- Implement all token definitions for each lexer mode
-- Add special handling for escape sequences
-- Handle edge cases in state transitions
-- Add comprehensive tests for all token types and transitions
+## Contributing
 
-### Phase 3: Parser Grammar
+When implementing new features or fixing issues:
 
-- Define grammar rules for Velocity syntax
-- Implement the parser using Chevrotain
-- Create the CST-to-AST transformation
-- Add tests for parsing various template constructs
-
-### Phase 4: Integration and Optimization
-
-- Integrate with the existing codebase
-- Ensure compatibility with the current API
-- Optimize performance
-- Add benchmarks
-- Complete documentation
-
-## Testing Strategy
-
-- Unit tests for individual components (state machine, lexer, parser)
-- Integration tests for the complete parsing pipeline
-- Test cases from the original parser to ensure compatibility
-- Edge case testing for error handling and recovery
-- Performance benchmarks
+1. Add or update appropriate tests first
+2. Update the parser rules
+3. Implement or update the AST visitor methods
+4. Verify compatibility with the Jison parser (where applicable)
+5. Update this documentation
 
 ## References
 
-- [Jison Parser Source](../jison)
 - [Chevrotain Documentation](https://chevrotain.io/docs/)
-- [Velocity Template Language Guide](https://velocity.apache.org/engine/2.0/user-guide.html)
+- [Velocity Template Language (VTL) Reference](https://velocity.apache.org/engine/1.7/vtl-reference.html)
+- Original Jison parser: `src/parse/index.js`

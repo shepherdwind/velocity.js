@@ -12,9 +12,14 @@ The `VelocityAstVisitor` class is responsible for converting the Concrete Syntax
 - [x] Support for formal references (e.g., `${name}`)
 - [x] Support for property access (e.g., `$user.name`)
 - [x] Position information for AST nodes
-- [x] Added support for comparison operators (==, !=, >, <, >=, <=)
-- [x] Added basic lexical support for logical operators (&& and ||)
-- [x] Added basic lexical support for arithmetic operators (+, -, \*, /, %)
+- [x] Added token definitions for all comparison operators (==, !=, >, <, >=, <=)
+- [x] Added token definitions for logical operators (&& and ||)
+- [x] Added token definitions for arithmetic operators (+, -, \*, /, %)
+- [x] Basic tests for tokenization of all supported operators
+- [x] Parser rule and visitor implementation for equality operator (==)
+- [ ] Parser rules for other comparison operators (!=, >, <, >=, <=)
+- [ ] Parser rules for logical operators (&& and ||)
+- [ ] Parser rules for arithmetic operators (+, -, \*, /, %)
 
 ## Implementation Plan
 
@@ -23,12 +28,59 @@ The `VelocityAstVisitor` class is responsible for converting the Concrete Syntax
 - [x] Token definitions for comparison operators
 - [x] Token definitions for logical operators
 - [x] Token definitions for arithmetic operators
-- [ ] Parser rules for binary expressions
-- [ ] Visitor methods for comparison expressions
+- [x] Parser rule for equality operator
+- [x] Visitor method for equality comparison
+- [ ] **Next Step:** Parser rules for remaining comparison operators (!=, >, <, >=, <=)
+- [ ] Visitor methods for remaining comparison expressions
+- [ ] Parser rules for logical operations (AND, OR, NOT)
 - [ ] Visitor methods for logical expressions
+- [ ] Parser rules for arithmetic operations
 - [ ] Visitor methods for arithmetic expressions
 - [ ] Support for method call expressions
 - [ ] Support for function call expressions
+
+### String Literal Handling
+
+In the current implementation, there is a difference between Jison and Chevrotain in handling string literals:
+
+1. **Jison Parser:** Strips quotes from string literals in the AST (e.g., `"test"` becomes `test`)
+2. **Chevrotain Parser:** Preserves quotes in string literals (e.g., `"test"` remains `"test"`)
+
+For compatibility, we should:
+
+- Either strip quotes in the visitor when building the AST
+- Or handle both formats in the runtime code that uses the AST
+
+The current solution for testing is to acknowledge the difference and adjust tests accordingly, but for proper implementation, we should align with the Jison format by stripping quotes.
+
+### Implementation Order for Parser Rules
+
+We'll implement the parser rules in this specific order:
+
+1. **Comparison Operators:**
+
+   - Not equal (`!=`) - Highest priority as it builds directly on the equality operator
+   - Greater than (`>`)
+   - Less than (`<`)
+   - Greater than or equal (`>=`)
+   - Less than or equal (`<=`)
+
+2. **Logical Operators:**
+
+   - NOT (`!`) - Unary operator
+   - AND (`&&`) - Binary operator with higher precedence
+   - OR (`||`) - Binary operator with lower precedence
+
+3. **Arithmetic Operators (by precedence groups):**
+   - Multiplicative operators (`*`, `/`, `%`)
+   - Additive operators (`+`, `-`)
+
+For each group, we'll:
+
+1. Update parser rules to handle the syntax
+2. Implement visitor methods to build the corresponding AST nodes
+3. Add tests comparing with Jison parsing results
+4. Document limitations and differences
 
 ### Phase 2: Directive Implementation
 
@@ -50,6 +102,7 @@ The `VelocityAstVisitor` class is responsible for converting the Concrete Syntax
 - Multiple Equal tokens are generated for '==' instead of a single DoubleEqual token
 - Logical operations (&&, ||) cannot be properly parsed within complex expressions
 - Arithmetic operations (+, -, \*, /, %) do not work properly within complex expressions
+- String literals retain quotes in the Chevrotain AST, unlike the Jison AST
 
 ## Technical Considerations
 

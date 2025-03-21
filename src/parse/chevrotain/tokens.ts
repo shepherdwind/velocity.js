@@ -86,6 +86,7 @@ export const Bang = createToken({
   line_breaks: false,
 });
 
+// Equal tokens
 export const Equal = createToken({
   name: LexerTokenTypes.EQUAL,
   pattern: /=/,

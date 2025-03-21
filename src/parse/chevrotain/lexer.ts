@@ -1108,7 +1108,33 @@ export function resetLexer(lexer: VelocityLexer): void {
  */
 export function tokenizeVelocityTemplate(template: string, lexer?: VelocityLexer): ILexingResult {
   const lexerToUse = lexer || createVelocityLexer();
-  return lexerToUse.tokenize(template);
+  const result = lexerToUse.tokenize(template);
+
+  // Post-process tokens to handle not-equal operators
+  if (result.tokens) {
+    // Filter out redundant Equal tokens that follow NotEqual tokens
+    const filteredTokens = [];
+    for (let i = 0; i < result.tokens.length; i++) {
+      const token = result.tokens[i];
+
+      // Check if this is an Equal token that follows a NotEqual token
+      const isRedundantEqualToken =
+        token.tokenType.name === LexerTokenTypes.EQUAL &&
+        i > 0 &&
+        result.tokens[i - 1].tokenType.name === LexerTokenTypes.NOT_EQUAL &&
+        token.startOffset === result.tokens[i - 1].startOffset;
+
+      // Only include non-redundant tokens
+      if (!isRedundantEqualToken) {
+        filteredTokens.push(token);
+      }
+    }
+
+    // Replace the tokens with the filtered list
+    result.tokens = filteredTokens;
+  }
+
+  return result;
 }
 
 /**
