@@ -18,6 +18,7 @@ import {
   Colon,
   Bang,
   Equal,
+  EqualEqual,
   NotEqual,
   GreaterThan,
   LessThan,
@@ -39,6 +40,7 @@ import {
   In,
   Id,
   StringLiteral,
+  NumberLiteral,
 } from './tokens';
 import { OperatorTypes } from './constants';
 
@@ -56,6 +58,7 @@ const allTokens = [
   Comma,
   Colon,
   Bang,
+  EqualEqual,
   Equal,
   NotEqual,
   GreaterThan,
@@ -70,6 +73,7 @@ const allTokens = [
   Divide,
   Modulo,
   StringLiteral,
+  NumberLiteral,
   Set,
   If,
   ElseIf,
@@ -109,14 +113,25 @@ export class VelocityTemplateParser extends CstParser {
   // Miscellaneous tokens rule - handles standalone tokens in content
   private readonly miscToken = this.RULE('miscToken', () => {
     this.OR([
-      { ALT: () => this.CONSUME(Id) },
+      { ALT: () => this.CONSUME(Plus) },
+      { ALT: () => this.CONSUME(Minus) },
+      { ALT: () => this.CONSUME(Multiply) },
+      { ALT: () => this.CONSUME(Divide) },
+      { ALT: () => this.CONSUME(Modulo) },
+      { ALT: () => this.CONSUME(EqualEqual) },
+      { ALT: () => this.CONSUME(Equal) },
+      { ALT: () => this.CONSUME(NotEqual) },
+      { ALT: () => this.CONSUME(GreaterThan) },
+      { ALT: () => this.CONSUME(LessThan) },
+      { ALT: () => this.CONSUME(GreaterThanEqual) },
+      { ALT: () => this.CONSUME(LessThanEqual) },
+      { ALT: () => this.CONSUME(And) },
+      { ALT: () => this.CONSUME(Or) },
       { ALT: () => this.CONSUME(Comma) },
-      { ALT: () => this.CONSUME(Bang) },
       { ALT: () => this.CONSUME(Colon) },
       { ALT: () => this.CONSUME(Dot) },
-      { ALT: () => this.CONSUME(In) },
-      { ALT: () => this.CONSUME(WhiteSpace) },
-      // 其他可能在内容中出现的标记
+      { ALT: () => this.CONSUME(NumberLiteral) },
+      { ALT: () => this.CONSUME(StringLiteral) },
     ]);
   });
 
@@ -221,76 +236,31 @@ export class VelocityTemplateParser extends CstParser {
     });
   });
 
-  // Rule for comparison conditions
-  private readonly comparisonCondition = this.RULE('comparisonCondition', () => {
-    this.SUBRULE(this.variableReference, { LABEL: 'left' });
+  // Rule for comparison operators
+  private readonly comparisonOperator = this.RULE('comparisonOperator', () => {
     this.OR([
-      {
-        // Equal condition (==)
-        ALT: () => {
-          this.CONSUME1(Equal);
-          this.CONSUME2(Equal);
-          this.OR1([
-            { ALT: () => this.CONSUME(StringLiteral, { LABEL: 'rightLiteral' }) },
-            { ALT: () => this.SUBRULE2(this.variableReference, { LABEL: 'rightVariable' }) },
-          ]);
-        },
-      },
-      {
-        // Not equal condition (!=)
-        ALT: () => {
-          // Consume the NotEqual token
-          this.CONSUME(NotEqual);
-          // Also consume the Equal token that is erroneously created for the same pattern
-          this.OPTION(() => {
-            this.CONSUME3(Equal);
-          });
-          this.OR2([
-            { ALT: () => this.CONSUME1(StringLiteral, { LABEL: 'rightLiteral' }) },
-            { ALT: () => this.SUBRULE3(this.variableReference, { LABEL: 'rightVariable' }) },
-          ]);
-        },
-      },
-      {
-        // Greater than condition (>)
-        ALT: () => {
-          this.CONSUME(GreaterThan);
-          this.OR3([
-            { ALT: () => this.CONSUME2(StringLiteral, { LABEL: 'rightLiteral' }) },
-            { ALT: () => this.SUBRULE4(this.variableReference, { LABEL: 'rightVariable' }) },
-          ]);
-        },
-      },
-      {
-        // Less than condition (<)
-        ALT: () => {
-          this.CONSUME(LessThan);
-          this.OR4([
-            { ALT: () => this.CONSUME3(StringLiteral, { LABEL: 'rightLiteral' }) },
-            { ALT: () => this.SUBRULE5(this.variableReference, { LABEL: 'rightVariable' }) },
-          ]);
-        },
-      },
-      {
-        // Greater than or equal condition (>=)
-        ALT: () => {
-          this.CONSUME(GreaterThanEqual);
-          this.OR5([
-            { ALT: () => this.CONSUME4(StringLiteral, { LABEL: 'rightLiteral' }) },
-            { ALT: () => this.SUBRULE6(this.variableReference, { LABEL: 'rightVariable' }) },
-          ]);
-        },
-      },
-      {
-        // Less than or equal condition (<=)
-        ALT: () => {
-          this.CONSUME(LessThanEqual);
-          this.OR6([
-            { ALT: () => this.CONSUME5(StringLiteral, { LABEL: 'rightLiteral' }) },
-            { ALT: () => this.SUBRULE7(this.variableReference, { LABEL: 'rightVariable' }) },
-          ]);
-        },
-      },
+      { ALT: () => this.CONSUME(EqualEqual) },
+      { ALT: () => this.CONSUME(NotEqual) },
+      { ALT: () => this.CONSUME(GreaterThan) },
+      { ALT: () => this.CONSUME(LessThan) },
+      { ALT: () => this.CONSUME(GreaterThanEqual) },
+      { ALT: () => this.CONSUME(LessThanEqual) },
+    ]);
+  });
+
+  // Create a comparison condition rule (e.g. $x > 5)
+  private readonly comparisonCondition = this.RULE('comparisonCondition', () => {
+    // Left side of the comparison is a variable reference
+    this.SUBRULE(this.variableReference, { LABEL: 'left' });
+
+    // Operator
+    this.SUBRULE(this.comparisonOperator, { LABEL: 'operator' });
+
+    // Right side can be a variable reference or a literal
+    this.OR([
+      { ALT: () => this.SUBRULE2(this.variableReference, { LABEL: 'right' }) },
+      { ALT: () => this.CONSUME(StringLiteral, { LABEL: 'rightLiteral' }) },
+      { ALT: () => this.CONSUME(NumberLiteral, { LABEL: 'rightNumberLiteral' }) },
     ]);
   });
 
@@ -431,19 +401,24 @@ export class VelocityTemplateParser extends CstParser {
 
   // For checking if a condition could be a comparison condition
   private readonly isComparisonCondition = this.RULE('isComparisonCondition', () => {
+    // First try to match a variable reference
     this.SUBRULE(this.variableReference);
+
+    // Then try to match any of the comparison operators
     this.OR([
-      {
-        ALT: () => {
-          this.CONSUME1(Equal);
-          this.CONSUME2(Equal);
-        },
-      },
+      { ALT: () => this.CONSUME(EqualEqual) },
       { ALT: () => this.CONSUME(NotEqual) },
       { ALT: () => this.CONSUME(GreaterThan) },
       { ALT: () => this.CONSUME(LessThan) },
       { ALT: () => this.CONSUME(GreaterThanEqual) },
       { ALT: () => this.CONSUME(LessThanEqual) },
+    ]);
+
+    // Finally, expect a right operand
+    this.OR1([
+      { ALT: () => this.SUBRULE2(this.variableReference) },
+      { ALT: () => this.CONSUME(StringLiteral) },
+      { ALT: () => this.CONSUME(NumberLiteral) },
     ]);
   });
 
@@ -1023,51 +998,66 @@ class ChevrotainToAstVisitor extends velocityParser.getBaseCstVisitorConstructor
     };
   }
 
-  // Comparison condition (e.g., $a == $b, $a != "string", $a > $b, etc.)
-  comparisonCondition(ctx: {
-    left?: CstNode[];
-    Equal?: IToken[];
+  // Process comparison operators
+  comparisonOperator(ctx: {
+    EqualEqual?: IToken[];
     NotEqual?: IToken[];
     GreaterThan?: IToken[];
     LessThan?: IToken[];
     GreaterThanEqual?: IToken[];
     LessThanEqual?: IToken[];
-    rightLiteral?: IToken[];
-    rightVariable?: CstNode[];
-  }): unknown {
-    // Get the left side (should be a variable reference)
-    const left = ctx.left && ctx.left.length > 0 ? this.visit(ctx.left[0]) : undefined;
-
-    // Get the right side based on the available tokens
-    let right: unknown;
-    if (ctx.rightLiteral && ctx.rightLiteral.length > 0) {
-      right = ctx.rightLiteral[0].image;
-    } else if (ctx.rightVariable && ctx.rightVariable.length > 0) {
-      right = this.visit(ctx.rightVariable[0]);
-    } else {
-      right = '';
-    }
-
-    // Determine the operator type based on tokens present
-    let operator = OperatorTypes.EQUAL; // Default
+  }): string {
     if (ctx.NotEqual && ctx.NotEqual.length > 0) {
-      operator = OperatorTypes.NOT_EQUAL;
+      return OperatorTypes.NOT_EQUAL;
     } else if (ctx.GreaterThan && ctx.GreaterThan.length > 0) {
-      operator = OperatorTypes.GREATER_THAN;
+      return OperatorTypes.GREATER_THAN;
     } else if (ctx.LessThan && ctx.LessThan.length > 0) {
-      operator = OperatorTypes.LESS_THAN;
+      return OperatorTypes.LESS_THAN;
     } else if (ctx.GreaterThanEqual && ctx.GreaterThanEqual.length > 0) {
-      operator = OperatorTypes.GREATER_THAN_EQUAL;
+      return OperatorTypes.GREATER_THAN_EQUAL;
     } else if (ctx.LessThanEqual && ctx.LessThanEqual.length > 0) {
-      operator = OperatorTypes.LESS_THAN_EQUAL;
+      return OperatorTypes.LESS_THAN_EQUAL;
+    } else if (ctx.EqualEqual && ctx.EqualEqual.length > 0) {
+      return OperatorTypes.EQUAL;
+    }
+    return OperatorTypes.EQUAL; // Default
+  }
+
+  // Comparison condition (e.g., $a == $b, $a != "string", $a > $b, etc.)
+  comparisonCondition(ctx: {
+    left?: CstNode[];
+    operator?: CstNode[];
+    right?: CstNode[];
+    rightLiteral?: IToken[];
+    rightNumberLiteral?: IToken[];
+  }): unknown {
+    const left = ctx.left && ctx.left.length > 0 ? this.visit(ctx.left[0]) : undefined;
+    const operator =
+      ctx.operator && ctx.operator.length > 0 ? (this.visit(ctx.operator[0]) as string) : '';
+
+    let right;
+    if (ctx.right && ctx.right.length > 0) {
+      right = this.visit(ctx.right[0]);
+    } else if (ctx.rightLiteral && ctx.rightLiteral.length > 0) {
+      // Convert string literal to match Jison's format: remove quotes and add type info
+      right = {
+        type: 'string',
+        value: ctx.rightLiteral[0].image.replace(/^"|"$/g, ''), // Remove quotes
+        isEval: true,
+      };
+    } else if (ctx.rightNumberLiteral && ctx.rightNumberLiteral.length > 0) {
+      // Extract number from token image (remove any quotes)
+      right = {
+        type: 'integer',
+        value: ctx.rightNumberLiteral[0].image,
+      };
     }
 
-    // Build a comparison operation object
+    // Return structure matching Jison's AST for math operations
     return {
-      type: 'operation',
+      type: 'math',
+      expression: [left, right],
       operator,
-      left,
-      right,
       pos: this.buildPosition(ctx),
     };
   }

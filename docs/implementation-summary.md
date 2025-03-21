@@ -1,141 +1,98 @@
 # Velocity.js Chevrotain Parser Implementation Summary
 
-## Accomplishments
+## Implementation Summary
 
-We have successfully implemented a basic Chevrotain-based parser for Velocity templates with the following capabilities:
+This document provides an overview of the current status of the Chevrotain-based Velocity parser implementation.
 
-1. **Lexical Analysis**
+### Accomplishments
 
-   - A robust lexer that can tokenize all Velocity syntax elements
-   - Support for basic tokens (variable references, directives, content)
-   - Support for all comparison operators (==, !=, >, <, >=, <=)
-   - Support for logical operators (&&, ||, !)
-   - Support for arithmetic operators (+, -, \*, /, %)
-   - Implemented token filtering to handle overlapping tokens (like NotEqual and Equal)
+- Lexer can tokenize all Velocity syntax elements, including:
 
-2. **Parsing Rules**
+  - Variable references with property access
+  - Directives (#set, #if, #foreach)
+  - All comparison operators: ==, !=, >, <, >=, <=
+  - All logical operators: &&, ||
+  - All arithmetic operators: +, -, \*, /, %
+  - String literals and comments
+  - Number literals
 
-   - Grammar rules for basic Velocity template language constructs
-   - Support for variable references (simple and formal)
-   - Support for property access
-   - Basic directive parsing (set, if, foreach)
-   - Implemented equality (==) and inequality (!=) comparisons in if conditions
+- Parser successfully implements grammar rules for:
+  - Basic content parsing
+  - Variable references with property access
+  - Directive structure (#set, #if, #foreach)
+  - Expressions in directives
+  - Equality comparison (==) and not-equality (!=) in if conditions
 
-3. **CST to AST Conversion**
+### Current Status Table
 
-   - Visitor pattern implementation to convert CST to AST
-   - AST structure compatible with the existing Jison parser
-   - Position tracking for error reporting
-   - Support for equality (==) and inequality (!=) comparisons in expressions
+| Feature              | Status         | Notes                                                |
+| -------------------- | -------------- | ---------------------------------------------------- |
+| Content Parsing      | ✅ Complete    | Basic text content parsing is working                |
+| Variable References  | ✅ Complete    | Simple, formal, and property access refs implemented |
+| Directives Structure | ✅ Complete    | #set, #if, #foreach structure is implemented         |
+| String Literals      | ✅ Complete    | String literals are properly tokenized and parsed    |
+| Number Literals      | 🔄 In Progress | Basic tokenization done, parsing work in progress    |
+| Equality Comparison  | ✅ Complete    | == operator is working in if directives              |
+| NotEqual Comparison  | ✅ Complete    | != operator is working in if directives              |
+| Greater Than         | 🔄 In Progress | Tokenization done, parsing not fully implemented     |
+| Less Than            | 🔄 In Progress | Tokenization done, parsing not fully implemented     |
+| GreaterThanEqual     | 🔄 In Progress | Tokenization done, parsing not fully implemented     |
+| LessThanEqual        | 🔄 In Progress | Tokenization done, parsing not fully implemented     |
+| Logical Operators    | 🔄 In Progress | Tokenization done, parsing not fully implemented     |
+| Arithmetic Operators | 🔄 In Progress | Tokenization done, parsing not fully implemented     |
 
-4. **Testing**
+### Current Limitations
 
-   - Comprehensive test cases for basic parsing functionality
-   - Tokenization tests for all operators
-   - Validation against Jison parser output
-   - Framework for comparing AST outputs between parsers (ignoring position info)
+- Number literal handling is being improved to ensure correct parsing in comparison operations
+- While NotEqual (!=) and Equal (==) comparison operators are fully implemented, other comparison operators (>, <, >=, <=) are tokenized but not fully parsed
+- Logical operators (&&, ||) are tokenized but not fully parsed
+- Arithmetic operators (+, -, \*, /, %) are tokenized but not fully parsed
+- String literal handling differs slightly between Jison and Chevrotain - Chevrotain includes quotes in the token image, which requires additional handling
 
-5. **Documentation**
-   - Detailed implementation plan for remaining tasks
-   - Documentation of current capabilities and limitations
-   - Test-driven development approach with verification against Jison
+### Next Steps
 
-## Current Status Table
+1. Complete support for all comparison operators in if directives
 
-| Feature              | Lexer | Parser     | Visitor    | Tests             |
-| -------------------- | ----- | ---------- | ---------- | ----------------- |
-| Content              | ✅    | ✅         | ✅         | ✅                |
-| Variable references  | ✅    | ✅         | ✅         | ✅                |
-| Property access      | ✅    | ✅         | ✅         | ✅                |
-| Equality (==)        | ✅    | ✅         | ✅         | ✅                |
-| Inequality (!=)      | ✅    | ✅         | ✅         | ✅                |
-| Other comparisons    | ✅    | ❌         | ❌         | ✅ (tokenization) |
-| Logical operators    | ✅    | ❌         | ❌         | ✅ (tokenization) |
-| Arithmetic operators | ✅    | ❌         | ❌         | ✅ (tokenization) |
-| Set directive        | ✅    | ✅ (basic) | ✅ (basic) | ✅ (tokenization) |
-| If directive         | ✅    | ✅ (basic) | ✅ (basic) | ✅ (basic ==, !=) |
-| Foreach directive    | ✅    | ✅ (basic) | ✅ (basic) | ✅ (tokenization) |
+   - Improve number literal handling in comparison operations
+   - Fix CST to AST conversion for comparison operations
 
-## Current Limitations
+2. Implement support for logical operators in if directives
 
-The current implementation has the following limitations that need to be addressed in future work:
+   - Add proper visitor methods for logical operation nodes
+   - Ensure logical operator precedence matches the Jison implementation
 
-1. **Partial Expression Support**
+3. Implement arithmetic operators in expressions
 
-   - Only equality (==) and inequality (!=) comparisons are fully implemented in the parser and visitor
-   - Other comparison operators (>, <, >=, <=) are tokenized but not parsed
-   - Logical and arithmetic operators are recognized by the lexer but not handled by the parser
+   - Add proper rules for arithmetic operator precedence
+   - Ensure correct AST structure for arithmetic operations
 
-2. **String Literal Handling**
+4. Enhance directive implementation
 
-   - Chevrotain AST preserves quotes in string literals ("test")
-   - Jison AST removes quotes (test)
-   - This difference is handled in tests but needs a consistent approach
+   - Add support for directives with more complex expressions
+   - Implement nested directive handling
 
-3. **Limited Directive Support**
+5. Standardize string literal handling
+   - Ensure consistent string handling between parsers
+   - Add proper escaping support in string literals
 
-   - Only basic structure for directives, without full semantic handling
-   - No support for nested directives
-   - No support for complex constructs like macros
+### Development Methodology
 
-4. **Method and Function Calls**
+We're following a methodical, incremental implementation approach:
 
-   - No support for method calls with arguments
-   - No support for chained method calls
+1. Implement and test each feature independently
+2. Verify each implementation against the original Jison parser
+3. Document progress and limitations
+4. Identify and prioritize next steps based on test coverage
 
-## Next Steps
+### Test Framework
 
-Based on the implementation plan documents, the following next steps are recommended:
+The implementation is validated using a comprehensive test suite that:
 
-1. **Complete Comparison Operator Support**
+1. Tests token generation with specified inputs
+2. Compares AST output with the original Jison parser
+3. Verifies semantic equivalence of the generated ASTs
 
-   - Implement parser rules for remaining comparison operators (>, <, >=, <=)
-   - Update the visitor to handle these operators
-   - Add tests with Jison comparison for each operator
-
-2. **Implement Logical Operator Support**
-
-   - Add parser rules for logical operations (!, &&, ||)
-   - Implement visitor methods for logical expressions
-   - Ensure proper operator precedence
-
-3. **Implement Arithmetic Expression Support**
-
-   - Add parser rules for arithmetic operations (\*, /, %, +, -)
-   - Create visitor methods for arithmetic expressions
-   - Test with various numeric expressions
-
-4. **Enhance Directive Implementation**
-
-   - Complete set directive with support for complex expressions
-   - Implement conditional directives with proper nesting
-   - Add foreach directive with iteration context
-   - Implement macro directives
-
-5. **String Literal Handling**
-   - Standardize string literal format to match Jison output
-   - Either strip quotes in visitor or update runtime code
-
-## Development Methodology
-
-The development follows a structured approach:
-
-1. **Incremental Implementation**
-
-   - Add support for one feature at a time
-   - Start with tokenization, then parser rules, then visitor methods
-   - Test each component thoroughly before moving on
-
-2. **Test-Driven Verification**
-
-   - Create test cases that compare with Jison parser output
-   - Verify AST structure compatibility
-   - Document discrepancies that need to be addressed
-
-3. **Documentation Updates**
-   - Keep documentation in sync with implementation
-   - Maintain clear records of current capabilities and limitations
-   - Provide detailed plans for next steps
+This approach ensures compatibility with the existing Velocity.js implementation while providing a more maintainable and extensible parser architecture.
 
 ## Conclusion
 

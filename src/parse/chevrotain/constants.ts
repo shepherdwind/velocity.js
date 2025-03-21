@@ -15,6 +15,7 @@ export enum LexerTokenTypes {
   COLON = 'Colon',
   BANG = 'Bang',
   EQUAL = 'Equal',
+  EQUAL_EQUAL = 'EqualEqual',
   NOT_EQUAL = 'NotEqual',
   GREATER_THAN = 'GreaterThan',
   LESS_THAN = 'LessThan',
@@ -36,6 +37,7 @@ export enum LexerTokenTypes {
   IN = 'In',
   ID = 'Id',
   STRING_LITERAL = 'StringLiteral',
+  NUMBER_LITERAL = 'NumberLiteral',
 }
 
 /**
@@ -97,7 +99,7 @@ export const CONTENT = {
 };
 
 /**
- * Operator types for operation nodes
+ * Operator types used in AST generation
  */
 export enum OperatorTypes {
   EQUAL = '==',

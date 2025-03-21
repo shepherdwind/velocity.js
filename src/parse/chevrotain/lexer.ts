@@ -28,6 +28,7 @@ import {
   NotEqual,
   GreaterThanEqual,
   LessThanEqual,
+  EqualEqual,
   Equal,
   GreaterThan,
   LessThan,
@@ -47,6 +48,7 @@ import {
   In,
   Id,
   StringLiteral,
+  NumberLiteral,
   createVelocityToken,
 } from './tokens';
 import { getLexerState, LexerWithState, VelocityLexerState } from './state';
@@ -159,6 +161,7 @@ export class VelocityLexerImpl implements VelocityLexer {
       NotEqual,
       GreaterThanEqual,
       LessThanEqual,
+      EqualEqual,
       And,
       Or,
       // Then simple operators
@@ -173,6 +176,7 @@ export class VelocityLexerImpl implements VelocityLexer {
       Divide,
       Modulo,
       // Other tokens
+      NumberLiteral,
       StringLiteral,
       Set,
       If,
@@ -1110,22 +1114,45 @@ export function tokenizeVelocityTemplate(template: string, lexer?: VelocityLexer
   const lexerToUse = lexer || createVelocityLexer();
   const result = lexerToUse.tokenize(template);
 
-  // Post-process tokens to handle not-equal operators
+  // Post-process tokens to handle duplicated operator tokens
   if (result.tokens) {
-    // Filter out redundant Equal tokens that follow NotEqual tokens
+    // Filter out redundant tokens
     const filteredTokens = [];
     for (let i = 0; i < result.tokens.length; i++) {
       const token = result.tokens[i];
+      const currentTokenType = token.tokenType.name;
 
-      // Check if this is an Equal token that follows a NotEqual token
-      const isRedundantEqualToken =
-        token.tokenType.name === LexerTokenTypes.EQUAL &&
+      // Check if this is a potentially duplicated token based on overlapping patterns
+      const isDuplicatedToken =
+        // Handles NotEqual followed by Equal
+        (currentTokenType === LexerTokenTypes.EQUAL &&
+          i > 0 &&
+          result.tokens[i - 1].tokenType.name === LexerTokenTypes.NOT_EQUAL &&
+          token.startOffset === result.tokens[i - 1].startOffset) ||
+        // Handle other comparison operators
+        (currentTokenType === LexerTokenTypes.EQUAL &&
+          i > 0 &&
+          (result.tokens[i - 1].tokenType.name === LexerTokenTypes.GREATER_THAN_EQUAL ||
+            result.tokens[i - 1].tokenType.name === LexerTokenTypes.LESS_THAN_EQUAL) &&
+          token.startOffset === result.tokens[i - 1].startOffset + 1) ||
+        // Handle other cases of duplicated tokens with the same offset
+        (i > 0 &&
+          token.startOffset === result.tokens[i - 1].startOffset &&
+          token.image === result.tokens[i - 1].image);
+
+      // Filter out incorrect string literals after comparison operators
+      const isIncorrectStringLiteral =
+        currentTokenType === LexerTokenTypes.STRING_LITERAL &&
         i > 0 &&
-        result.tokens[i - 1].tokenType.name === LexerTokenTypes.NOT_EQUAL &&
-        token.startOffset === result.tokens[i - 1].startOffset;
+        (result.tokens[i - 1].tokenType.name === LexerTokenTypes.GREATER_THAN ||
+          result.tokens[i - 1].tokenType.name === LexerTokenTypes.LESS_THAN ||
+          result.tokens[i - 1].tokenType.name === LexerTokenTypes.GREATER_THAN_EQUAL ||
+          result.tokens[i - 1].tokenType.name === LexerTokenTypes.LESS_THAN_EQUAL) &&
+        // String literal starts with a digit, suggesting it should be a number
+        /^\d/.test(token.image.slice(1, -1));
 
       // Only include non-redundant tokens
-      if (!isRedundantEqualToken) {
+      if (!isDuplicatedToken && !isIncorrectStringLiteral) {
         filteredTokens.push(token);
       }
     }

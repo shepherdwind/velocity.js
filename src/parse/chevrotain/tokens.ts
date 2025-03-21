@@ -93,6 +93,12 @@ export const Equal = createToken({
   line_breaks: false,
 });
 
+export const EqualEqual = createToken({
+  name: LexerTokenTypes.EQUAL_EQUAL,
+  pattern: /==/,
+  line_breaks: false,
+});
+
 // New comparison operators
 export const NotEqual = createToken({
   name: LexerTokenTypes.NOT_EQUAL,
@@ -172,6 +178,13 @@ export const Modulo = createToken({
 export const StringLiteral = createToken({
   name: LexerTokenTypes.STRING_LITERAL,
   pattern: /(["'])(?:(?=(\\?))\2.)*?\1/,
+  line_breaks: false,
+});
+
+// Number literals
+export const NumberLiteral = createToken({
+  name: LexerTokenTypes.NUMBER_LITERAL,
+  pattern: /\d+/,
   line_breaks: false,
 });
 
