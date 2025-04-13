@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.1.0](https://github.com/shepherdwind/velocity.js/compare/v2.0.6...v2.1.0)
+
+> 13 April 2025
+
+- TypeScript support [`#158`](https://github.com/shepherdwind/velocity.js/pull/158)
+
 #### [v2.0.6](https://github.com/shepherdwind/velocity.js/compare/v2.0.5...v2.0.6)
+
+> 16 January 2022
 
 - feat: add custom method handlers support, refactor references.js [`#146`](https://github.com/shepherdwind/velocity.js/pull/146)
 - chore: add npm ci support [`91baab1`](https://github.com/shepherdwind/velocity.js/commit/91baab1cbd3979f1cc4f1ad850433541fdf6566d)
