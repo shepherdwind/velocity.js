@@ -1,7 +1,7 @@
 {
   "name": "velocityjs",
   "description": "Velocity Template Language(VTL) for JavaScript",
-  "version": "2.0.6",
+  "version": "2.1.0-beta",
   "license": "MIT",
   "keywords": [
     "velocity template"
@@ -12,31 +12,48 @@
     "url": "git://github.com/shepherdwind/velocity.js.git"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=16.0.0"
   },
-  "main": "src/velocity.js",
-  "bin": {
-    "velocity": "bin/velocity"
-  },
-  "browser": {
-    "fs": false,
-    "path": false
-  },
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "History.md",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
   "devDependencies": {
-    "amplify-appsync-simulator": "^2.3.5",
-    "auto-changelog": "^2.3.0",
-    "jison": ">=0.3",
-    "mocha": "^9.1.4",
-    "nyc": "^15.1.0",
-    "should": "^13.2.3"
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@types/debug": "^4.1.12",
+    "@types/jest": "^29.5.11",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "auto-changelog": "^2.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "jest": "^29.7.0",
+    "jison": "^0.4.18",
+    "prettier": "^3.2.5",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.4.18",
+    "vite-plugin-dts": "^3.9.1"
   },
   "scripts": {
-    "test": "mocha test --require should",
+    "test": "jest --config=jest.config.js",
+    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' --fix",
+    "build": "rm -rf dist && vite build",
+    "test:build": "npm run build && node ./test/build-test.js && node ./test/build-test-esm.mjs",
     "prepublishOnly": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\") npm run tag",
     "version": "npm run changelog && git add . && git commit -m 'chore: update history.md' && git push origin",
     "tag": "if [[ $PACKAGE_VERSION != *\"beta\"* ]];then git tag v$PACKAGE_VERSION && git push --tags; fi",
     "changelog": "auto-changelog -p -u",
-    "ci": "nyc mocha --require should"
+    "ci": "npm run lint && jest --coverage --no-cache && npm run test:build",
+    "prepare": "npm run build"
   },
   "auto-changelog": {
     "output": "History.md",
@@ -44,11 +61,14 @@
     "startingVersion": "v2.0.3",
     "ignoreCommitPattern": "(chore: update history.md)|(Merge branch .+)"
   },
-  "spm": {
-    "main": "index.js",
-    "buildArgs": "--skip fs,path"
-  },
   "dependencies": {
-    "debug": "^4.3.3"
+    "debug": "^4.3.4"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
   }
 }

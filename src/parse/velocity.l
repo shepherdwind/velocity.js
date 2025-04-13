@@ -1,4 +1,3 @@
-
 %x mu c i h esc run
 
 %%
@@ -7,7 +6,7 @@
                                     var _reg = /\\+$/;
                                     var _esc = yytext.match(_reg);
                                     var _num = _esc ? _esc[0].length: null;
-                                    /*转义实现，非常恶心，暂时没有好的解决方案*/
+                                    /*Escape implementation, very tricky, no good solution for now*/
                                     if (!_num || !(_num % 2)) {
                                       this.begin("mu");
                                     } else {
@@ -96,7 +95,7 @@
                                       }
 
                                       var tailStack = this.topState(len - 2);
-                                      /** 遇到#set(a = b)括号结束后结束状态h*/
+                                      /** End state h after encountering #set(a = b) parenthesis closure*/
                                       if (len === 2 && tailStack === "h"){
                                         this.popState();
                                       } else if (len === 3 && tailStack === "mu" &&  this.topState(len - 3) === "h") {

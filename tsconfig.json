@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2018",
+    "module": "esnext",
+    "sourceMap": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "declarationDir": "dist/types",
+    "outDir": "dist/",
+    "strictNullChecks": true,
+    "rootDir": "./",
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src", "test"],
+  "exclude": ["src/parse/index.js"]
+}
