@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { Velocity } from './base';
 import { Compile } from './base-compile';
 import { BlockCommand } from './blocks';
