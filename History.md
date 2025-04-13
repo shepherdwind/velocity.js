@@ -2,11 +2,32 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.1.1](https://github.com/shepherdwind/velocity.js/compare/v2.1.0...v2.1.1)
+
+- chore: update dependencies [`c299117`](https://github.com/shepherdwind/velocity.js/commit/c299117c549644e5990e22c4dd15b51f26ac111d)
+- chore: remove package-lock.json and update README and VSCode settings [`2cdd37f`](https://github.com/shepherdwind/velocity.js/commit/2cdd37f162c30d5154c70d87ecdfe9397a15f75f)
+
 #### [v2.1.0](https://github.com/shepherdwind/velocity.js/compare/v2.0.6...v2.1.0)
 
 > 13 April 2025
 
 - TypeScript support [`#158`](https://github.com/shepherdwind/velocity.js/pull/158)
+- chore(deps-dev): bump express from 4.18.2 to 4.19.2 [`#163`](https://github.com/shepherdwind/velocity.js/pull/163)
+- chore(deps-dev): bump @babel/traverse from 7.16.8 to 7.24.1 [`#162`](https://github.com/shepherdwind/velocity.js/pull/162)
+- chore(deps-dev): bump ip from 1.1.5 to 1.1.9 [`#161`](https://github.com/shepherdwind/velocity.js/pull/161)
+- chore(deps): bump xml2js and aws-sdk [`#159`](https://github.com/shepherdwind/velocity.js/pull/159)
+- chore(deps): bump async from 2.6.3 to 2.6.4 [`#150`](https://github.com/shepherdwind/velocity.js/pull/150)
+- chore(deps): bump minimatch from 3.0.4 to 3.1.2 [`#152`](https://github.com/shepherdwind/velocity.js/pull/152)
+- chore(deps): bump qs and express [`#154`](https://github.com/shepherdwind/velocity.js/pull/154)
+- chore(deps): bump moment from 2.29.2 to 2.29.4 [`#157`](https://github.com/shepherdwind/velocity.js/pull/157)
+- chore(deps): bump express from 4.17.2 to 4.18.2 [`#155`](https://github.com/shepherdwind/velocity.js/pull/155)
+- chore(deps): bump json5 from 2.2.0 to 2.2.3 [`#156`](https://github.com/shepherdwind/velocity.js/pull/156)
+- chore(deps): bump node-fetch from 2.6.6 to 2.6.7 [`#148`](https://github.com/shepherdwind/velocity.js/pull/148)
+- chore(deps): bump moment from 2.29.1 to 2.29.2 [`#149`](https://github.com/shepherdwind/velocity.js/pull/149)
+- chore(deps): bump minimist from 1.2.5 to 1.2.6 [`#147`](https://github.com/shepherdwind/velocity.js/pull/147)
+- fix: restore project to stable state, remove ESM configuration, fix build and tests [`fcbbf37`](https://github.com/shepherdwind/velocity.js/commit/fcbbf372e942d7be224012291ad51c91bb3b9c16)
+- chore: update package.json and GitHub Actions for Node.js version compatibility [`9d3840a`](https://github.com/shepherdwind/velocity.js/commit/9d3840a5763f74a5a7708a97c971c30ea80700f4)
+- feat: upgrade all test and source code to typescript [`b749a27`](https://github.com/shepherdwind/velocity.js/commit/b749a27d83a283ada8e23abc21f6293963128148)
 
 #### [v2.0.6](https://github.com/shepherdwind/velocity.js/compare/v2.0.5...v2.0.6)
 
