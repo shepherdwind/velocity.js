@@ -10,7 +10,7 @@ Velocity - Template Engine
 [npm-url]: http://npmjs.org/package/velocityjs
 [download-image]: https://img.shields.io/npm/dm/velocityjs.svg?style=flat-square
 [download-url]: https://npmjs.org/package/velocityjs
-[github-image]: https://img.shields.io/github/actions/workflow/status/shepherdwind/velocity.js/ci.yml?branch=master&style=flat-square
+[github-image]: https://img.shields.io/github/actions/workflow/status/shepherdwind/velocity.js/node.js.yml?branch=master&style=flat-square
 [github-url]: https://github.com/shepherdwind/velocity.js/actions
 
 
