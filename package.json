@@ -12,7 +12,7 @@
     "url": "git://github.com/shepherdwind/velocity.js.git"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
