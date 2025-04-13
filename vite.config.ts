@@ -47,4 +47,4 @@ export default defineConfig({
       exclude: ['src/parse/index.js'],
     }),
   ],
-}); 
+});

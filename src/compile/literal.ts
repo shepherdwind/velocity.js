@@ -1,4 +1,3 @@
-import type { VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './base-compile';
 import { ArrayAST, LiteralAST, NormalArrayAST, ReferencesAST, StringAST } from '../type';

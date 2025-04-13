@@ -86,4 +86,4 @@ export class Velocity {
   protected eval(str: string, _local?: object) {
     return str;
   }
-} 
+}

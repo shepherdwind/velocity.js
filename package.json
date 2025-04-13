@@ -45,7 +45,7 @@
   },
   "scripts": {
     "test": "jest --config=jest.config.js",
-    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' --fix",
     "build": "rm -rf dist && vite build",
     "test:build": "npm run build && node ./test/build-test.js && node ./test/build-test-esm.mjs",
     "prepublishOnly": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\") npm run tag",
@@ -63,29 +63,6 @@
   },
   "dependencies": {
     "debug": "^4.3.4"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/src/parse/",
-      "/test/"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 90,
-        "functions": 95,
-        "lines": 95,
-        "statements": 95
-      }
-    }
   },
   "exports": {
     ".": {

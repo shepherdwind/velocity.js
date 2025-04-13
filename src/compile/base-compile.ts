@@ -82,4 +82,4 @@ export class Compile extends Velocity {
 
     return str;
   }
-} 
+}
