@@ -1,6 +1,6 @@
 import type { VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
-import { Compile } from './compile';
+import { Compile } from './base-compile';
 
 /**
  * expression support, include math, logic, compare expression

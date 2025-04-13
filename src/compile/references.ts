@@ -1,6 +1,6 @@
 import debugBase from 'debug';
 import { getRefText } from '../helper';
-import { Compile } from './compile';
+import { Compile } from './base-compile';
 import { Attribute, IndexAttribute, Method, ReferencesAST, VELOCITY_AST } from '../type';
 import { applyMixins, convert } from '../utils';
 

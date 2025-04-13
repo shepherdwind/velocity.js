@@ -5,7 +5,7 @@
 
 // Test CommonJS import
 try {
-  const velocityjs = require('../dist/cjs/index.js');
+  const velocityjs = require('../dist/cjs/index.cjs');
   console.log('✅ CommonJS import successful');
 
   // Basic functionality test

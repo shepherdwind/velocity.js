@@ -1,6 +1,6 @@
-import Velocity from './index';
+import { Velocity } from './base';
 import { Macros, RenderContext, VELOCITY_AST } from '../type';
-import { applyMixins, format } from '../utils';
+import { format } from '../utils';
 
 export class Compile extends Velocity {
   /**
@@ -82,12 +82,4 @@ export class Compile extends Velocity {
 
     return str;
   }
-}
-
-import './blocks';
-import './expression';
-import './literal';
-import './references';
-import './set';
-
-applyMixins(Velocity, [Compile]);
+} 

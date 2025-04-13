@@ -1,8 +1,8 @@
 import type { EachAST, MacroAST, MacroCallAST, VELOCITY_AST, CommonAstType } from '../type';
-import { Compile } from './compile';
+import { Compile } from './base-compile';
 import { parse } from '../parse';
 import { getRefText } from '../helper/index';
-import { applyMixins, guid } from '../utils';
+import { guid } from '../utils';
 
 /**
  * blocks such as if, foreach, macro syntax handler
@@ -237,5 +237,3 @@ export class BlockCommand extends Compile {
     return this.renderAstList(asts, this.contextId);
   }
 }
-
-applyMixins(Compile, [BlockCommand]);

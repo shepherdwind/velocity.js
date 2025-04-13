@@ -1,6 +1,6 @@
-import { SetAST, VELOCITY_AST } from '../type';
+import type { SetAST, VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
-import { Compile } from './compile';
+import { Compile } from './base-compile';
 /**
  * #set value
  */

@@ -1,6 +1,7 @@
-import { ArrayAST, LiteralAST, NormalArrayAST, ReferencesAST, StringAST } from '../type';
+import type { VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
-import { Compile } from './compile';
+import { Compile } from './base-compile';
+import { ArrayAST, LiteralAST, NormalArrayAST, ReferencesAST, StringAST } from '../type';
 
 /**
  * literal parse, include string, integer, array, map, bool data structure
