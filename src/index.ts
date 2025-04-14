@@ -5,18 +5,24 @@ import { getRefText } from './helper/index';
 
 // Compile.parse = parse;
 
-export const render = (
-  template: string,
-  context?: RenderContext,
-  macros?: Macros,
-  config?: CompileConfig
-): string => {
-  const asts = parse(template);
-  const compile = new Compile(asts, config);
-  return compile.render(context, macros);
+const velocity = {
+  render: (
+    template: string,
+    context?: RenderContext,
+    macros?: Macros,
+    config?: CompileConfig
+  ): string => {
+    const asts = parse(template);
+    const compile = new Compile(asts, config);
+    return compile.render(context, macros);
+  },
+  parse: parse,
+  Compile: Compile,
+  Helper: {
+    getRefText,
+  },
 };
 
-export const Helper = {
-  getRefText,
-};
-export { parse, Compile };
+export { parse, Compile, velocity };
+export const Helper = velocity.Helper;
+export default velocity;
