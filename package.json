@@ -53,8 +53,7 @@
     "tag": "if [[ $PACKAGE_VERSION != *\"beta\"* ]];then git tag v$PACKAGE_VERSION && git push --tags; fi",
     "changelog": "auto-changelog -p -u",
     "ci": "npm run lint && jest --coverage --no-cache && npm run test:build",
-    "postinstall": "if [ -d .git ]; then npm run build; fi",
-    "publish:all": "npm version patch && npm publish && git push origin"
+    "publish:all": "npm run build && npm version patch && npm publish && git push origin"
   },
   "auto-changelog": {
     "output": "History.md",
