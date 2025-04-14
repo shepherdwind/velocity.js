@@ -1,6 +1,4 @@
-Velocity - Template Engine
-==========================
-
+# Velocity.js
 
 [![NPM version][npm-image]][npm-url]
 [![build status][github-image]][github-url]
@@ -13,137 +11,127 @@ Velocity - Template Engine
 [github-image]: https://img.shields.io/github/actions/workflow/status/shepherdwind/velocity.js/node.js.yml?branch=master&style=flat-square
 [github-url]: https://github.com/shepherdwind/velocity.js/actions
 
-
-Velocityjs is [velocity](http://velocity.apache.org/) template engine for javascript.
-
-[中文版文档](./README-cn.md)
+A JavaScript implementation of the [Apache Velocity](http://velocity.apache.org/) template engine.
 
 ## Features
 
-- Supports both client and server side use.
-- Separation of parsing and rendering templates.
-- The basic syntax is fully supported all java version velocity.
-- [Vim Syntax](https://github.com/shepherdwind/vim-velocity) for vim.
+- ✨ Full support for both client-side and server-side rendering
+- 🔄 Separation of template parsing and rendering phases
+- 🎯 Complete compatibility with Java Velocity syntax
+- 🚀 High performance and lightweight
 
-## Install
-
-via npm:
+## Installation
 
 ```bash
-$ npm install velocityjs
+npm install velocityjs
 ```
 
-## Browser
+## Quick Start
 
-Compatible with all modern browsers. You can try [test case](http://git.shepherdwind.com/velocity.js/runner/tests.html) in your browser to test it.
+```javascript
+import { render, parse, Compile } from 'velocityjs';
 
-For other lower version browsers, you need have those polyfill function.
+// Simple rendering
+const result = render('Hello $name!', { name: 'World' });
+console.log(result); // Output: Hello World!
 
-1. Array.prototype map, forEach, some, filter, every, indexOf
-2. Date.now
-3. Object.keys
-
-## Examples
-
-You can find a lot of examples from the tests directory. There is no different between the use of browser and NodeJs.
-
-## Public API
-
-```
-{
-  // render method
-  render(vm: string, context?: Object, macros?: Object): string;
-
-  parse(vm: string, config?: Object, ignorespace?: boolean): Array<Ast>;
-
-  Compile: {
-    (asts: Array<Ast>, config?: Object): {
-      render(context?: Object, macros?: Object);
-    };
-  };
-}
+// With macros
+const macros = {
+  include: (path) => `Included content from ${path}`,
+};
+const template = '#include("header.vm") Hello $name!';
+const rendered = render(template, { name: 'World' }, macros);
 ```
 
-### render
+## API Reference
 
-params:
+### Core Methods
 
-- vm {string} velocity string input
-- context {object} render context, data or function for vm
-- macros {object} such as `#include('path/xxx')` , you can define you `inlcude` macro function
+#### `render(vm, context, macros)`
 
-```js
-var Velocity = require('velocityjs');
+Renders a Velocity template string with the provided context and macros.
 
-Velocity.render('string of velocity', context, macros);
+**Parameters:**
+
+- `vm` (string) - Velocity template string
+- `context` (object) - Data context for template variables
+- `macros` (object) - Custom macro functions
+
+**Returns:** (string) Rendered output
+
+#### `parse(vm, config, ignorespace)`
+
+Parses a Velocity template into an AST (Abstract Syntax Tree).
+
+**Parameters:**
+
+- `vm` (string) - Velocity template string
+- `config` (object) - Parsing configuration
+- `ignorespace` (boolean) - Whether to ignore whitespace trimming
+
+**Returns:** (Array) AST nodes
+
+#### `Compile`
+
+Compiles parsed AST into a renderable template.
+
+```javascript
+import { parse, Compile } from 'velocityjs';
+
+const asts = parse('Hello $name!');
+const template = new Compile(asts);
+const result = template.render({ name: 'World' });
 ```
 
-#### context
+### Configuration Options
 
-`context` is an object or undefined, for vm `$foo.bar`, data look up path will be `context.foo.bar`.
-`context` can have method, and call it just on velocity string.
+#### Compile Configuration
 
-The method of context, will have `eval` method on `this` of inner method body. You can `eval` to rerender velocity string, such as test code [$control.setTemplate](https://github.com/shepherdwind/velocity.js/blob/master/tests/compile.js#L532).
+- `escape` (boolean) - Enable HTML escaping for variables (default: false)
+- `unescape` (object) - Specify variables to exclude from escaping
+- `env` (string) - Set to 'development' to throw errors on null values
+- `valueMapper` (function) - Custom value transformation for #set directives
+- `customMethodHandlers` (Array) - Custom function behavior implementations
 
+### Context and Macros
 
-### Compile and parse
+#### Context Object
 
-`parse` method can parse vm, and return ast tree of velocity.
+The context object provides data and methods to your templates:
 
-`Compile` will render asts to result string.
+- Properties are accessed using dot notation: `$user.name`
+- Methods can be called directly: `$formatDate($date)`
+- Methods have access to an `eval` method for dynamic rendering
 
+#### Macros
+
+Custom macro functions can be defined for directives like `#include`:
+
+```javascript
+import { render } from 'velocityjs';
+
+const macros = {
+  include: (path) => {
+    // Custom include implementation
+    return readFile(path);
+  },
+};
 ```
-var Compile = Velocity.Compile;
 
-var asts = Velocity.parse('string of velocity');
-(new Compile(asts)).render(context, macros);
-```
+## Supported Directives
 
-#### Compile
+- `#set` - Variable assignment
+- `#foreach` - Loop iteration
+- `#if/#else/#elseif` - Conditional logic
+- `#macro` - Template macro definition
+- `#break` - Loop control
+- `#stop` - Template execution control
 
-params:
+## Getting Help
 
-- asts {array} array of vm asts tree
-- config {object} you can define some option for Compile
-
-##### config
-
-- escape {boolean} default `false`, default not escape variable to html encode, you can set true to open it.
-- unescape {object} define the object, which key do not need escape. For example, set unescape equal `{control: true}`, so `$control.html` will not escape.
-- env {string} when env equal `development` will throw error when null values are used
-- valueMapper {function} this config allow us to redefine the `#set` value, @see https://github.com/shepherdwind/velocity.js/pull/105
-- customMethodHandlers {Array} Used to implement some custom function behavior, the specific use of reference https://github.com/shepherdwind/velocity.js/issues/145
-
-#### parse
-
-params:
-
-- vm {string} string to parse
-- blocks {object} self define blocks, such as `#cms(1) hello #end`, you can set `{cms: true}`
-- ignorespace {boolean} if set true, then ignore the newline trim.
-
-## Syntax
-
-Syntax you can find from [velocity user guide](http://velocity.apache.org/engine/devel/user-guide.html)。
-
-### Directives
-
-Directives supports have `set`, `foreach`, `if|else|elseif`, `macro`, `break`, `stop`.
-
-Some othe directive `evaluate`, `define`, `parse`, do not supported default, but You can realize by context or macros, for example [parse](https://github.com/shepherdwind/velocity.js/blob/master/tests/compile.js#L627)
-
-## Questions
-
-You can find help from those ways:
-
-1. New [issue](https://github.com/shepherdwind/velocity.js/issues/new)
-2. Email to eward.song at gmail.com
-3. 阿里内部员工，可以通过 hanwen.sah 搜到我的旺旺
-
-## Other
-
-Recommend an other [velocity](https://github.com/fool2fish/velocity).
+- 📝 [Create an issue](https://github.com/shepherdwind/velocity.js/issues/new)
+- 📧 Email: eward.song at gmail.com
 
 ## License
 
-(The MIT License)
+MIT License
