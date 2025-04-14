@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.1.2](https://github.com/shepherdwind/velocity.js/compare/v2.1.1...v2.1.2)
+
+- chore: update package-lock.json to use npm registry [`cbeaab3`](https://github.com/shepherdwind/velocity.js/commit/cbeaab38e89d49ff8a0d08af5412eb919a1a80d8)
+- chore: update dependencies in package.json and package-lock.json [`456e6d2`](https://github.com/shepherdwind/velocity.js/commit/456e6d2210ebb0740c00ee894f9155c85d52dec4)
+- chore: modify publish script in package.json [`0f7fa8f`](https://github.com/shepherdwind/velocity.js/commit/0f7fa8fe5599198593b1ffd85ff46e92e6f71f6d)
+
 #### [v2.1.1](https://github.com/shepherdwind/velocity.js/compare/v2.1.0...v2.1.1)
+
+> 13 April 2025
 
 - chore: update dependencies [`c299117`](https://github.com/shepherdwind/velocity.js/commit/c299117c549644e5990e22c4dd15b51f26ac111d)
 - chore: remove package-lock.json and update README and VSCode settings [`2cdd37f`](https://github.com/shepherdwind/velocity.js/commit/2cdd37f162c30d5154c70d87ecdfe9397a15f75f)
