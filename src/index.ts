@@ -19,4 +19,15 @@ export const render = (
 export const Helper = {
   getRefText,
 };
+
 export { parse, Compile };
+
+// Default export
+const velocity = {
+  render,
+  parse,
+  Compile,
+  Helper,
+};
+
+export default velocity;
