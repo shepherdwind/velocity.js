@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.1.4](https://github.com/shepherdwind/velocity.js/compare/v2.1.3...v2.1.4)
+
+- chore: update type definitions path in package.json and remove install script from package-lock.json [`6b44cbb`](https://github.com/shepherdwind/velocity.js/commit/6b44cbb2b5b4ccee6dcc14e2ddd5b43efc8b8f2e)
+
 #### [v2.1.3](https://github.com/shepherdwind/velocity.js/compare/v2.1.2...v2.1.3)
+
+> 14 April 2025
 
 - feat: add default export for velocity object [`#169`](https://github.com/shepherdwind/velocity.js/issues/169)
 - chore: remove Chinese README and update English documentation [`dcc646e`](https://github.com/shepherdwind/velocity.js/commit/dcc646ed3066f15a53013d541345589840c81567)
