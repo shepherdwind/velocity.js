@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.1.5](https://github.com/shepherdwind/velocity.js/compare/v2.1.4...v2.1.5)
+
+- chore: update type definitions path in package.json to point to src directory [`52c651a`](https://github.com/shepherdwind/velocity.js/commit/52c651aea4ac6e0d07483afb924d257363d5763b)
+
 #### [v2.1.4](https://github.com/shepherdwind/velocity.js/compare/v2.1.3...v2.1.4)
+
+> 23 April 2025
 
 - chore: update type definitions path in package.json and remove install script from package-lock.json [`6b44cbb`](https://github.com/shepherdwind/velocity.js/commit/6b44cbb2b5b4ccee6dcc14e2ddd5b43efc8b8f2e)
 
