@@ -190,6 +190,108 @@ describe('Set && Expression', function () {
     });
   });
 
+  describe('prototype pollution protection', function () {
+    afterEach(function () {
+      delete (Object.prototype as Record<string, unknown>).polluted;
+      delete (Object.prototype as Record<string, unknown>).isAdmin;
+    });
+
+    it('does not set values through __proto__ references', function () {
+      render('#set($__proto__.polluted = "hacked")', {});
+
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+
+    it('does not set values through __proto__ index keys', function () {
+      render('#set($target["__proto__"].polluted = "hacked")', { target: {} });
+
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+
+    it('does not set values through inherited constructor.prototype paths', function () {
+      render('#set($target.constructor.prototype.isAdmin = true)', { target: {} });
+
+      assert.equal(({} as Record<string, unknown>).isAdmin, undefined);
+    });
+
+    it('does not evaluate assigned values for blocked dynamic index keys', function () {
+      let evaluated = false;
+
+      render('#set($key = "__proto__") #set($target[$key].polluted = $markEvaluated())', {
+        target: {},
+        markEvaluated() {
+          evaluated = true;
+          return 'hacked';
+        },
+      });
+
+      assert.equal(evaluated, false);
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+
+    it('does not create root objects for blocked paths', function () {
+      const context = getContext('#set($target["__proto__"].polluted = "hacked")');
+
+      expect(context).not.toHaveProperty('target');
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+
+    it('preserves assignments after assigned values create missing parents', function () {
+      const target: { child?: { name?: string } } = {};
+      const context = {
+        target,
+        ensureChild() {
+          target.child = {};
+          return 'Car';
+        },
+      };
+
+      render('#set($target.child.name = $ensureChild())', context);
+
+      assert.equal(target.child?.name, 'Car');
+    });
+
+    it('preserves top-level constructor and prototype variables', function () {
+      const context = getContext('#set($constructor = "ctor") #set($prototype = "proto")');
+
+      assert.equal(context.constructor, 'ctor');
+      assert.equal(context.prototype, 'proto');
+    });
+
+    it('preserves own constructor and prototype data fields', function () {
+      const model = {
+        constructor: {
+          prototype: {},
+        },
+        prototype: {},
+      };
+
+      render(
+        '#set($model.constructor.name = "Car") #set($model.constructor.prototype.kind = "vehicle") #set($model.prototype.label = "draft")',
+        { model }
+      );
+
+      assert.equal((model.constructor as Record<string, unknown>).name, 'Car');
+      assert.equal((model.constructor.prototype as Record<string, unknown>).kind, 'vehicle');
+      assert.equal((model.prototype as Record<string, unknown>).label, 'draft');
+    });
+
+    it('does not set values through function prototype paths', function () {
+      let evaluated = false;
+
+      render('#set($target.constructor.prototype.polluted = $markEvaluated())', {
+        target: { constructor: Object },
+        markEvaluated() {
+          evaluated = true;
+          return 'hacked';
+        },
+      });
+
+      assert.equal(evaluated, false);
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+  });
+
   it('set with foreach', function () {
     const tpl = `
 #foreach($item in [1..2])
