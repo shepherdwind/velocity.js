@@ -84,17 +84,18 @@ export class SetValue extends Compile {
     (context as Record<string, unknown>)[ref.id] = baseRef;
     const len = ref.path ? ref.path.length : 0;
 
-    ref.path.some((exp, i) => {
+    for (let i = 0; i < len; i++) {
+      const exp = ref.path[i];
       const key = this.getPathKey(exp);
       const isEnd = len === i + 1;
 
       if (isPollutingKey(key)) {
-        return true;
+        return;
       }
 
       if (isEnd) {
         (baseRef as Record<string, unknown>)[key] = val;
-        return true;
+        return;
       }
 
       baseRef = (baseRef as Record<string, unknown>)[key] as Record<string, unknown>;
@@ -103,11 +104,9 @@ export class SetValue extends Compile {
       // #set($a.d.c2 = 2)
       // but $a.d is undefined, value set fail
       if (baseRef === undefined) {
-        return true;
+        return;
       }
-
-      return false;
-    });
+    }
   }
 }
 
