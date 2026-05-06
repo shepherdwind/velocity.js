@@ -61,14 +61,22 @@ export class SetValue extends Compile {
       return true;
     }
 
+    // Function.prototype is a shared prototype object; assigning through it can
+    // affect every object created by that constructor.
     if (key === 'prototype' && typeof baseRef === 'function') {
       return true;
     }
 
+    // `constructor` and `prototype` are valid own data fields. They are only
+    // dangerous when traversal would fall through to inherited prototype-chain
+    // properties such as Object.constructor.prototype.
     return !isEnd && PROTOTYPE_CHAIN_KEYS.has(key) && !hasOwnProperty(baseRef, key);
   }
 
   private hasBlockedUnknownPath(keys: string[], startIndex: number): boolean {
+    // If an earlier safe segment is missing, the RHS may create it. Before
+    // evaluating RHS we can only allow the path when the remaining unresolved
+    // suffix does not contain keys that could later traverse prototypes.
     return keys.slice(startIndex).some((key, i) => {
       const isEnd = startIndex + i === keys.length - 1;
       return key === PROTO_KEY || (!isEnd && PROTOTYPE_CHAIN_KEYS.has(key));
@@ -129,6 +137,8 @@ export class SetValue extends Compile {
       // fix #129
     }
 
+    // Resolve the left-hand path before evaluating RHS so blocked prototype
+    // paths cannot trigger user callbacks or other RHS side effects.
     const pathKeys = this.getPathKeys(ref);
     let setPath = this.resolveSetPath(context, ref, pathKeys);
 
@@ -151,6 +161,8 @@ export class SetValue extends Compile {
       return;
     }
 
+    // Resolve again after RHS evaluation to preserve legacy behavior where RHS
+    // side effects create a previously missing parent object.
     setPath = this.resolveSetPath(context, ref, pathKeys);
 
     if (setPath.blocked) {
