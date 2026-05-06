@@ -2,7 +2,29 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.1.6](https://github.com/shepherdwind/velocity.js/compare/v2.1.5...v2.1.6)
+
+- fix: guard #set paths against prototype pollution [`#188`](https://github.com/shepherdwind/velocity.js/pull/188)
+- chore(deps): bump postcss from 8.5.3 to 8.5.14 [`#187`](https://github.com/shepherdwind/velocity.js/pull/187)
+- chore(deps-dev): bump picomatch from 2.3.1 to 2.3.2 [`#182`](https://github.com/shepherdwind/velocity.js/pull/182)
+- chore(deps-dev): bump handlebars from 4.7.8 to 4.7.9 [`#183`](https://github.com/shepherdwind/velocity.js/pull/183)
+- chore(deps-dev): bump vite from 6.4.1 to 6.4.2 [`#184`](https://github.com/shepherdwind/velocity.js/pull/184)
+- chore(deps): bump lodash and @microsoft/api-extractor [`#185`](https://github.com/shepherdwind/velocity.js/pull/185)
+- chore(deps): bump minimatch and @microsoft/api-extractor [`#180`](https://github.com/shepherdwind/velocity.js/pull/180)
+- chore(deps): bump rollup from 4.40.0 to 4.59.0 [`#179`](https://github.com/shepherdwind/velocity.js/pull/179)
+- chore(deps-dev): bump vite from 6.3.6 to 6.4.1 [`#175`](https://github.com/shepherdwind/velocity.js/pull/175)
+- chore(deps-dev): bump lodash from 4.17.21 to 4.17.23 [`#177`](https://github.com/shepherdwind/velocity.js/pull/177)
+- Chore: Update github action node versions [`#178`](https://github.com/shepherdwind/velocity.js/pull/178)
+- chore(deps-dev): bump js-yaml from 3.14.1 to 3.14.2 [`#176`](https://github.com/shepherdwind/velocity.js/pull/176)
+- chore(deps-dev): bump vite from 6.3.4 to 6.3.6 [`#174`](https://github.com/shepherdwind/velocity.js/pull/174)
+- chore(deps-dev): bump vite from 6.2.6 to 6.3.4 [`#173`](https://github.com/shepherdwind/velocity.js/pull/173)
+- fix: guard set paths against prototype pollution [`b9a030d`](https://github.com/shepherdwind/velocity.js/commit/b9a030d02a579b31ada6670a82acc03d308d35fc)
+- fix: preserve set assignments after rhs side effects [`6c7e6f0`](https://github.com/shepherdwind/velocity.js/commit/6c7e6f0d0540a94112cb90ea2e31360889fab109)
+- docs: explain set path prototype guards [`221d197`](https://github.com/shepherdwind/velocity.js/commit/221d197e1b77564cc5661d69cedce5b321bae940)
+
 #### [v2.1.5](https://github.com/shepherdwind/velocity.js/compare/v2.1.4...v2.1.5)
+
+> 23 April 2025
 
 - chore: update type definitions path in package.json to point to src directory [`52c651a`](https://github.com/shepherdwind/velocity.js/commit/52c651aea4ac6e0d07483afb924d257363d5763b)
 
