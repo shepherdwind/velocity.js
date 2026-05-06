@@ -236,6 +236,21 @@ describe('Set && Expression', function () {
       assert.equal(({} as Record<string, unknown>).polluted, undefined);
     });
 
+    it('preserves assignments after assigned values create missing parents', function () {
+      const target: { child?: { name?: string } } = {};
+      const context = {
+        target,
+        ensureChild() {
+          target.child = {};
+          return 'Car';
+        },
+      };
+
+      render('#set($target.child.name = $ensureChild())', context);
+
+      assert.equal(target.child?.name, 'Car');
+    });
+
     it('preserves top-level constructor and prototype variables', function () {
       const context = getContext('#set($constructor = "ctor") #set($prototype = "proto")');
 

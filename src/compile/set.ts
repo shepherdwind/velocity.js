@@ -52,6 +52,10 @@ export class SetValue extends Compile {
     return '';
   }
 
+  private getPathKeys(ref: ReferencesAST): string[] {
+    return (ref.path || []).map((exp) => this.getPathKey(exp));
+  }
+
   private isBlockedPathKey(baseRef: unknown, key: string, isEnd: boolean): boolean {
     if (key === PROTO_KEY) {
       return true;
@@ -64,8 +68,15 @@ export class SetValue extends Compile {
     return !isEnd && PROTOTYPE_CHAIN_KEYS.has(key) && !hasOwnProperty(baseRef, key);
   }
 
-  private resolveSetPath(context: object, ref: ReferencesAST): SetPathTarget {
-    if (!ref.path) {
+  private hasBlockedUnknownPath(keys: string[], startIndex: number): boolean {
+    return keys.slice(startIndex).some((key, i) => {
+      const isEnd = startIndex + i === keys.length - 1;
+      return key === PROTO_KEY || (!isEnd && PROTOTYPE_CHAIN_KEYS.has(key));
+    });
+  }
+
+  private resolveSetPath(context: object, ref: ReferencesAST, pathKeys: string[]): SetPathTarget {
+    if (pathKeys.length === 0) {
       return { blocked: ref.id === PROTO_KEY };
     }
 
@@ -83,13 +94,13 @@ export class SetValue extends Compile {
 
     let baseRef = rootRef;
 
-    for (let i = 0; i < ref.path.length; i++) {
+    for (let i = 0; i < pathKeys.length; i++) {
       if (baseRef === undefined || baseRef === null) {
-        return { blocked: false, rootRef, shouldSetRoot };
+        return { blocked: this.hasBlockedUnknownPath(pathKeys, i), rootRef, shouldSetRoot };
       }
 
-      const key = this.getPathKey(ref.path[i]);
-      const isEnd = ref.path.length === i + 1;
+      const key = pathKeys[i];
+      const isEnd = pathKeys.length === i + 1;
 
       if (this.isBlockedPathKey(baseRef, key, isEnd)) {
         return { blocked: true };
@@ -118,7 +129,8 @@ export class SetValue extends Compile {
       // fix #129
     }
 
-    const setPath = this.resolveSetPath(context, ref);
+    const pathKeys = this.getPathKeys(ref);
+    let setPath = this.resolveSetPath(context, ref, pathKeys);
 
     if (setPath.blocked) {
       return;
@@ -136,6 +148,12 @@ export class SetValue extends Compile {
 
     if (!ref.path) {
       (context as Record<string, unknown>)[ref.id] = val;
+      return;
+    }
+
+    setPath = this.resolveSetPath(context, ref, pathKeys);
+
+    if (setPath.blocked) {
       return;
     }
 
