@@ -1,4 +1,4 @@
-import type { Attribute, ReferencesAST, SetAST, VELOCITY_AST } from '../type';
+import type { ReferencesAST, SetAST, VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './base-compile';
 
@@ -27,18 +27,6 @@ export class SetValue extends Compile {
     // not find local variable, return global context
     return this.context;
   }
-  private getPathKey(exp: Attribute): string {
-    if (exp.type === 'property') {
-      return exp.id;
-    }
-
-    if (exp.type === 'index' && exp.id) {
-      return String(this.getLiteral(exp.id as VELOCITY_AST));
-    }
-
-    return '';
-  }
-
   private hasPollutingPropertyPath(ref: ReferencesAST): boolean {
     return Boolean(ref.path?.some((exp) => exp.type === 'property' && isPollutingKey(exp.id)));
   }
@@ -84,18 +72,26 @@ export class SetValue extends Compile {
     (context as Record<string, unknown>)[ref.id] = baseRef;
     const len = ref.path ? ref.path.length : 0;
 
-    for (let i = 0; i < len; i++) {
-      const exp = ref.path[i];
-      const key = this.getPathKey(exp);
+    ref.path.some((exp, i) => {
       const isEnd = len === i + 1;
+      let key: string;
+
+      if (exp.type === 'property') {
+        key = exp.id;
+      } else if (exp.type === 'index' && exp.id) {
+        key = String(this.getLiteral(exp.id as VELOCITY_AST));
+      } else {
+        key = '';
+      }
 
       if (isPollutingKey(key)) {
-        return;
+        // Return true to stop Array.prototype.some traversal without assigning.
+        return true;
       }
 
       if (isEnd) {
         (baseRef as Record<string, unknown>)[key] = val;
-        return;
+        return true;
       }
 
       baseRef = (baseRef as Record<string, unknown>)[key] as Record<string, unknown>;
@@ -104,9 +100,11 @@ export class SetValue extends Compile {
       // #set($a.d.c2 = 2)
       // but $a.d is undefined, value set fail
       if (baseRef === undefined) {
-        return;
+        return true;
       }
-    }
+
+      return false;
+    });
   }
 }
 
