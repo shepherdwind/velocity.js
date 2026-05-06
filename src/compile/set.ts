@@ -1,6 +1,13 @@
 import type { SetAST, VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './base-compile';
+
+const POLLUTING_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function isPollutingKey(key: string): boolean {
+  return POLLUTING_KEYS.has(key);
+}
+
 /**
  * #set value
  */
@@ -43,6 +50,10 @@ export class SetValue extends Compile {
       val = this.config.valueMapper?.(this.getLiteral(ast.equal[1]));
     }
 
+    if (isPollutingKey(ref.id)) {
+      return;
+    }
+
     if (!ref.path) {
       (context as Record<string, unknown>)[ref.id] = val;
       return;
@@ -66,6 +77,10 @@ export class SetValue extends Compile {
         key = String(this.getLiteral(exp.id as VELOCITY_AST));
       } else {
         key = '';
+      }
+
+      if (isPollutingKey(key)) {
+        return true;
       }
 
       if (isEnd) {

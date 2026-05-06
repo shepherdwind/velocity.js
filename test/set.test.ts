@@ -190,6 +190,31 @@ describe('Set && Expression', function () {
     });
   });
 
+  describe('prototype pollution protection', function () {
+    afterEach(function () {
+      delete (Object.prototype as Record<string, unknown>).polluted;
+      delete (Object.prototype as Record<string, unknown>).isAdmin;
+    });
+
+    it('does not set values through __proto__ references', function () {
+      render('#set($__proto__.polluted = "hacked")', {});
+
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+
+    it('does not set values through constructor.prototype paths', function () {
+      render('#set($target.constructor.prototype.isAdmin = true)', { target: {} });
+
+      assert.equal(({} as Record<string, unknown>).isAdmin, undefined);
+    });
+
+    it('does not set prototype-polluting index keys', function () {
+      render('#set($target["__proto__"].polluted = "hacked")', { target: {} });
+
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+  });
+
   it('set with foreach', function () {
     const tpl = `
 #foreach($item in [1..2])
