@@ -1,4 +1,4 @@
-import type { SetAST, VELOCITY_AST } from '../type';
+import type { Attribute, ReferencesAST, SetAST, VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './base-compile';
 
@@ -27,11 +27,32 @@ export class SetValue extends Compile {
     // not find local variable, return global context
     return this.context;
   }
+  private getPathKey(exp: Attribute): string {
+    if (exp.type === 'property') {
+      return exp.id;
+    }
+
+    if (exp.type === 'index' && exp.id) {
+      return String(this.getLiteral(exp.id as VELOCITY_AST));
+    }
+
+    return '';
+  }
+
+  private hasPollutingPropertyPath(ref: ReferencesAST): boolean {
+    return Boolean(ref.path?.some((exp) => exp.type === 'property' && isPollutingKey(exp.id)));
+  }
+
   /**
    * parse #set
    */
   setValue(ast: SetAST): void {
     const ref = ast.equal[0];
+
+    if (isPollutingKey(ref.id) || this.hasPollutingPropertyPath(ref)) {
+      return;
+    }
+
     let context = this.getContext(ref.id) as object;
 
     // @see #25
@@ -50,10 +71,6 @@ export class SetValue extends Compile {
       val = this.config.valueMapper?.(this.getLiteral(ast.equal[1]));
     }
 
-    if (isPollutingKey(ref.id)) {
-      return;
-    }
-
     if (!ref.path) {
       (context as Record<string, unknown>)[ref.id] = val;
       return;
@@ -68,16 +85,8 @@ export class SetValue extends Compile {
     const len = ref.path ? ref.path.length : 0;
 
     ref.path.some((exp, i) => {
+      const key = this.getPathKey(exp);
       const isEnd = len === i + 1;
-      let key: string;
-
-      if (exp.type === 'property') {
-        key = exp.id;
-      } else if (exp.type === 'index' && exp.id) {
-        key = String(this.getLiteral(exp.id as VELOCITY_AST));
-      } else {
-        key = '';
-      }
 
       if (isPollutingKey(key)) {
         return true;

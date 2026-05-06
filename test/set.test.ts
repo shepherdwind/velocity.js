@@ -213,6 +213,20 @@ describe('Set && Expression', function () {
 
       assert.equal(({} as Record<string, unknown>).polluted, undefined);
     });
+
+    it('does not evaluate assigned values for prototype-polluting paths', function () {
+      let evaluated = false;
+
+      render('#set($__proto__.polluted = $markEvaluated())', {
+        markEvaluated() {
+          evaluated = true;
+          return 'hacked';
+        },
+      });
+
+      assert.equal(evaluated, false);
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
   });
 
   it('set with foreach', function () {
