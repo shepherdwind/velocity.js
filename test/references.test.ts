@@ -259,6 +259,57 @@ describe('References', function () {
     assert.equal('123', ret.trim());
   });
 
+  describe('prototype chain protection', function () {
+    it('does not expose dangerous top-level prototype references', function () {
+      (Object.prototype as Record<string, unknown>).polluted = 'hacked';
+
+      try {
+        assert.equal('$__proto__.polluted', render('$__proto__.polluted', {}).trim());
+        assert.equal('$constructor.name', render('$constructor.name', {}).trim());
+      } finally {
+        delete (Object.prototype as Record<string, unknown>).polluted;
+      }
+    });
+
+    it('does not expose __proto__ references', function () {
+      assert.equal(
+        '$foo.__proto__.polluted',
+        render('$foo.__proto__.polluted', { foo: {}, polluted: 'safe' }).trim()
+      );
+      assert.equal(
+        '$foo["__proto__"].polluted',
+        render('$foo["__proto__"].polluted', { foo: {}, polluted: 'safe' }).trim()
+      );
+    });
+
+    it('does not expose inherited constructor or prototype references', function () {
+      assert.equal('$foo.constructor.name', render('$foo.constructor.name', { foo: {} }));
+      assert.equal(
+        '$foo.constructor.constructor.name',
+        render('$foo.constructor.constructor.name', { foo: {} })
+      );
+    });
+
+    it('preserves own constructor and prototype data fields', function () {
+      const model = {
+        constructor: { name: 'Car' },
+        prototype: { label: 'draft' },
+      };
+
+      assert.equal(
+        'Car draft',
+        render('$model.constructor.name $model.prototype.label', { model })
+      );
+    });
+
+    it('does not expose function prototype paths', function () {
+      assert.equal(
+        '$target.constructor.prototype',
+        render('$target.constructor.prototype', { target: { constructor: Object } })
+      );
+    });
+  });
+
   describe('env', function () {
     it('should throw on property when parent is null', function () {
       const vm = '$foo.bar';
