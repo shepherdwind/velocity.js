@@ -1,9 +1,7 @@
 import type { Attribute, ReferencesAST, SetAST, VELOCITY_AST } from '../type';
 import { applyMixins } from '../utils';
 import { Compile } from './base-compile';
-
-const PROTO_KEY = '__proto__';
-const PROTOTYPE_CHAIN_KEYS = new Set(['constructor', 'prototype']);
+import { hasBlockedUnknownPrototypePath, isBlockedPrototypeKey } from './prototype-guard';
 
 type SetPathTarget = {
   blocked: boolean;
@@ -12,14 +10,6 @@ type SetPathTarget = {
   baseRef?: unknown;
   key?: string;
 };
-
-function hasOwnProperty(baseRef: unknown, key: string): boolean {
-  return (
-    (typeof baseRef === 'object' || typeof baseRef === 'function') &&
-    baseRef !== null &&
-    Object.prototype.hasOwnProperty.call(baseRef, key)
-  );
-}
 
 /**
  * #set value
@@ -57,38 +47,19 @@ export class SetValue extends Compile {
   }
 
   private isBlockedPathKey(baseRef: unknown, key: string, isEnd: boolean): boolean {
-    if (key === PROTO_KEY) {
-      return true;
-    }
-
-    // Function.prototype is a shared prototype object; assigning through it can
-    // affect every object created by that constructor.
-    if (key === 'prototype' && typeof baseRef === 'function') {
-      return true;
-    }
-
-    // `constructor` and `prototype` are valid own data fields. They are only
-    // dangerous when traversal would fall through to inherited prototype-chain
-    // properties such as Object.constructor.prototype.
-    return !isEnd && PROTOTYPE_CHAIN_KEYS.has(key) && !hasOwnProperty(baseRef, key);
+    return isBlockedPrototypeKey(baseRef, key, isEnd);
   }
 
   private hasBlockedUnknownPath(keys: string[], startIndex: number): boolean {
-    // If an earlier safe segment is missing, the RHS may create it. Before
-    // evaluating RHS we can only allow the path when the remaining unresolved
-    // suffix does not contain keys that could later traverse prototypes.
-    return keys.slice(startIndex).some((key, i) => {
-      const isEnd = startIndex + i === keys.length - 1;
-      return key === PROTO_KEY || (!isEnd && PROTOTYPE_CHAIN_KEYS.has(key));
-    });
+    return hasBlockedUnknownPrototypePath(keys, startIndex);
   }
 
   private resolveSetPath(context: object, ref: ReferencesAST, pathKeys: string[]): SetPathTarget {
     if (pathKeys.length === 0) {
-      return { blocked: ref.id === PROTO_KEY };
+      return { blocked: this.isBlockedPathKey(context, ref.id, true) };
     }
 
-    if (ref.id === PROTO_KEY) {
+    if (this.isBlockedPathKey(context, ref.id, false)) {
       return { blocked: true };
     }
 

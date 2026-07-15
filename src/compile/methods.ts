@@ -1,3 +1,5 @@
+import { isBlockedPrototypeKey } from './prototype-guard';
+
 function hasProperty(context: object, field: string) {
   if (typeof context === 'number' || typeof context === 'string') {
     return context[field] || Object.prototype.hasOwnProperty.call(context, field);
@@ -25,6 +27,10 @@ function getter(base: any, property: number | string) {
     return base[property];
   }
 
+  if (isBlockedPrototypeKey(base, property)) {
+    return undefined;
+  }
+
   const letter = property.charCodeAt(0);
   const isUpper = letter < 91;
   const ret = base[property];
@@ -43,7 +49,22 @@ function getter(base: any, property: number | string) {
     property = String.fromCharCode(letter).toUpperCase() + property.slice(1);
   }
 
+  if (isBlockedPrototypeKey(base, property)) {
+    return undefined;
+  }
+
   return base[property];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function setter(context: any, property: unknown, value: unknown) {
+  const key = String(property);
+  if (isBlockedPrototypeKey(context, key, true)) {
+    return '';
+  }
+
+  context[key] = value;
+  return value;
 }
 
 function getSize(obj: unknown) {
@@ -76,7 +97,7 @@ const handlers = {
   set: {
     match: matchProperty('set', true),
     resolve: ({ context, params }: IHandlerParams) => {
-      context[params[0]] = params[1];
+      setter(context, params[0], params[1]);
       return '';
     },
   },
@@ -93,7 +114,7 @@ const handlers = {
   setValue: {
     match: matchStartWith('set'),
     resolve: ({ context, property, params }: IHandlerParams) => {
-      context[property.slice(3)] = params[0];
+      setter(context, property.slice(3), params[0]);
       // set value will not output anything
       context.toString = () => '';
       return context;
@@ -117,7 +138,7 @@ const handlers = {
   },
   put: {
     match: matchProperty('put', true),
-    resolve: ({ context, params }: IHandlerParams) => (context[params[0]] = params[1]),
+    resolve: ({ context, params }: IHandlerParams) => setter(context, params[0], params[1]),
   },
   add: {
     match: matchProperty('add', true),

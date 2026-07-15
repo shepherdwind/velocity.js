@@ -259,6 +259,91 @@ describe('References', function () {
     assert.equal('123', ret.trim());
   });
 
+  describe('prototype chain protection', function () {
+    it('does not expose dangerous top-level prototype references', function () {
+      (Object.prototype as Record<string, unknown>).polluted = 'hacked';
+
+      try {
+        assert.equal('$__proto__.polluted', render('$__proto__.polluted', {}).trim());
+        assert.equal('$constructor.name', render('$constructor.name', {}).trim());
+      } finally {
+        delete (Object.prototype as Record<string, unknown>).polluted;
+      }
+    });
+
+    it('does not expose __proto__ references', function () {
+      assert.equal(
+        '$foo.__proto__.polluted',
+        render('$foo.__proto__.polluted', { foo: {}, polluted: 'safe' }).trim()
+      );
+      assert.equal(
+        '$foo["__proto__"].polluted',
+        render('$foo["__proto__"].polluted', { foo: {}, polluted: 'safe' }).trim()
+      );
+    });
+
+    it('does not expose inherited constructor or prototype references', function () {
+      assert.equal('$foo.constructor.name', render('$foo.constructor.name', { foo: {} }));
+      assert.equal(
+        '$foo.constructor.constructor.name',
+        render('$foo.constructor.constructor.name', { foo: {} })
+      );
+    });
+
+    it('preserves own constructor and prototype data fields', function () {
+      const model = {
+        constructor: { name: 'Car' },
+        prototype: { label: 'draft' },
+      };
+
+      assert.equal(
+        'Car draft',
+        render('$model.constructor.name $model.prototype.label', { model })
+      );
+    });
+
+    it('does not expose function prototype paths', function () {
+      assert.equal(
+        '$target.constructor.prototype',
+        render('$target.constructor.prototype', { target: { constructor: Object } })
+      );
+    });
+
+    it('does not expose prototype paths through default getter methods', function () {
+      assert.equal(
+        '$foo.get("__proto__").polluted',
+        render('$foo.get("__proto__").polluted', { foo: {} })
+      );
+      assert.equal(
+        '$foo.get("constructor").name',
+        render('$foo.get("constructor").name', { foo: {} })
+      );
+      assert.equal('$foo.getConstructor().name', render('$foo.getConstructor().name', { foo: {} }));
+    });
+
+    it('preserves own constructor and prototype fields through default getter methods', function () {
+      const model = {
+        constructor: { name: 'Car' },
+        prototype: { label: 'draft' },
+      };
+
+      assert.equal(
+        'Car draft',
+        render('$model.get("constructor").name $model.get("prototype").label', { model })
+      );
+    });
+
+    it('does not mutate prototypes through default setter methods', function () {
+      const target: Record<string, unknown> = {};
+
+      render('$target.set("__proto__", {"polluted": "hacked"})', { target });
+      render('$target.put("__proto__", {"polluted": "hacked"})', { target });
+
+      assert.equal(target.polluted, undefined);
+      assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    });
+  });
+
   describe('env', function () {
     it('should throw on property when parent is null', function () {
       const vm = '$foo.bar';

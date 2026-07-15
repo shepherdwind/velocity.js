@@ -3,6 +3,7 @@ import { getRefText } from '../helper';
 import { Compile } from './base-compile';
 import { Attribute, IndexAttribute, Method, ReferencesAST, VELOCITY_AST } from '../type';
 import { applyMixins, convert } from '../utils';
+import { hasOwnProperty, isBlockedPrototypeKey } from './prototype-guard';
 
 const debug = debugBase('velocity');
 const posUnknown = { first_line: 'unknown', first_column: 'unknown' };
@@ -31,12 +32,12 @@ export class References extends Compile {
     const isSilent = this.silence || ast.leader === '$!';
     const isFunction = ast.args !== undefined;
     const context = this.context;
-    let ret = context[ast.id];
+    let ret = this.isBlockedPathKey(context, ast.id) ? undefined : context[ast.id];
     const local = this.getLocal(ast);
 
     const text = getRefText(ast);
 
-    if (text in context) {
+    if (hasOwnProperty(context, text)) {
       return ast.prue && escape ? convert(context[text]) : context[text];
     }
 
@@ -75,7 +76,7 @@ export class References extends Compile {
     let ret: unknown = false;
 
     const isLocal = this.conditions.some((contextId: string) => {
-      const hasData = id in (local[contextId] as object);
+      const hasData = hasOwnProperty(local[contextId], id);
       if (hasData) {
         const contextObj = local[contextId] as Record<string, unknown>;
         ret = contextObj[id];
@@ -110,9 +111,17 @@ export class References extends Compile {
     }
 
     if (property.type === 'property') {
+      if (this.isBlockedPathKey(baseRef, property.id)) {
+        return undefined;
+      }
+
       return (baseRef as Record<string, unknown>)[property.id];
     }
     return this.getPropIndex(property, baseRef as object);
+  }
+
+  private isBlockedPathKey(baseRef: unknown, key: string): boolean {
+    return isBlockedPrototypeKey(baseRef, key);
   }
 
   /**
@@ -122,6 +131,10 @@ export class References extends Compile {
   getPropIndex(property: IndexAttribute, baseRef: object) {
     const ast = property.id;
     const key = ast.type === 'references' ? this.getReferences(ast) : ast.value;
+    if (this.isBlockedPathKey(baseRef, String(key))) {
+      return undefined;
+    }
+
     return (baseRef as Record<string, unknown>)[key as string];
   }
 
@@ -131,6 +144,11 @@ export class References extends Compile {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getPropMethod(property: Method, baseRef: any, ast: ReferencesAST) {
     const id = property.id;
+    if (this.isBlockedPathKey(baseRef, id)) {
+      this._throw(ast, property, 'TypeError');
+      return;
+    }
+
     let ret = baseRef[id];
     const args = (property.args || []).map((exp) => this.getLiteral(exp as VELOCITY_AST)) || [];
 
