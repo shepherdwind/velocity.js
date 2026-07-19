@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v2.1.7](https://github.com/shepherdwind/velocity.js/compare/v2.1.6...v2.1.7)
+
+- ci: drop Node.js 18 [`#193`](https://github.com/shepherdwind/velocity.js/pull/193)
+- Guard prototype chain access to prevent prototype pollution [`#192`](https://github.com/shepherdwind/velocity.js/pull/192)
+- chore(deps): bump esbuild and vite [`#190`](https://github.com/shepherdwind/velocity.js/pull/190)
+- chore(deps-dev): bump fast-uri from 3.1.0 to 3.1.2 [`#189`](https://github.com/shepherdwind/velocity.js/pull/189)
+- fix: harden prototype path guards [`f8e47a6`](https://github.com/shepherdwind/velocity.js/commit/f8e47a6c4607249b9c967d3a1ced959b4dd64dba)
+- fix: guard default method prototype access [`f2cd2c6`](https://github.com/shepherdwind/velocity.js/commit/f2cd2c69214df80b3d50476b77cec9956f6bdd99)
+
 #### [v2.1.6](https://github.com/shepherdwind/velocity.js/compare/v2.1.5...v2.1.6)
+
+> 6 May 2026
 
 - fix: guard #set paths against prototype pollution [`#188`](https://github.com/shepherdwind/velocity.js/pull/188)
 - chore(deps): bump postcss from 8.5.3 to 8.5.14 [`#187`](https://github.com/shepherdwind/velocity.js/pull/187)
